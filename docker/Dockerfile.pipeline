@@ -1,0 +1,26 @@
+# =============================================================================
+# RevenueOS – Pipeline Runner Dockerfile
+# Builds a lightweight Python image with all project dependencies.
+# Used by the `pipeline` service in docker-compose.yml.
+# =============================================================================
+
+FROM python:3.12-slim
+
+# System deps (psycopg needs libpq)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq-dev \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install Python dependencies first (layer-cached)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy project code
+COPY . .
+
+# Default command – run full pipeline
+# Override with: docker compose run --rm pipeline python pipeline.py --phase bronze
+CMD ["python", "pipeline.py"]

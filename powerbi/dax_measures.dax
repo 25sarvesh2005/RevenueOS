@@ -1,0 +1,327 @@
+/* =============================================================================
+   RevenueOS – Complete DAX Semantic Measure Library
+   Organized by Domain & Power BI Page
+   Paste into a dedicated "_Measures" table in Power BI Desktop
+   ============================================================================= */
+
+// =============================================================================
+// 01. CORE FINANCIAL WATERFALL (Pages 01 & 02)
+// =============================================================================
+
+Gross Revenue = 
+SUM(fact_orders[gross_revenue])
+
+Total Discounts = 
+SUM(fact_orders[discount_amount])
+
+Net Sales = 
+SUM(fact_orders[net_sales])
+
+Total Returns = 
+SUM(fact_returns[return_value])
+
+Net Revenue = 
+[Net Sales] - [Total Returns]
+
+Total COGS = 
+SUM(fact_orders[cogs])
+
+Gross Profit = 
+[Net Sales] - [Total COGS]
+
+Gross Margin % = 
+DIVIDE([Gross Profit], [Net Sales], 0)
+
+Order Count = 
+DISTINCTCOUNT(fact_orders[order_id])
+
+Units Sold = 
+SUM(fact_orders[quantity])
+
+Units Returned = 
+SUM(fact_returns[quantity_returned])
+
+Average Order Value = 
+DIVIDE([Net Sales], [Order Count], 0)
+
+Average Selling Price = 
+DIVIDE([Net Sales], [Units Sold], 0)
+
+Discount Rate % = 
+DIVIDE([Total Discounts], [Gross Revenue], 0)
+
+Return Rate % = 
+DIVIDE([Units Returned], [Units Sold], 0)
+
+Return Value Rate % = 
+DIVIDE([Total Returns], [Net Sales], 0)
+
+
+// =============================================================================
+// 02. TIME INTELLIGENCE & VARIANCES (Pages 01 & 02)
+// =============================================================================
+
+Net Sales PY = 
+CALCULATE(
+    [Net Sales],
+    SAMEPERIODLASTYEAR(dim_date[full_date])
+)
+
+Net Sales YoY $ = 
+[Net Sales] - [Net Sales PY]
+
+Net Sales YoY % = 
+DIVIDE([Net Sales YoY $], [Net Sales PY], 0)
+
+Net Sales PM = 
+CALCULATE(
+    [Net Sales],
+    PREVIOUSMONTH(dim_date[full_date])
+)
+
+Net Sales MoM $ = 
+[Net Sales] - [Net Sales PM]
+
+Net Sales MoM % = 
+DIVIDE([Net Sales MoM $], [Net Sales PM], 0)
+
+Net Sales YTD = 
+TOTALYTD([Net Sales], dim_date[full_date])
+
+Gross Profit YTD = 
+TOTALYTD([Gross Profit], dim_date[full_date])
+
+Rolling 7D Net Sales = 
+CALCULATE(
+    [Net Sales],
+    DATESINPERIOD(dim_date[full_date], LASTDATE(dim_date[full_date]), -7, DAY)
+)
+
+Rolling 30D Net Sales = 
+CALCULATE(
+    [Net Sales],
+    DATESINPERIOD(dim_date[full_date], LASTDATE(dim_date[full_date]), -30, DAY)
+)
+
+
+// =============================================================================
+// 03. REVENUE LEAKAGE RADAR (Page 03)
+// =============================================================================
+
+Discount Leakage Amount = 
+CALCULATE(
+    SUM(fact_orders[discount_amount]),
+    fact_orders[discount_rate] > 0.15
+)
+
+Return Leakage Amount = 
+[Total Returns]
+
+Payment Failure Amount = 
+CALCULATE(
+    SUM(fact_payments[amount]),
+    fact_payments[payment_status] = "FAILED"
+)
+
+Payment Failure Rate % = 
+DIVIDE(
+    CALCULATE(COUNTROWS(fact_payments), fact_payments[payment_status] = "FAILED"),
+    COUNTROWS(fact_payments),
+    0
+)
+
+Cancellation Leakage Amount = 
+CALCULATE(
+    SUM(fact_orders[net_sales]),
+    fact_orders[order_status] = "CANCELLED"
+)
+
+Cancellation Rate % = 
+DIVIDE(
+    CALCULATE([Order Count], fact_orders[order_status] = "CANCELLED"),
+    [Order Count],
+    0
+)
+
+Estimated Stockout Revenue Loss = 
+CALCULATE(
+    SUM(fact_inventory[estimated_lost_revenue]),
+    fact_inventory[is_stockout] = TRUE()
+)
+
+Total Revenue Leakage = 
+[Discount Leakage Amount] + 
+[Return Leakage Amount] + 
+[Payment Failure Amount] + 
+[Cancellation Leakage Amount] + 
+[Estimated Stockout Revenue Loss]
+
+Leakage % of Gross Revenue = 
+DIVIDE([Total Revenue Leakage], [Gross Revenue], 0)
+
+
+// =============================================================================
+// 04. CUSTOMER INTELLIGENCE & HEALTH (Page 04)
+// =============================================================================
+
+Total Customers = 
+DISTINCTCOUNT(dim_customer[customer_id])
+
+Active Customers 90D = 
+CALCULATE(
+    DISTINCTCOUNT(fact_orders[customer_key]),
+    DATESINPERIOD(dim_date[full_date], LASTDATE(dim_date[full_date]), -90, DAY)
+)
+
+Churned Customers = 
+[Total Customers] - [Active Customers 90D]
+
+Churn Rate % = 
+DIVIDE([Churned Customers], [Total Customers], 0)
+
+Customer Lifetime Value (LTV) = 
+DIVIDE([Net Sales], [Total Customers], 0)
+
+Avg Customer Health Score = 
+AVERAGE(gold_customer_health[health_score])
+
+Healthy Customer Count = 
+CALCULATE(
+    DISTINCTCOUNT(gold_customer_health[customer_id]),
+    gold_customer_health[health_status] = "Healthy"
+)
+
+At Risk Customer Count = 
+CALCULATE(
+    DISTINCTCOUNT(gold_customer_health[customer_id]),
+    gold_customer_health[health_status] = "At Risk"
+)
+
+At Risk Revenue Exposure = 
+CALCULATE(
+    SUM(gold_customer_health[total_spend]),
+    gold_customer_health[health_status] = "At Risk"
+)
+
+
+// =============================================================================
+// 05. PRODUCT PROFITABILITY & QUADRANTS (Page 05)
+// =============================================================================
+
+Revenue Trap Revenue = 
+CALCULATE(
+    [Net Sales],
+    gold_product_profitability[classification] = "Revenue Trap"
+)
+
+Revenue Trap SKU Count = 
+CALCULATE(
+    DISTINCTCOUNT(gold_product_profitability[product_id]),
+    gold_product_profitability[classification] = "Revenue Trap"
+)
+
+Profit Driver Gross Profit = 
+CALCULATE(
+    [Gross Profit],
+    gold_product_profitability[classification] = "Profit Driver"
+)
+
+Profit Driver SKU Count = 
+CALCULATE(
+    DISTINCTCOUNT(gold_product_profitability[product_id]),
+    gold_product_profitability[classification] = "Profit Driver"
+)
+
+Product Contribution Margin % = 
+DIVIDE([Gross Profit], [Net Sales], 0)
+
+Defective Return % = 
+DIVIDE(
+    CALCULATE(SUM(fact_returns[quantity_returned]), fact_returns[return_reason] = "DEFECTIVE_ITEM"),
+    [Units Sold],
+    0
+)
+
+
+// =============================================================================
+// 06. INVENTORY & OPERATIONS (Page 06)
+// =============================================================================
+
+Current Available Units = 
+SUM(fact_inventory[units_available])
+
+Inventory Holding Value = 
+SUMX(fact_inventory, fact_inventory[units_available] * RELATED(dim_product[cost]))
+
+Stockout Warehouse SKU Count = 
+CALCULATE(
+    COUNTROWS(fact_inventory),
+    fact_inventory[is_stockout] = TRUE()
+)
+
+Inventory Turnover Rate = 
+DIVIDE([Total COGS], [Inventory Holding Value], 0)
+
+Days of Inventory (DOI) = 
+DIVIDE([Inventory Holding Value], DIVIDE([Total COGS], 365, 0), 0)
+
+
+// =============================================================================
+// 07. MARKETING EFFICIENCY & ROAS (Page 07)
+// =============================================================================
+
+Total Ad Spend = 
+SUM(fact_marketing[spend])
+
+Total Impressions = 
+SUM(fact_marketing[impressions])
+
+Total Clicks = 
+SUM(fact_marketing[clicks])
+
+Total Marketing Conversions = 
+SUM(fact_marketing[conversions])
+
+Click Through Rate (CTR) % = 
+DIVIDE([Total Clicks], [Total Impressions], 0)
+
+Cost Per Click (CPC) = 
+DIVIDE([Total Ad Spend], [Total Clicks], 0)
+
+Blended Customer Acquisition Cost (CAC) = 
+DIVIDE([Total Ad Spend], [Order Count], 0)
+
+Return on Ad Spend (ROAS) = 
+DIVIDE([Net Sales], [Total Ad Spend], 0)
+
+Net Contribution After Marketing = 
+[Gross Profit] - [Total Ad Spend]
+
+Marketing Margin % = 
+DIVIDE([Net Contribution After Marketing], [Net Sales], 0)
+
+
+// =============================================================================
+// 08. INVESTIGATION QUEUE & DECISION SIGNALS (Page 08)
+// =============================================================================
+
+Total Open Investigations = 
+CALCULATE(
+    COUNTROWS(gold_investigation_queue),
+    gold_investigation_queue[status] = "OPEN"
+)
+
+Critical Priority Investigations = 
+CALCULATE(
+    COUNTROWS(gold_investigation_queue),
+    gold_investigation_queue[priority] = "CRITICAL" || gold_investigation_queue[priority] = "HIGH"
+)
+
+Total Financial Exposure at Risk = 
+CALCULATE(
+    SUM(gold_investigation_queue[estimated_impact]),
+    gold_investigation_queue[status] = "OPEN"
+)
+
+Avg Priority Score = 
+AVERAGE(gold_investigation_queue[priority_score])

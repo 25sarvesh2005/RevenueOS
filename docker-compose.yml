@@ -1,0 +1,133 @@
+version: "3.9"
+
+# =============================================================================
+# RevenueOS – Docker Compose
+#
+# Services:
+#   postgres  – PostgreSQL 16 analytical warehouse (auto-initialised from init.sql)
+#   pgadmin   – Browser-based DB UI at http://localhost:5050
+#   pipeline  – One-shot pipeline runner (optional, run with --profile pipeline)
+#
+# Quick start:
+#   docker compose up -d              # start postgres + pgadmin
+#   docker compose --profile pipeline run --rm pipeline  # run full ETL
+#   docker compose down               # stop all
+#   docker compose down -v            # stop all + delete data (DESTRUCTIVE)
+# =============================================================================
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL 16 – Analytical Warehouse
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: revenueos_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${DB_USER:-revenueos}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-revenueos}
+      POSTGRES_DB:       ${DB_NAME:-revenueos}
+      # Performance tuning for analytics workloads
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    command: >
+      postgres
+        -c shared_buffers=256MB
+        -c work_mem=64MB
+        -c maintenance_work_mem=128MB
+        -c effective_cache_size=512MB
+        -c max_connections=50
+        -c log_min_duration_statement=1000
+        -c log_statement=none
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - revenueos_pgdata:/var/lib/postgresql/data
+      - ./warehouse/init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-revenueos} -d ${DB_NAME:-revenueos}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - revenueos_net
+    logging: *default-logging
+
+  # ---------------------------------------------------------------------------
+  # pgAdmin 4 – Browser-based PostgreSQL UI
+  # Access: http://localhost:5050
+  # Login:  admin@revenueos.local / admin  (or override via env)
+  # ---------------------------------------------------------------------------
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: revenueos_pgadmin
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGADMIN_DEFAULT_EMAIL:    ${PGADMIN_EMAIL:-admin@revenueos.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: "False"          # single-user mode (no login page)
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    volumes:
+      - revenueos_pgadmin:/var/lib/pgadmin
+      - ./docker/pgadmin_servers.json:/pgadmin4/servers.json:ro  # auto-register DB
+    networks:
+      - revenueos_net
+    logging: *default-logging
+
+  # ---------------------------------------------------------------------------
+  # Pipeline Runner – one-shot ETL container (opt-in via --profile pipeline)
+  # Mounts the project code and data directory into the container.
+  # Usage:
+  #   docker compose --profile pipeline run --rm pipeline
+  #   docker compose --profile pipeline run --rm pipeline python pipeline.py --phase bronze
+  # ---------------------------------------------------------------------------
+  pipeline:
+    profiles: ["pipeline"]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.pipeline
+    container_name: revenueos_pipeline
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST:     postgres          # use service name as host inside Docker network
+      DB_PORT:     5432
+      DB_NAME:     ${DB_NAME:-revenueos}
+      DB_USER:     ${DB_USER:-revenueos}
+      DB_PASSWORD: ${DB_PASSWORD:-revenueos}
+      LOG_LEVEL:   ${LOG_LEVEL:-INFO}
+    volumes:
+      - ./data:/app/data             # mount raw data in
+      - ./:/app                      # mount project code
+    working_dir: /app
+    command: python pipeline.py
+    networks:
+      - revenueos_net
+    logging: *default-logging
+
+# =============================================================================
+# Networks & Volumes
+# =============================================================================
+
+networks:
+  revenueos_net:
+    driver: bridge
+
+volumes:
+  revenueos_pgdata:
+    name: revenueos_pgdata
+  revenueos_pgadmin:
+    name: revenueos_pgadmin

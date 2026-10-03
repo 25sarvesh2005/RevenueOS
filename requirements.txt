@@ -1,0 +1,38 @@
+# Python dependencies for RevenueOS
+
+# Core data
+pandas>=2.1.0
+numpy>=1.26.0
+scipy>=1.11.0
+scikit-learn>=1.3.0
+
+# Database
+psycopg[binary]>=3.1.0
+SQLAlchemy>=2.0.0
+
+# Environment management
+python-dotenv>=1.0.0
+
+# Data validation
+great-expectations>=0.18.0
+
+# Reporting
+openpyxl>=3.1.0
+jinja2>=3.1.0
+
+# Logging
+structlog>=23.1.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Optional: Forecasting
+# prophet>=1.1.4
+
+# Optional: Orchestration
+# apache-airflow>=2.7.0
+
+# Optional: API layer
+# fastapi>=0.104.0
+# uvicorn>=0.24.0
