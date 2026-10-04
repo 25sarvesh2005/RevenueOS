@@ -1,73 +1,53 @@
-# RevenueOS --- Revenue Intelligence & Decision Engine
+# RevenueOS — Enterprise Revenue Intelligence & Automated Decision Engine
 
-## 1. Project Overview
+## 1. Executive Platform Overview
 
-**RevenueOS** is an end-to-end Data Analytics and Decision Intelligence
-platform that transforms raw, multi-source business data into validated
-financial metrics, operational insights, anomaly signals, and
-prioritized business investigations.
+**RevenueOS** is an enterprise-grade Data Analytics, Analytics Engineering, and Automated Decision Intelligence platform engineered for omnichannel commerce organizations. It transforms high-volume, disparate operational transactional streams into validated financial metrics, automated leakage surveillance, statistical anomaly alerts, and a prioritized executive investigation queue.
 
-This is **not a sales dashboard**.
+RevenueOS is **not an ordinary reporting dashboard**; it is an active operational operating system that orchestrates:
 
-The goal is to simulate how a real analytics team could build a system
-for a retail/e-commerce company where data arrives from multiple
-operational systems:
+- **Multi-Source Operational Ingestion**: Ingesting high-velocity transactional feeds across orders, customers, product catalogs, payment gateways, returns/refunds, distributed warehouse inventory, and multi-channel marketing campaigns.
+- **Strict Data Quality Gates**: Enforcing schema validation, null thresholds, deduplication, foreign key referential integrity, and automated cross-layer reconciliation.
+- **Kimball Dimensional Warehouse**: Powering production Bronze, Silver, and Gold schemas in PostgreSQL with optimized indexing and explicit grain isolation.
+- **Continuous Automation Engine**: Providing headless background daemon scheduling, debounced raw filesystem watching, pre-flight diagnostics, and automated artifact compilation.
+- **Financial & Margin Surveillance**: Calculating true net revenue, cost of goods sold (COGS), gross profit, return impact, discount erosion, and stockout penalties.
+- **Decision Intelligence & Investigation Copilot**: Synthesizing multi-signal anomalies into executive diagnostic briefs and prioritized root-cause investigation tickets.
 
--   Orders
--   Customers
--   Products
--   Payments
--   Returns
--   Inventory
--   Marketing campaigns
--   Channels
--   Locations
--   Suppliers
+The platform continuously resolves five mission-critical questions:
 
-The platform answers five core questions:
+1. **Revenue Origin**: Where is revenue generated across channels, geos, and categories?
+2. **Margin Integrity**: Where is enterprise profit created, maintained, or eroded?
+3. **Revenue Leakage**: Where are systemic losses occurring across discounts, returns, failed payments, and stockouts?
+4. **Entity Health**: Which customer cohorts, product SKUs, marketing campaigns, and warehouse nodes require immediate operational intervention?
+5. **Prescriptive Action**: What is the root cause, financial impact, and recommended operational resolution for active anomalies?
 
-1.  **Where is revenue being generated?**
-2.  **Where is profit being created or destroyed?**
-3.  **Where is revenue leaking?**
-4.  **Which customers, products, campaigns, and inventory situations
-    require attention?**
-5.  **What should an analyst investigate next?**
+---
 
-------------------------------------------------------------------------
+# 2. Enterprise Platform Identity
 
-# 2. Project Identity
-
-## Name
-
+## Platform Name
 **RevenueOS**
 
-## Full Name
+## Architectural Designation
+**Enterprise Revenue Intelligence & Automated Decision Engine**
 
-**Revenue Intelligence & Decision Engine**
+## Strategic Directive
+> *From raw operational transactions to auditable financial intelligence and automated operational decisions.*
 
-## Tagline
+## System Classification
+Mission-critical Data Platform, Kimball Dimensional Warehouse, Statistical Anomaly Detection Engine, and Executive Business Intelligence System.
 
-> From raw transactions to financial decisions.
+## Architectural Capabilities
+RevenueOS is engineered to production software and data engineering standards:
 
-## Project Type
+- **Enterprise Data Platform Engineering**: Scalable multi-stage ingestion (Bronze/Silver/Gold) with automated audit logging (`bronze.pipeline_runs`).
+- **Financial Analytics & Revenue Assurance**: Reconciled P&L waterfalls, leakage quantification, and customer unit economics.
+- **Continuous Pipeline Automation**: Event-driven debounced file watching, background daemon execution, and pre-flight health diagnostics.
+- **Machine Learning & Statistical Quality**: Interquartile range (IQR), Z-Score, Isolation Forest anomaly interceptors, and 30-day Holt-Winters forecasting.
+- **Executive BI & Decision Layer**: 8-page semantic Power BI decision center with drill-through capability to transaction grain.
+- **Commercial Royalty Licensing**: Strict source-available commercial license protecting proprietary IP and mandating royalties for commercial exploitation.
 
-End-to-end Data Analyst / Analytics Engineering / Business Intelligence
-project.
-
-## Target Roles
-
-This project is designed to demonstrate skills relevant to:
-
--   Data Analyst
--   Business Analyst
--   BI Analyst
--   Product Analyst
--   Revenue Analyst
--   Commercial Analyst
--   Analytics Engineer --- junior level
--   Data/BI Intern
-
-------------------------------------------------------------------------
+---
 
 # 3. Core Philosophy
 
@@ -333,11 +313,11 @@ Do not add tools simply to make the technology list longer.
 
 # 8. Data Strategy
 
-Do not build the project around one CSV.
+Do not build the architecture around an isolated single CSV.
 
-The project should simulate multiple operational systems.
+The architecture integrates high-fidelity operational data across multiple enterprise operational domains.
 
-Recommended structure:
+Production directory structure:
 
 ``` text
 data/
@@ -734,8 +714,8 @@ Possible causes:
 -   rounding
 -   missing transactions
 
-This is an important portfolio feature because it demonstrates
-analytical reliability.
+This cross-layer reconciliation is a mandatory enterprise requirement to ensure
+analytical integrity, compliance, and financial auditability.
 
 ------------------------------------------------------------------------
 
@@ -1592,7 +1572,7 @@ appropriate.
 
 # 46. SQL Layer
 
-SQL should demonstrate:
+SQL implementation architectural standards:
 
 -   joins
 -   CTEs
@@ -2156,152 +2136,106 @@ Build the MVP first.
 
 ------------------------------------------------------------------------
 
-# 58. Portfolio Demo Flow
+# 58. Enterprise Operational Flow & Execution Workflows
 
-Your demo should follow this sequence:
-
-``` text
-1. Show business problem
-2. Show architecture
-3. Show raw data problems
-4. Show data quality report
-5. Show warehouse model
-6. Show financial calculations
-7. Show leakage engine
-8. Show customer/product intelligence
-9. Show anomaly
-10. Show investigation queue
-11. Open Power BI
-12. Drill from company → product → order
-13. Explain one business case
-```
-
-The demo should tell a story.
-
-------------------------------------------------------------------------
-
-# 59. Example Business Story
-
-Use a fictional/demo finding.
+In production enterprise operations, the platform executes along a deterministic seven-stage pipeline:
 
 ``` text
-Revenue increased.
-
-However:
-
-Gross margin declined.
-
-Investigation shows:
-
-Discount rate increased.
-Return rate increased.
-Product cost increased.
-
-The product therefore generated more sales
-but weaker profitability.
-
-The system flags the product for investigation.
+1. Raw Source Staging & Canonical Ingestion (Excel sheets / drop-directory CSVs)
+2. Automated Quality Gate Enforcement (Schema, Nulls, Duplicates, FK Integrity, Reconciliation)
+3. Kimball Dimensional Warehouse Materialization (Bronze -> Silver -> Gold star schema)
+4. Financial Waterfall & Reconciled P&L Computation (Gross Revenue -> Net Margin)
+5. Revenue Leakage Quantification (Discounts, Returns, Stockouts, Payment Failures)
+6. Statistical & Machine Learning Anomaly Detection (IQR, Z-Score, Isolation Forest)
+7. Operational Prioritization, Investigation Copilot Synthesis & Power BI Semantic Refresh
 ```
 
-This demonstrates why the project exists.
+---
 
-------------------------------------------------------------------------
+# 59. Operational Revenue Incident Walkthrough & Decision Loop
 
-# 60. Interview Questions This Project Should Prepare You For
+Enterprise decision intelligence connects transactional anomalies directly to P&L remediation. Consider a classic enterprise revenue trap scenario:
 
-Be prepared to answer:
+``` text
+OBSERVED SIGNAL:
+Top-line Gross Revenue expands by +18% MoM.
 
-### SQL
+MARGIN ANOMALY:
+Consolidated Gross Profit margin drops by -420 bps.
 
--   Why use CTEs?
--   Where did you use window functions?
--   How did you avoid duplicate joins?
--   How did you optimize queries?
--   How did you define table grain?
+REVENUE LEAKAGE AUDIT:
+- Aggregate discount rate spikes from 8.2% to 26.4% on high-volume SKUs.
+- Customer return rates escalate to 18.9% due to defective manufacturing batches.
+- Supplier unit costs increased by 11.5% without corresponding retail price adjustments.
 
-### Data Engineering
+AUTOMATED ACTION:
+1. Product categorized as "Revenue Trap" in gold.gold_product_profitability.
+2. Anomaly registered with critical severity in gold.gold_business_anomalies.
+3. Investigation ticket dispatched to gold.gold_investigation_queue.
+4. AI Investigation Copilot synthesizes root-cause executive brief and pricing corrective memo.
+```
 
--   What happens if a source schema changes?
--   How do you handle duplicates?
--   How do you validate foreign keys?
--   Why Bronze/Silver/Gold?
+---
 
-### Data Modeling
+# 60. Production Deployment & Platform Hardening Checklist
 
--   Why a star schema?
--   What belongs in a fact table?
--   What belongs in a dimension?
--   What is the grain of your fact table?
+Enterprise production readiness mandates rigorous operational safeguards:
 
-### Power BI
+### Database & Concurrency
+- Connection pooling configured via SQLAlchemy `pool_pre_ping=True` and bounded pool size.
+- Atomic phase-level execution wrapped in isolated transactions.
+- Idempotent table truncation and atomic bulk upsert strategies (`--truncate`).
 
--   Why Power Query vs SQL?
--   Why DAX?
--   How did you handle filter context?
--   How did you validate dashboard numbers?
+### Data Quality & Gate Failures
+- Fatal errors (`CRITICAL`) halt downstream transformations with explicit non-zero exit codes.
+- Quality metrics logged permanently into `bronze.quality_log` for SLA tracking.
+- Non-blocking data warnings logged with detailed diagnostic payloads for asynchronous triage.
 
-### Business
+### OS Parity & Internationalization
+- UTF-8 filesystem and log encoding with ASCII terminal fallback safe for Windows cp1252 consoles.
+- Path normalization using Python `pathlib.Path` across Windows, macOS, and Linux runtimes.
 
--   What is revenue leakage?
--   How did you estimate stockout impact?
--   Why isn't ROAS enough?
--   How did you identify unprofitable customers?
--   How do you distinguish correlation from causation?
+---
 
-### Python
+# 61. Continuous Automation Pipeline Engine
 
--   Why use Python instead of SQL?
--   How did you detect anomalies?
--   How did you structure the pipeline?
--   How did you test the transformations?
+RevenueOS incorporates an enterprise automation engine (`engine/pipeline_engine.py`) designed for zero-touch continuous operation:
 
-------------------------------------------------------------------------
+### Continuous File Watcher
+- Actively monitors `data/raw/` (including `excel/` and canonical raw entity directories) for incoming files.
+- Employs SHA256 and mtime change detection with configurable debouncing (default: 3 seconds) to prevent partial-write ingestion.
+- Automatically triggers idempotent end-to-end processing upon verified file stabilization.
 
-# 61. Resume Project Description
+### Headless Scheduled Daemon
+- Runs as an autonomous background service executing recurring pipeline runs at user-defined intervals (e.g. `--interval 3600`).
+- Graceful signal handling (`SIGINT`, `SIGTERM`) ensuring that executing batch transactions finish cleanly prior to shutdown.
 
-Use a concise version such as:
+### Pre-Flight Health & Readiness Diagnostics
+- `python pipeline.py --health` inspects database connectivity, schema completeness (`bronze`, `silver`, `gold`), row counts, and raw staging directories prior to job dispatch.
 
-> **RevenueOS --- Revenue Intelligence & Decision Engine**\
-> Built an end-to-end analytics pipeline using Python, PostgreSQL, SQL
-> and Power BI to integrate multi-source retail data, implement
-> data-quality controls and a dimensional warehouse, calculate
-> profitability and revenue-leakage metrics, detect business anomalies,
-> and generate prioritized investigation insights.
+### Automated Gold Mart Export & Power BI Compilation
+- `python pipeline.py --export` serializes all 6 Gold star schema dimension and fact tables plus all 8 analytical marts to `data/processed/gold/*.csv`.
+- Automatically compiles the Power BI template (`powerbi/RevenueOS.pbit`) and developer project (`powerbi/RevenueOS.pbip`).
 
-Do not claim production deployment, real monetary savings, or actual
-business impact unless you genuinely demonstrate those things.
+### Multi-Tier Execution Auditing
+- Every execution run writes comprehensive telemetry (run ID, phase metrics, row counts, durations, status, error traces) to `bronze.pipeline_runs` in PostgreSQL.
+- Concurrently maintains a resilient local JSON audit trail (`data/pipeline_runs.json`) that functions even when database connectivity is severed.
 
-------------------------------------------------------------------------
+---
 
-# 62. Stronger Resume Bullet Variants
+# 62. Commercial Source-Available Licensing & Royalty Governance
 
-### Pipeline
+RevenueOS is governed by the **RevenueOS Source-Available Commercial & Royalty License (Version 1.0)**.
 
-> Engineered a Bronze/Silver/Gold analytics pipeline in Python and
-> PostgreSQL integrating orders, customers, payments, returns, inventory
-> and marketing data with automated quality and reconciliation checks.
+### Permitted Non-Commercial Use
+- Free internal evaluation, academic research, non-commercial educational review, and testing are permitted.
 
-### Financial Analytics
+### Strict Commercial Exploitation Prohibition
+- **No Commercial Exploitation Without Prior Agreement**: No individual, enterprise, or entity has the right to use, run, deploy, embed, resell, or profit from RevenueOS or its derivative works for commercial gain without an executed commercial license agreement and royalty payments to the copyright holder (**Sarvesh Sharma**).
+- **Prohibited Activities**: Hosting RevenueOS as a commercial Software-as-a-Service (SaaS), charging fees for hosted analytics instances, incorporating the software into proprietary paid commercial products, or using the software to provide paid commercial consulting, advisory, or managed services without authorization.
+- **Royalty Terms**: Commercial licenses require express written agreements and royalty payments as negotiated with the copyright holder. Inquiries: contact the copyright holder via GitHub (`@25sarvesh2005`).
 
-> Built reusable SQL/DAX financial metrics for net revenue, COGS, gross
-> profit, margin, discounts and returns, with cross-layer reconciliation
-> between Python, PostgreSQL and Power BI.
-
-### Intelligence
-
-> Developed revenue-leakage, customer-health, product-profitability and
-> inventory-risk analytics to surface high-impact business investigation
-> candidates.
-
-### BI
-
-> Designed an interactive Power BI decision layer with drill-through
-> analysis from executive KPIs to product, customer and
-> transaction-level evidence.
-
-Only use bullets that accurately describe what you actually implement.
-
-------------------------------------------------------------------------
+---
 
 # 63. Acceptance Criteria
 
@@ -2484,11 +2418,11 @@ That is the central objective of RevenueOS.
 
 When someone opens the repository, they should immediately understand:
 
-> RevenueOS is a simulated production-style analytics platform that
-> takes messy multi-source retail data, validates and transforms it,
-> builds a financial warehouse, calculates revenue and profitability,
-> identifies potential revenue leakage and operational risks, and
-> exposes the evidence through an interactive BI decision layer.
+> RevenueOS is an enterprise-grade revenue intelligence and automated decision platform
+> that takes high-volume multi-source commercial data, validates and transforms it with strict quality gates,
+> maintains a Kimball dimensional warehouse, quantifies revenue leakage and margin erosion,
+> detects operational anomalies via statistical and machine learning models, and
+> exposes auditable evidence through an interactive Power BI decision layer and automated executive briefs.
 
 The strongest version of this project is not the one with the most
 charts.

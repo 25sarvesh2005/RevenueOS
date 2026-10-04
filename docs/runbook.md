@@ -96,6 +96,22 @@ python -c "from python.anomaly_detection.detector import run_anomaly_pipeline; p
 python python/reporting/executive_report.py --output docs/executive_briefing.md
 ```
 
+### Automation & Daemon Controls
+
+```bash
+# Run pre-flight health & infrastructure diagnostics
+python pipeline.py --health
+
+# Run continuous debounced file watcher (watches data/raw/ and data/raw/excel/)
+python pipeline.py --watch
+
+# Run background scheduled daemon (hourly recurring pipeline execution)
+python pipeline.py --daemon --interval 3600
+
+# Export Gold marts to CSV & compile Power BI templates (.pbit & .pbip)
+python pipeline.py --export
+```
+
 ---
 
 ## 4. Incident Response & Troubleshooting

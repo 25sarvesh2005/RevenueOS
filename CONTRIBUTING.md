@@ -66,6 +66,16 @@ Use conventional commits:
 
 ## 📝 Pull Request Guidelines
 
-1. Ensure all 51+ unit tests pass locally before opening a PR.
+1. Ensure all 63+ unit tests pass locally before opening a PR (`pytest tests/ -v`).
 2. Document new columns in [`docs/data_dictionary.md`](docs/data_dictionary.md).
 3. If introducing an estimation methodology, update [`docs/assumptions.md`](docs/assumptions.md).
+
+---
+
+## 📜 Intellectual Property & Commercial License Terms
+
+By submitting code, documentation, or other materials to RevenueOS, you acknowledge and agree that:
+1. All contributions become part of RevenueOS under the **RevenueOS Source-Available Commercial & Royalty License (Version 1.0)**.
+2. The codebase remains source-available for non-commercial inspection, educational research, and internal testing.
+3. No contributor or third party obtains any right to monetize, commercialize, resell, sub-license, or deploy RevenueOS as a paid product or service without an executed written agreement and royalty payments to the author and copyright holder (**Sarvesh Sharma**).
+

@@ -1,21 +1,93 @@
-MIT License
+RevenueOS Source-Available Commercial & Royalty License (Version 1.0)
+Copyright (c) 2024-2026 Sarvesh Sharma. All Rights Reserved.
 
-Copyright (c) 2024-2026 Sarvesh Sharma
+===============================================================================
+IMPORTANT LEGAL NOTICE — READ CAREFULLY BEFORE ACCESSING, COPYING, OR USING
+===============================================================================
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This software, its source code, documentation, architectural blueprints, data models,
+semantic layers, schemas, and analytical engines (collectively, the "Software") are
+the proprietary intellectual property of Sarvesh Sharma (the "Licensor" / "Copyright Holder").
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+By accessing, copying, downloading, modifying, or using the Software, you ("Licensee")
+expressly agree to be bound by the terms and conditions of this License Agreement.
+If you do not agree to all terms, do not download, install, copy, access, or use the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+-------------------------------------------------------------------------------
+1. PERMITTED NON-COMMERCIAL & EVALUATION USE
+-------------------------------------------------------------------------------
+Subject to the terms and limitations herein, the Licensor hereby grants to you a personal,
+non-exclusive, non-transferable, revocable, royalty-free license to:
+  (a) Inspect, compile, test, and evaluate the Software in non-production environments;
+  (b) Use the Software solely for personal, educational, research, or academic purposes;
+  (c) Submit non-commercial contributions, bug reports, and pull requests to the public repository.
+
+-------------------------------------------------------------------------------
+2. STRICT PROHIBITION ON COMMERCIAL USE AND PROFIT
+-------------------------------------------------------------------------------
+NO INDIVIDUAL, ENTITY, CORPORATION, PARTNERSHIP, OR ORGANIZATION HAS THE RIGHT OR
+PERMISSION TO PROFIT FROM, MONETIZE, OR COMMERCIALLY EXPLOIT THE SOFTWARE WITHOUT
+AN EXECUTED COMMERCIAL LICENSE AGREEMENT AND PAYMENT OF REQUISITE ROYALTIES TO THE LICENSOR.
+
+Specifically, you shall NOT, directly or indirectly, without the prior express written
+consent of the Licensor and an executed Commercial Royalty Agreement:
+  (a) Commercial Operations: Deploy, host, run, or utilize the Software or any derivative
+      works to generate revenue, conduct commercial business operations, or manage commercial
+      transactions for any for-profit enterprise.
+  (b) Software-as-a-Service (SaaS) & Cloud Services: Make the functionality of the Software,
+      its pipelines, APIs, dashboards, models, or reporting engines available to third parties
+      as a hosted service, managed service, cloud platform, or API for fee or commercial benefit.
+  (c) Distribution & Resale: Sell, resell, license, sublicense, rent, lease, distribute,
+      bundle, or assign the Software or any portion thereof to any commercial party.
+  (d) Commercial Consulting & Advisory: Use the Software, its analytical outputs, or its
+      architecture to provide paid consulting, commercial analytics advisory, or fee-based
+      client implementations.
+  (e) Extraction of Commercial Gain: Derive commercial cost savings, financial arbitrage,
+      or commercial competitive advantage without an active royalty-bearing agreement.
+
+-------------------------------------------------------------------------------
+3. MANDATORY COMMERCIAL LICENSING & ROYALTY REQUIREMENT
+-------------------------------------------------------------------------------
+Any commercial use, integration, deployment, or monetization of the Software requires:
+  (a) Prior written application to and authorization from the Copyright Holder;
+  (b) Execution of a definitive RevenueOS Commercial Enterprise License Agreement;
+  (c) Continuous payment of agreed licensing fees and/or revenue royalties as stipulated
+      in said Commercial Agreement;
+  (d) Compliance with all audit, accounting, and compliance reporting covenants.
+
+Inquiries regarding commercial licensing and royalty terms must be directed in writing
+to the Copyright Holder (Sarvesh Sharma).
+
+-------------------------------------------------------------------------------
+4. INFRINGEMENT, LIQUIDATED DAMAGES & LEGAL REMEDIES
+-------------------------------------------------------------------------------
+Any use, deployment, or exploitation of the Software in violation of Section 2 shall
+constitute willful, intentional copyright infringement and intentional breach of contract.
+
+In the event of unauthorized commercial use or monetization, the infringing party
+shall immediately and unconditionally be liable to the Licensor for:
+  (a) Full accounting and disgorgement of all gross revenues, profits, savings, and fees
+      derived directly or indirectly through or in connection with the Software;
+  (b) Mandatory retroactive royalties assessed at the Licensor's maximum commercial
+      enterprise licensing schedule plus statutory punitive interest;
+  (c) Liquidated damages for willful infringement;
+  (d) All attorneys' fees, court costs, investigation expenses, and collection costs
+      incurred by the Licensor in enforcing this License.
+
+-------------------------------------------------------------------------------
+5. DERIVATIVE WORKS & ATTRIBUTION
+-------------------------------------------------------------------------------
+Any allowed non-commercial modification or derivative work remains subject to all terms
+and royalty requirements of this License. You must prominently retain all copyright notices,
+licensing declarations, and author attributions in all copies and substantial portions
+of the Software.
+
+-------------------------------------------------------------------------------
+6. DISCLAIMER OF WARRANTY
+-------------------------------------------------------------------------------
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE, ACCURACY, TITLE, AND NON-INFRINGEMENT. IN NO EVENT SHALL THE COPYRIGHT HOLDER
+BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE
+USE OR OTHER DEALINGS IN THE SOFTWARE.

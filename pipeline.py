@@ -1,47 +1,40 @@
 """
-RevenueOS – Main Pipeline Orchestrator
-========================================
-Executes the full Bronze → Silver → Gold pipeline in sequence.
+RevenueOS – Enterprise Analytics Pipeline & Automation Engine
+=============================================================
+Unified entrypoint for execution, automated file watching, scheduled
+daemons, pre-flight diagnostics, and artifact publishing.
 
 Usage
 -----
-    python pipeline.py                     # full run
-    python pipeline.py --phase bronze      # only bronze ingestion
-    python pipeline.py --phase quality     # only quality checks
-    python pipeline.py --phase silver      # only silver transformation
-    python pipeline.py --phase gold        # only gold build
-    python pipeline.py --truncate          # truncate silver/gold before loading
+    # Standard single execution
+    python pipeline.py                          # full pipeline run
+    python pipeline.py --phase excel            # import Excel sheets to canonical CSVs
+    python pipeline.py --phase bronze           # ingest CSVs into Bronze
+    python pipeline.py --phase quality          # run data quality checks
+    python pipeline.py --phase silver           # transform into Silver
+    python pipeline.py --phase gold             # build Gold star schema & marts
+    python pipeline.py --truncate               # truncate target tables before loading
+
+    # Automation Engine modes
+    python pipeline.py --watch                  # continuous file watcher for data/raw/
+    python pipeline.py --daemon --interval 300  # recurring background scheduler
+    python pipeline.py --health                 # pre-flight system & schema diagnostics
+    python pipeline.py --export                 # dump Gold marts to CSV & update Power BI
 """
 
 from __future__ import annotations
 
 import argparse
 import sys
-import time
-from datetime import datetime, timezone
 from pathlib import Path
 
-from config import get_run_id, logger
+from config import logger
+from engine.pipeline_engine import PipelineEngine
 
 
-def run_phase(name: str, fn, *args, **kwargs):
-    logger.info("\n" + "─" * 60)
-    logger.info("▶ PHASE: %s", name.upper())
-    logger.info("─" * 60)
-    t0 = time.time()
-    try:
-        result = fn(*args, **kwargs)
-        elapsed = time.time() - t0
-        logger.info("✓ %s completed in %.1fs", name, elapsed)
-        return result
-    except Exception as exc:
-        logger.error("✗ %s FAILED: %s", name, exc)
-        raise
-
-
-def main():
+def main() -> int:
     parser = argparse.ArgumentParser(
-        description="RevenueOS – End-to-End Analytics Pipeline"
+        description="RevenueOS - Enterprise Analytics Pipeline & Automation Engine"
     )
     parser.add_argument(
         "--phase",
@@ -59,120 +52,71 @@ def main():
         action="store_true",
         help="Truncate target tables before loading (idempotent reruns).",
     )
+    parser.add_argument(
+        "--watch",
+        action="store_true",
+        help="Run in continuous file watcher mode, triggering pipeline on file changes.",
+    )
+    parser.add_argument(
+        "--daemon",
+        action="store_true",
+        help="Run in recurring background daemon mode.",
+    )
+    parser.add_argument(
+        "--interval",
+        type=int,
+        default=300,
+        help="Execution interval in seconds for daemon mode (default: 300).",
+    )
+    parser.add_argument(
+        "--health",
+        action="store_true",
+        help="Run pre-flight database and system health diagnostics.",
+    )
+    parser.add_argument(
+        "--export",
+        action="store_true",
+        help="Export all Gold analytical tables to processed storage and refresh Power BI assets.",
+    )
+
     args = parser.parse_args()
+    engine = PipelineEngine()
 
-    run_id    = get_run_id()
-    started   = datetime.now(timezone.utc)
+    # 1. Health check mode
+    if args.health:
+        report = engine.run_health_check()
+        return 0 if report["status"] == "HEALTHY" else 1
 
-    logger.info("=" * 60)
-    logger.info("REVENUEOS PIPELINE")
-    logger.info("Run ID  : %s", run_id)
-    logger.info("Phase   : %s", args.phase)
-    logger.info("Truncate: %s", args.truncate)
-    logger.info("Started : %s UTC", started.strftime("%Y-%m-%d %H:%M:%S"))
-    logger.info("=" * 60)
+    # 2. Export mode only
+    if args.export and not (args.watch or args.daemon):
+        engine.export_artifacts()
+        return 0
 
-    # ----------------------------------------------------------------
-    # Excel import / preprocessing
-    # ----------------------------------------------------------------
-    if args.phase in ("excel", "all"):
-        from config import RAW_DIR
-        from ingestion.import_excel import import_excel_paths
+    # 3. Continuous File Watcher mode
+    if args.watch:
+        engine.start_watcher()
+        return 0
 
-        sources = [Path(args.excel_path)] if args.excel_path else [RAW_DIR / "excel"]
-        run_phase("Excel Import", import_excel_paths, sources, out_dir=RAW_DIR, overwrite=True)
+    # 4. Recurring Daemon mode
+    if args.daemon:
+        engine.start_daemon(interval_seconds=args.interval)
+        return 0
 
-    # ----------------------------------------------------------------
-    # Bronze ingestion
-    # ----------------------------------------------------------------
-    if args.phase in ("bronze", "all"):
-        from ingestion.ingest_bronze import ingest_all
-        run_phase("Bronze Ingestion", ingest_all, truncate=args.truncate)
+    # 5. Standard Pipeline Run
+    res = engine.execute(
+        phase=args.phase,
+        truncate=args.truncate,
+        excel_path=args.excel_path,
+        trigger_type="MANUAL",
+        auto_export=True,
+    )
 
-    # ----------------------------------------------------------------
-    # Data quality checks
-    # ----------------------------------------------------------------
-    if args.phase in ("quality", "all"):
-        from quality.run_checks import run_quality_checks
-        report = run_phase("Data Quality Checks", run_quality_checks, run_id=run_id)
-        if report:
-            report.print()
-            if report.overall_status() == "CRITICAL":
-                logger.error("Pipeline halted: CRITICAL quality failure.")
-                sys.exit(2)
-
-    # ----------------------------------------------------------------
-    # Silver transformation
-    # ----------------------------------------------------------------
-    if args.phase in ("silver", "all"):
-        from transformation.transform_silver import transform_all
-        run_phase("Silver Transformation", transform_all, truncate=args.truncate)
-
-    # ----------------------------------------------------------------
-    # Gold layer
-    # ----------------------------------------------------------------
-    if args.phase in ("gold", "all"):
-        from transformation.build_gold import build_gold
-        run_phase("Gold Layer Build", build_gold)
-
-    # ----------------------------------------------------------------
-    # Statistical & ML Anomaly Detection
-    # ----------------------------------------------------------------
-    if args.phase in ("anomalies", "all"):
-        try:
-            from config import get_engine, SCHEMA_SILVER
-            from python.anomaly_detection.detector import run_anomaly_pipeline
-            import pandas as pd
-            engine = get_engine()
-            orders_df = pd.read_sql(f"SELECT * FROM {SCHEMA_SILVER}.orders", engine)
-            products_df = pd.read_sql(f"SELECT * FROM {SCHEMA_SILVER}.products", engine)
-            run_phase("Anomaly Engine", run_anomaly_pipeline, orders_df=orders_df, products_df=products_df)
-        except Exception as exc:
-            logger.warning("Anomaly engine skipped or encountered non-fatal error: %s", exc)
-
-    # ----------------------------------------------------------------
-    # Forward-Looking Revenue Forecasting
-    # ----------------------------------------------------------------
-    if args.phase in ("forecast", "all"):
-        try:
-            from config import get_engine, SCHEMA_GOLD
-            from python.forecasting.forecast_engine import generate_revenue_forecast
-            import pandas as pd
-            engine = get_engine()
-            daily_df = pd.read_sql(f"SELECT * FROM {SCHEMA_GOLD}.gold_daily_financials", engine)
-            if not daily_df.empty:
-                run_phase("Revenue Forecasting", generate_revenue_forecast, daily_financials_df=daily_df, horizon_days=30)
-        except Exception as exc:
-            logger.warning("Forecast engine skipped or encountered non-fatal error: %s", exc)
-
-    # ----------------------------------------------------------------
-    # Executive Briefing & Decision Report
-    # ----------------------------------------------------------------
-    if args.phase in ("report", "all"):
-        try:
-            from config import get_engine
-            from python.reporting.executive_report import fetch_gold_summary, generate_executive_briefing
-            from pathlib import Path
-            engine = get_engine()
-            def _gen_report():
-                data = fetch_gold_summary(engine)
-                md = generate_executive_briefing(data)
-                out = Path("docs/executive_briefing.md")
-                out.parent.mkdir(parents=True, exist_ok=True)
-                out.write_text(md, encoding="utf-8")
-                logger.info("Saved executive report to %s", out)
-            run_phase("Executive Briefing Generation", _gen_report)
-        except Exception as exc:
-            logger.warning("Report generation skipped or encountered non-fatal error: %s", exc)
-
-    # ----------------------------------------------------------------
-    # Summary
-    # ----------------------------------------------------------------
-    elapsed = (datetime.now(timezone.utc) - started).total_seconds()
-    logger.info("=" * 60)
-    logger.info("✓ Pipeline complete in %.1fs", elapsed)
-    logger.info("=" * 60)
+    if res.status == "CRITICAL_QUALITY_FAILURE":
+        return 2
+    elif res.status == "FAILED":
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

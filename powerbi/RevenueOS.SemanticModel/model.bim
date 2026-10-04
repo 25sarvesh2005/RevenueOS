@@ -1,0 +1,2683 @@
+{
+  "name": "RevenueOS",
+  "compatibilityLevel": 1550,
+  "model": {
+    "culture": "en-US",
+    "dataAccessOptions": {
+      "legacyRedirects": true,
+      "returnErrorValuesAsNull": true
+    },
+    "defaultPowerBIDataSourceVersion": "powerBI_V3",
+    "sourceQueryCulture": "en-US",
+    "tables": [
+      {
+        "name": "dim_date",
+        "lineageTag": "dim_date_table_tag",
+        "columns": [
+          {
+            "name": "date_key",
+            "dataType": "int64",
+            "sourceColumn": "date_key",
+            "lineageTag": "dim_date_date_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "full_date",
+            "dataType": "dateTime",
+            "sourceColumn": "full_date",
+            "lineageTag": "dim_date_full_date_tag",
+            "summarizeBy": "none",
+            "formatString": "Short Date"
+          },
+          {
+            "name": "year",
+            "dataType": "int64",
+            "sourceColumn": "year",
+            "lineageTag": "dim_date_year_tag",
+            "summarizeBy": "sum",
+            "formatString": "0"
+          },
+          {
+            "name": "quarter",
+            "dataType": "int64",
+            "sourceColumn": "quarter",
+            "lineageTag": "dim_date_quarter_tag",
+            "summarizeBy": "sum",
+            "formatString": "0"
+          },
+          {
+            "name": "month",
+            "dataType": "int64",
+            "sourceColumn": "month",
+            "lineageTag": "dim_date_month_tag",
+            "summarizeBy": "sum",
+            "formatString": "0"
+          },
+          {
+            "name": "month_name",
+            "dataType": "string",
+            "sourceColumn": "month_name",
+            "lineageTag": "dim_date_month_name_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "week",
+            "dataType": "int64",
+            "sourceColumn": "week",
+            "lineageTag": "dim_date_week_tag",
+            "summarizeBy": "sum",
+            "formatString": "0"
+          },
+          {
+            "name": "day_of_week",
+            "dataType": "int64",
+            "sourceColumn": "day_of_week",
+            "lineageTag": "dim_date_day_of_week_tag",
+            "summarizeBy": "sum",
+            "formatString": "0"
+          },
+          {
+            "name": "day_name",
+            "dataType": "string",
+            "sourceColumn": "day_name",
+            "lineageTag": "dim_date_day_name_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "is_weekend",
+            "dataType": "boolean",
+            "sourceColumn": "is_weekend",
+            "lineageTag": "dim_date_is_weekend_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "fiscal_year",
+            "dataType": "int64",
+            "sourceColumn": "fiscal_year",
+            "lineageTag": "dim_date_fiscal_year_tag",
+            "summarizeBy": "sum",
+            "formatString": "0"
+          },
+          {
+            "name": "fiscal_quarter",
+            "dataType": "int64",
+            "sourceColumn": "fiscal_quarter",
+            "lineageTag": "dim_date_fiscal_quarter_tag",
+            "summarizeBy": "sum",
+            "formatString": "0"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_date",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_dim_date = Source{[Schema=\"gold\",Item=\"dim_date\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_dim_date,{",
+                "        {\"date_key\", Int64.Type},",
+                "        {\"full_date\", type date},",
+                "        {\"year\", Int64.Type},",
+                "        {\"quarter\", Int64.Type},",
+                "        {\"month\", Int64.Type},",
+                "        {\"month_name\", type text},",
+                "        {\"week\", Int64.Type},",
+                "        {\"day_of_week\", Int64.Type},",
+                "        {\"day_name\", type text},",
+                "        {\"is_weekend\", type logical},",
+                "        {\"fiscal_year\", Int64.Type},",
+                "        {\"fiscal_quarter\", Int64.Type}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "dim_customer",
+        "lineageTag": "dim_customer_table_tag",
+        "columns": [
+          {
+            "name": "customer_key",
+            "dataType": "int64",
+            "sourceColumn": "customer_key",
+            "lineageTag": "dim_customer_customer_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "customer_id",
+            "dataType": "string",
+            "sourceColumn": "customer_id",
+            "lineageTag": "dim_customer_customer_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "name",
+            "dataType": "string",
+            "sourceColumn": "name",
+            "lineageTag": "dim_customer_name_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "email",
+            "dataType": "string",
+            "sourceColumn": "email",
+            "lineageTag": "dim_customer_email_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "city",
+            "dataType": "string",
+            "sourceColumn": "city",
+            "lineageTag": "dim_customer_city_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "region",
+            "dataType": "string",
+            "sourceColumn": "region",
+            "lineageTag": "dim_customer_region_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "signup_date",
+            "dataType": "dateTime",
+            "sourceColumn": "signup_date",
+            "lineageTag": "dim_customer_signup_date_tag",
+            "summarizeBy": "none",
+            "formatString": "Short Date"
+          },
+          {
+            "name": "segment",
+            "dataType": "string",
+            "sourceColumn": "segment",
+            "lineageTag": "dim_customer_segment_tag",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_customer",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_dim_cust = Source{[Schema=\"gold\",Item=\"dim_customer\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_dim_cust,{",
+                "        {\"customer_key\", Int64.Type},",
+                "        {\"customer_id\", type text},",
+                "        {\"name\", type text},",
+                "        {\"email\", type text},",
+                "        {\"city\", type text},",
+                "        {\"region\", type text},",
+                "        {\"signup_date\", type date},",
+                "        {\"segment\", type text}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "dim_product",
+        "lineageTag": "dim_product_table_tag",
+        "columns": [
+          {
+            "name": "product_key",
+            "dataType": "int64",
+            "sourceColumn": "product_key",
+            "lineageTag": "dim_product_product_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "product_id",
+            "dataType": "string",
+            "sourceColumn": "product_id",
+            "lineageTag": "dim_product_product_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "product_name",
+            "dataType": "string",
+            "sourceColumn": "product_name",
+            "lineageTag": "dim_product_product_name_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "category",
+            "dataType": "string",
+            "sourceColumn": "category",
+            "lineageTag": "dim_product_category_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "subcategory",
+            "dataType": "string",
+            "sourceColumn": "subcategory",
+            "lineageTag": "dim_product_subcategory_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "supplier",
+            "dataType": "string",
+            "sourceColumn": "supplier",
+            "lineageTag": "dim_product_supplier_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "cost",
+            "dataType": "decimal",
+            "sourceColumn": "cost",
+            "lineageTag": "dim_product_cost_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "selling_price",
+            "dataType": "decimal",
+            "sourceColumn": "selling_price",
+            "lineageTag": "dim_product_selling_price_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "margin_pct",
+            "dataType": "double",
+            "sourceColumn": "margin_pct",
+            "lineageTag": "dim_product_margin_pct_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0%"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_product",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_dim_prod = Source{[Schema=\"gold\",Item=\"dim_product\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_dim_prod,{",
+                "        {\"product_key\", Int64.Type},",
+                "        {\"product_id\", type text},",
+                "        {\"product_name\", type text},",
+                "        {\"category\", type text},",
+                "        {\"subcategory\", type text},",
+                "        {\"supplier\", type text},",
+                "        {\"cost\", Currency.Type},",
+                "        {\"selling_price\", Currency.Type},",
+                "        {\"margin_pct\", Percentage.Type}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "dim_channel",
+        "lineageTag": "dim_channel_table_tag",
+        "columns": [
+          {
+            "name": "channel_key",
+            "dataType": "int64",
+            "sourceColumn": "channel_key",
+            "lineageTag": "dim_channel_channel_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "channel_name",
+            "dataType": "string",
+            "sourceColumn": "channel_name",
+            "lineageTag": "dim_channel_channel_name_tag",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_channel",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_dim_channel = Source{[Schema=\"gold\",Item=\"dim_channel\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_dim_channel,{",
+                "        {\"channel_key\", Int64.Type},",
+                "        {\"channel_name\", type text}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "dim_location",
+        "lineageTag": "dim_location_table_tag",
+        "columns": [
+          {
+            "name": "location_key",
+            "dataType": "int64",
+            "sourceColumn": "location_key",
+            "lineageTag": "dim_location_location_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "location_name",
+            "dataType": "string",
+            "sourceColumn": "location_name",
+            "lineageTag": "dim_location_location_name_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "region",
+            "dataType": "string",
+            "sourceColumn": "region",
+            "lineageTag": "dim_location_region_tag",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_location",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_dim_location = Source{[Schema=\"gold\",Item=\"dim_location\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_dim_location,{",
+                "        {\"location_key\", Int64.Type},",
+                "        {\"location_name\", type text},",
+                "        {\"region\", type text}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "dim_supplier",
+        "lineageTag": "dim_supplier_table_tag",
+        "columns": [
+          {
+            "name": "supplier_key",
+            "dataType": "int64",
+            "sourceColumn": "supplier_key",
+            "lineageTag": "dim_supplier_supplier_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "supplier_name",
+            "dataType": "string",
+            "sourceColumn": "supplier_name",
+            "lineageTag": "dim_supplier_supplier_name_tag",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_supplier",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_dim_supplier = Source{[Schema=\"gold\",Item=\"dim_supplier\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_dim_supplier,{",
+                "        {\"supplier_key\", Int64.Type},",
+                "        {\"supplier_name\", type text}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "dim_campaign",
+        "lineageTag": "dim_campaign_table_tag",
+        "columns": [
+          {
+            "name": "campaign_key",
+            "dataType": "int64",
+            "sourceColumn": "campaign_key",
+            "lineageTag": "dim_campaign_campaign_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "campaign_id",
+            "dataType": "string",
+            "sourceColumn": "campaign_id",
+            "lineageTag": "dim_campaign_campaign_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "channel",
+            "dataType": "string",
+            "sourceColumn": "channel",
+            "lineageTag": "dim_campaign_channel_tag",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_campaign",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_dim_campaign = Source{[Schema=\"gold\",Item=\"dim_campaign\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_dim_campaign,{",
+                "        {\"campaign_key\", Int64.Type},",
+                "        {\"campaign_id\", type text},",
+                "        {\"channel\", type text}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "dim_payment_method",
+        "lineageTag": "dim_payment_method_table_tag",
+        "columns": [
+          {
+            "name": "payment_method_key",
+            "dataType": "int64",
+            "sourceColumn": "payment_method_key",
+            "lineageTag": "dim_payment_method_payment_method_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "method_name",
+            "dataType": "string",
+            "sourceColumn": "method_name",
+            "lineageTag": "dim_payment_method_method_name_tag",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "dim_payment_method",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_dim_payment_method = Source{[Schema=\"gold\",Item=\"dim_payment_method\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_dim_payment_method,{",
+                "        {\"payment_method_key\", Int64.Type},",
+                "        {\"method_name\", type text}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "fact_orders",
+        "lineageTag": "fact_orders_table_tag",
+        "columns": [
+          {
+            "name": "order_line_key",
+            "dataType": "int64",
+            "sourceColumn": "order_line_key",
+            "lineageTag": "fact_orders_order_line_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "order_id",
+            "dataType": "string",
+            "sourceColumn": "order_id",
+            "lineageTag": "fact_orders_order_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "date_key",
+            "dataType": "int64",
+            "sourceColumn": "date_key",
+            "lineageTag": "fact_orders_date_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "customer_key",
+            "dataType": "int64",
+            "sourceColumn": "customer_key",
+            "lineageTag": "fact_orders_customer_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "product_key",
+            "dataType": "int64",
+            "sourceColumn": "product_key",
+            "lineageTag": "fact_orders_product_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "channel_key",
+            "dataType": "int64",
+            "sourceColumn": "channel_key",
+            "lineageTag": "fact_orders_channel_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "location_key",
+            "dataType": "int64",
+            "sourceColumn": "location_key",
+            "lineageTag": "fact_orders_location_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "status",
+            "dataType": "string",
+            "sourceColumn": "status",
+            "lineageTag": "fact_orders_status_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "quantity",
+            "dataType": "int64",
+            "sourceColumn": "quantity",
+            "lineageTag": "fact_orders_quantity_tag",
+            "summarizeBy": "sum",
+            "formatString": "#,0"
+          },
+          {
+            "name": "unit_price",
+            "dataType": "decimal",
+            "sourceColumn": "unit_price",
+            "lineageTag": "fact_orders_unit_price_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "discount_pct",
+            "dataType": "double",
+            "sourceColumn": "discount_pct",
+            "lineageTag": "fact_orders_discount_pct_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "discount_amount",
+            "dataType": "decimal",
+            "sourceColumn": "discount_amount",
+            "lineageTag": "fact_orders_discount_amount_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "gross_revenue",
+            "dataType": "decimal",
+            "sourceColumn": "gross_revenue",
+            "lineageTag": "fact_orders_gross_revenue_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "net_sales",
+            "dataType": "decimal",
+            "sourceColumn": "net_sales",
+            "lineageTag": "fact_orders_net_sales_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "cogs",
+            "dataType": "decimal",
+            "sourceColumn": "cogs",
+            "lineageTag": "fact_orders_cogs_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "gross_profit",
+            "dataType": "decimal",
+            "sourceColumn": "gross_profit",
+            "lineageTag": "fact_orders_gross_profit_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "gross_margin_pct",
+            "dataType": "double",
+            "sourceColumn": "gross_margin_pct",
+            "lineageTag": "fact_orders_gross_margin_pct_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "run_id",
+            "dataType": "string",
+            "sourceColumn": "run_id",
+            "lineageTag": "fact_orders_run_id_tag",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_orders",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_fact_orders = Source{[Schema=\"gold\",Item=\"fact_orders\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_fact_orders,{",
+                "        {\"order_line_key\", Int64.Type},",
+                "        {\"order_id\", type text},",
+                "        {\"date_key\", Int64.Type},",
+                "        {\"customer_key\", Int64.Type},",
+                "        {\"product_key\", Int64.Type},",
+                "        {\"channel_key\", Int64.Type},",
+                "        {\"location_key\", Int64.Type},",
+                "        {\"quantity\", Int64.Type},",
+                "        {\"unit_price\", Currency.Type},",
+                "        {\"discount_pct\", Percentage.Type},",
+                "        {\"discount_amount\", Currency.Type},",
+                "        {\"gross_revenue\", Currency.Type},",
+                "        {\"net_sales\", Currency.Type},",
+                "        {\"cogs\", Currency.Type},",
+                "        {\"gross_profit\", Currency.Type},",
+                "        {\"gross_margin_pct\", Percentage.Type},",
+                "        {\"status\", type text},",
+                "        {\"run_id\", type text}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "fact_payments",
+        "lineageTag": "fact_payments_table_tag",
+        "columns": [
+          {
+            "name": "payment_line_key",
+            "dataType": "int64",
+            "sourceColumn": "payment_line_key",
+            "lineageTag": "fact_payments_payment_line_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "payment_id",
+            "dataType": "string",
+            "sourceColumn": "payment_id",
+            "lineageTag": "fact_payments_payment_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_id",
+            "dataType": "string",
+            "sourceColumn": "order_id",
+            "lineageTag": "fact_payments_order_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "date_key",
+            "dataType": "int64",
+            "sourceColumn": "date_key",
+            "lineageTag": "fact_payments_date_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "payment_method_key",
+            "dataType": "int64",
+            "sourceColumn": "payment_method_key",
+            "lineageTag": "fact_payments_payment_method_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "amount",
+            "dataType": "decimal",
+            "sourceColumn": "amount",
+            "lineageTag": "fact_payments_amount_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "payment_status",
+            "dataType": "string",
+            "sourceColumn": "payment_status",
+            "lineageTag": "fact_payments_payment_status_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "failure_reason",
+            "dataType": "string",
+            "sourceColumn": "failure_reason",
+            "lineageTag": "fact_payments_failure_reason_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "run_id",
+            "dataType": "string",
+            "sourceColumn": "run_id",
+            "lineageTag": "fact_payments_run_id_tag",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_payments",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_fact_payments = Source{[Schema=\"gold\",Item=\"fact_payments\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_fact_payments,{",
+                "        {\"payment_line_key\", Int64.Type},",
+                "        {\"payment_id\", type text},",
+                "        {\"order_id\", type text},",
+                "        {\"date_key\", Int64.Type},",
+                "        {\"payment_method_key\", Int64.Type},",
+                "        {\"amount\", Currency.Type},",
+                "        {\"payment_status\", type text},",
+                "        {\"failure_reason\", type text},",
+                "        {\"run_id\", type text}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "fact_returns",
+        "lineageTag": "fact_returns_table_tag",
+        "columns": [
+          {
+            "name": "return_line_key",
+            "dataType": "int64",
+            "sourceColumn": "return_line_key",
+            "lineageTag": "fact_returns_return_line_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "return_id",
+            "dataType": "string",
+            "sourceColumn": "return_id",
+            "lineageTag": "fact_returns_return_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "order_id",
+            "dataType": "string",
+            "sourceColumn": "order_id",
+            "lineageTag": "fact_returns_order_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "date_key",
+            "dataType": "int64",
+            "sourceColumn": "date_key",
+            "lineageTag": "fact_returns_date_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "product_key",
+            "dataType": "int64",
+            "sourceColumn": "product_key",
+            "lineageTag": "fact_returns_product_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "quantity_returned",
+            "dataType": "int64",
+            "sourceColumn": "quantity_returned",
+            "lineageTag": "fact_returns_quantity_returned_tag",
+            "summarizeBy": "sum",
+            "formatString": "#,0"
+          },
+          {
+            "name": "return_reason",
+            "dataType": "string",
+            "sourceColumn": "return_reason",
+            "lineageTag": "fact_returns_return_reason_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "return_value",
+            "dataType": "decimal",
+            "sourceColumn": "return_value",
+            "lineageTag": "fact_returns_return_value_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "run_id",
+            "dataType": "string",
+            "sourceColumn": "run_id",
+            "lineageTag": "fact_returns_run_id_tag",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_returns",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_fact_returns = Source{[Schema=\"gold\",Item=\"fact_returns\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_fact_returns,{",
+                "        {\"return_line_key\", Int64.Type},",
+                "        {\"return_id\", type text},",
+                "        {\"order_id\", type text},",
+                "        {\"date_key\", Int64.Type},",
+                "        {\"product_key\", Int64.Type},",
+                "        {\"quantity_returned\", Int64.Type},",
+                "        {\"return_value\", Currency.Type},",
+                "        {\"return_reason\", type text},",
+                "        {\"run_id\", type text}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "fact_inventory",
+        "lineageTag": "fact_inventory_table_tag",
+        "columns": [
+          {
+            "name": "inventory_key",
+            "dataType": "int64",
+            "sourceColumn": "inventory_key",
+            "lineageTag": "fact_inventory_inventory_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "date_key",
+            "dataType": "int64",
+            "sourceColumn": "date_key",
+            "lineageTag": "fact_inventory_date_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "product_key",
+            "dataType": "int64",
+            "sourceColumn": "product_key",
+            "lineageTag": "fact_inventory_product_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "supplier_key",
+            "dataType": "int64",
+            "sourceColumn": "supplier_key",
+            "lineageTag": "fact_inventory_supplier_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "warehouse",
+            "dataType": "string",
+            "sourceColumn": "warehouse",
+            "lineageTag": "fact_inventory_warehouse_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "units_available",
+            "dataType": "int64",
+            "sourceColumn": "units_available",
+            "lineageTag": "fact_inventory_units_available_tag",
+            "summarizeBy": "sum",
+            "formatString": "#,0"
+          },
+          {
+            "name": "units_reserved",
+            "dataType": "int64",
+            "sourceColumn": "units_reserved",
+            "lineageTag": "fact_inventory_units_reserved_tag",
+            "summarizeBy": "sum",
+            "formatString": "#,0"
+          },
+          {
+            "name": "units_sold",
+            "dataType": "int64",
+            "sourceColumn": "units_sold",
+            "lineageTag": "fact_inventory_units_sold_tag",
+            "summarizeBy": "sum",
+            "formatString": "#,0"
+          },
+          {
+            "name": "inventory_value",
+            "dataType": "decimal",
+            "sourceColumn": "inventory_value",
+            "lineageTag": "fact_inventory_inventory_value_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "is_stockout",
+            "dataType": "boolean",
+            "sourceColumn": "is_stockout",
+            "lineageTag": "fact_inventory_is_stockout_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "run_id",
+            "dataType": "string",
+            "sourceColumn": "run_id",
+            "lineageTag": "fact_inventory_run_id_tag",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_inventory",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_fact_inv = Source{[Schema=\"gold\",Item=\"fact_inventory\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_fact_inv,{",
+                "        {\"inventory_key\", Int64.Type},",
+                "        {\"date_key\", Int64.Type},",
+                "        {\"product_key\", Int64.Type},",
+                "        {\"supplier_key\", Int64.Type},",
+                "        {\"warehouse\", type text},",
+                "        {\"units_available\", Int64.Type},",
+                "        {\"units_reserved\", Int64.Type},",
+                "        {\"units_sold\", Int64.Type},",
+                "        {\"inventory_value\", Currency.Type},",
+                "        {\"is_stockout\", type logical},",
+                "        {\"run_id\", type text}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "fact_marketing",
+        "lineageTag": "fact_marketing_table_tag",
+        "columns": [
+          {
+            "name": "marketing_key",
+            "dataType": "int64",
+            "sourceColumn": "marketing_key",
+            "lineageTag": "fact_marketing_marketing_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "campaign_key",
+            "dataType": "int64",
+            "sourceColumn": "campaign_key",
+            "lineageTag": "fact_marketing_campaign_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "date_key",
+            "dataType": "int64",
+            "sourceColumn": "date_key",
+            "lineageTag": "fact_marketing_date_key_tag",
+            "summarizeBy": "none",
+            "formatString": "0"
+          },
+          {
+            "name": "spend",
+            "dataType": "decimal",
+            "sourceColumn": "spend",
+            "lineageTag": "fact_marketing_spend_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "impressions",
+            "dataType": "int64",
+            "sourceColumn": "impressions",
+            "lineageTag": "fact_marketing_impressions_tag",
+            "summarizeBy": "sum",
+            "formatString": "#,0"
+          },
+          {
+            "name": "clicks",
+            "dataType": "int64",
+            "sourceColumn": "clicks",
+            "lineageTag": "fact_marketing_clicks_tag",
+            "summarizeBy": "sum",
+            "formatString": "#,0"
+          },
+          {
+            "name": "orders_attributed",
+            "dataType": "int64",
+            "sourceColumn": "orders_attributed",
+            "lineageTag": "fact_marketing_orders_attributed_tag",
+            "summarizeBy": "sum",
+            "formatString": "#,0"
+          },
+          {
+            "name": "revenue_attributed",
+            "dataType": "decimal",
+            "sourceColumn": "revenue_attributed",
+            "lineageTag": "fact_marketing_revenue_attributed_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "ctr",
+            "dataType": "double",
+            "sourceColumn": "ctr",
+            "lineageTag": "fact_marketing_ctr_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00%"
+          },
+          {
+            "name": "conversion_rate",
+            "dataType": "double",
+            "sourceColumn": "conversion_rate",
+            "lineageTag": "fact_marketing_conversion_rate_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00%"
+          },
+          {
+            "name": "roas",
+            "dataType": "double",
+            "sourceColumn": "roas",
+            "lineageTag": "fact_marketing_roas_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00"
+          },
+          {
+            "name": "run_id",
+            "dataType": "string",
+            "sourceColumn": "run_id",
+            "lineageTag": "fact_marketing_run_id_tag",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "fact_marketing",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_fact_mkt = Source{[Schema=\"gold\",Item=\"fact_marketing\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_fact_mkt,{",
+                "        {\"marketing_key\", Int64.Type},",
+                "        {\"campaign_key\", Int64.Type},",
+                "        {\"date_key\", Int64.Type},",
+                "        {\"spend\", Currency.Type},",
+                "        {\"impressions\", Int64.Type},",
+                "        {\"clicks\", Int64.Type},",
+                "        {\"orders_attributed\", Int64.Type},",
+                "        {\"revenue_attributed\", Currency.Type},",
+                "        {\"ctr\", Percentage.Type},",
+                "        {\"conversion_rate\", Percentage.Type},",
+                "        {\"roas\", type number},",
+                "        {\"run_id\", type text}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "gold_investigation_queue",
+        "lineageTag": "gold_investigation_queue_table_tag",
+        "columns": [
+          {
+            "name": "investigation_id",
+            "dataType": "int64",
+            "sourceColumn": "investigation_id",
+            "lineageTag": "gold_investigation_queue_investigation_id_tag",
+            "summarizeBy": "sum",
+            "formatString": "0"
+          },
+          {
+            "name": "created_at",
+            "dataType": "dateTime",
+            "sourceColumn": "created_at",
+            "lineageTag": "gold_investigation_queue_created_at_tag",
+            "summarizeBy": "none",
+            "formatString": "General Date"
+          },
+          {
+            "name": "priority",
+            "dataType": "string",
+            "sourceColumn": "priority",
+            "lineageTag": "gold_investigation_queue_priority_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "priority_score",
+            "dataType": "double",
+            "sourceColumn": "priority_score",
+            "lineageTag": "gold_investigation_queue_priority_score_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0"
+          },
+          {
+            "name": "entity_type",
+            "dataType": "string",
+            "sourceColumn": "entity_type",
+            "lineageTag": "gold_investigation_queue_entity_type_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "entity_id",
+            "dataType": "string",
+            "sourceColumn": "entity_id",
+            "lineageTag": "gold_investigation_queue_entity_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "entity_name",
+            "dataType": "string",
+            "sourceColumn": "entity_name",
+            "lineageTag": "gold_investigation_queue_entity_name_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "issue",
+            "dataType": "string",
+            "sourceColumn": "issue",
+            "lineageTag": "gold_investigation_queue_issue_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "metric",
+            "dataType": "string",
+            "sourceColumn": "metric",
+            "lineageTag": "gold_investigation_queue_metric_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "observed_value",
+            "dataType": "double",
+            "sourceColumn": "observed_value",
+            "lineageTag": "gold_investigation_queue_observed_value_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00"
+          },
+          {
+            "name": "baseline_value",
+            "dataType": "double",
+            "sourceColumn": "baseline_value",
+            "lineageTag": "gold_investigation_queue_baseline_value_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00"
+          },
+          {
+            "name": "estimated_impact",
+            "dataType": "decimal",
+            "sourceColumn": "estimated_impact",
+            "lineageTag": "gold_investigation_queue_estimated_impact_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "possible_drivers",
+            "dataType": "string",
+            "sourceColumn": "possible_drivers",
+            "lineageTag": "gold_investigation_queue_possible_drivers_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "recommended_investigation",
+            "dataType": "string",
+            "sourceColumn": "recommended_investigation",
+            "lineageTag": "gold_investigation_queue_recommended_investigation_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "confidence",
+            "dataType": "string",
+            "sourceColumn": "confidence",
+            "lineageTag": "gold_investigation_queue_confidence_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "evidence_summary",
+            "dataType": "string",
+            "sourceColumn": "evidence_summary",
+            "lineageTag": "gold_investigation_queue_evidence_summary_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "status",
+            "dataType": "string",
+            "sourceColumn": "status",
+            "lineageTag": "gold_investigation_queue_status_tag",
+            "summarizeBy": "none"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "gold_investigation_queue",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_queue = Source{[Schema=\"gold\",Item=\"gold_investigation_queue\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_queue,{",
+                "        {\"investigation_id\", Int64.Type},",
+                "        {\"created_at\", type datetimezone},",
+                "        {\"priority\", type text},",
+                "        {\"priority_score\", type number},",
+                "        {\"entity_type\", type text},",
+                "        {\"entity_id\", type text},",
+                "        {\"entity_name\", type text},",
+                "        {\"issue\", type text},",
+                "        {\"metric\", type text},",
+                "        {\"observed_value\", type number},",
+                "        {\"baseline_value\", type number},",
+                "        {\"estimated_impact\", Currency.Type},",
+                "        {\"possible_drivers\", type text},",
+                "        {\"recommended_investigation\", type text},",
+                "        {\"confidence\", type text},",
+                "        {\"evidence_summary\", type text},",
+                "        {\"status\", type text}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "gold_product_profitability",
+        "lineageTag": "gold_product_profitability_table_tag",
+        "columns": [
+          {
+            "name": "product_id",
+            "dataType": "string",
+            "sourceColumn": "product_id",
+            "lineageTag": "gold_product_profitability_product_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "product_name",
+            "dataType": "string",
+            "sourceColumn": "product_name",
+            "lineageTag": "gold_product_profitability_product_name_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "category",
+            "dataType": "string",
+            "sourceColumn": "category",
+            "lineageTag": "gold_product_profitability_category_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "subcategory",
+            "dataType": "string",
+            "sourceColumn": "subcategory",
+            "lineageTag": "gold_product_profitability_subcategory_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "supplier",
+            "dataType": "string",
+            "sourceColumn": "supplier",
+            "lineageTag": "gold_product_profitability_supplier_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "revenue",
+            "dataType": "decimal",
+            "sourceColumn": "revenue",
+            "lineageTag": "gold_product_profitability_revenue_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "units_sold",
+            "dataType": "int64",
+            "sourceColumn": "units_sold",
+            "lineageTag": "gold_product_profitability_units_sold_tag",
+            "summarizeBy": "sum",
+            "formatString": "#,0"
+          },
+          {
+            "name": "discount_amount",
+            "dataType": "decimal",
+            "sourceColumn": "discount_amount",
+            "lineageTag": "gold_product_profitability_discount_amount_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "return_value",
+            "dataType": "decimal",
+            "sourceColumn": "return_value",
+            "lineageTag": "gold_product_profitability_return_value_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "cogs",
+            "dataType": "decimal",
+            "sourceColumn": "cogs",
+            "lineageTag": "gold_product_profitability_cogs_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "gross_profit",
+            "dataType": "decimal",
+            "sourceColumn": "gross_profit",
+            "lineageTag": "gold_product_profitability_gross_profit_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "gross_margin_pct",
+            "dataType": "double",
+            "sourceColumn": "gross_margin_pct",
+            "lineageTag": "gold_product_profitability_gross_margin_pct_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "units_in_inventory",
+            "dataType": "double",
+            "sourceColumn": "units_in_inventory",
+            "lineageTag": "gold_product_profitability_units_in_inventory_tag",
+            "summarizeBy": "sum",
+            "formatString": "#,0"
+          },
+          {
+            "name": "stockout_days",
+            "dataType": "int64",
+            "sourceColumn": "stockout_days",
+            "lineageTag": "gold_product_profitability_stockout_days_tag",
+            "summarizeBy": "sum",
+            "formatString": "0"
+          },
+          {
+            "name": "return_rate",
+            "dataType": "double",
+            "sourceColumn": "return_rate",
+            "lineageTag": "gold_product_profitability_return_rate_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "classification",
+            "dataType": "string",
+            "sourceColumn": "classification",
+            "lineageTag": "gold_product_profitability_classification_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "run_id",
+            "dataType": "string",
+            "sourceColumn": "run_id",
+            "lineageTag": "gold_product_profitability_run_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "computed_at",
+            "dataType": "dateTime",
+            "sourceColumn": "computed_at",
+            "lineageTag": "gold_product_profitability_computed_at_tag",
+            "summarizeBy": "none",
+            "formatString": "General Date"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "gold_product_profitability",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_product_prof = Source{[Schema=\"gold\",Item=\"gold_product_profitability\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_product_prof,{",
+                "        {\"product_id\", type text},",
+                "        {\"product_name\", type text},",
+                "        {\"category\", type text},",
+                "        {\"subcategory\", type text},",
+                "        {\"supplier\", type text},",
+                "        {\"revenue\", Currency.Type},",
+                "        {\"units_sold\", Int64.Type},",
+                "        {\"discount_amount\", Currency.Type},",
+                "        {\"return_value\", Currency.Type},",
+                "        {\"cogs\", Currency.Type},",
+                "        {\"gross_profit\", Currency.Type},",
+                "        {\"gross_margin_pct\", Percentage.Type},",
+                "        {\"units_in_inventory\", type number},",
+                "        {\"stockout_days\", Int64.Type},",
+                "        {\"return_rate\", Percentage.Type},",
+                "        {\"classification\", type text},",
+                "        {\"run_id\", type text},",
+                "        {\"computed_at\", type datetimezone}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "gold_customer_health",
+        "lineageTag": "gold_customer_health_table_tag",
+        "columns": [
+          {
+            "name": "customer_id",
+            "dataType": "string",
+            "sourceColumn": "customer_id",
+            "lineageTag": "gold_customer_health_customer_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "customer_name",
+            "dataType": "string",
+            "sourceColumn": "customer_name",
+            "lineageTag": "gold_customer_health_customer_name_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "segment",
+            "dataType": "string",
+            "sourceColumn": "segment",
+            "lineageTag": "gold_customer_health_segment_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "region",
+            "dataType": "string",
+            "sourceColumn": "region",
+            "lineageTag": "gold_customer_health_region_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "total_revenue",
+            "dataType": "decimal",
+            "sourceColumn": "total_revenue",
+            "lineageTag": "gold_customer_health_total_revenue_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "total_gross_profit",
+            "dataType": "decimal",
+            "sourceColumn": "total_gross_profit",
+            "lineageTag": "gold_customer_health_total_gross_profit_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "gross_margin_pct",
+            "dataType": "double",
+            "sourceColumn": "gross_margin_pct",
+            "lineageTag": "gold_customer_health_gross_margin_pct_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "order_count",
+            "dataType": "int64",
+            "sourceColumn": "order_count",
+            "lineageTag": "gold_customer_health_order_count_tag",
+            "summarizeBy": "sum",
+            "formatString": "#,0"
+          },
+          {
+            "name": "avg_order_value",
+            "dataType": "decimal",
+            "sourceColumn": "avg_order_value",
+            "lineageTag": "gold_customer_health_avg_order_value_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "return_rate",
+            "dataType": "double",
+            "sourceColumn": "return_rate",
+            "lineageTag": "gold_customer_health_return_rate_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "discount_dependency",
+            "dataType": "double",
+            "sourceColumn": "discount_dependency",
+            "lineageTag": "gold_customer_health_discount_dependency_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "payment_fail_rate",
+            "dataType": "double",
+            "sourceColumn": "payment_fail_rate",
+            "lineageTag": "gold_customer_health_payment_fail_rate_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "days_since_last_order",
+            "dataType": "int64",
+            "sourceColumn": "days_since_last_order",
+            "lineageTag": "gold_customer_health_days_since_last_order_tag",
+            "summarizeBy": "sum",
+            "formatString": "0"
+          },
+          {
+            "name": "revenue_last_30d",
+            "dataType": "decimal",
+            "sourceColumn": "revenue_last_30d",
+            "lineageTag": "gold_customer_health_revenue_last_30d_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "revenue_prev_30d",
+            "dataType": "decimal",
+            "sourceColumn": "revenue_prev_30d",
+            "lineageTag": "gold_customer_health_revenue_prev_30d_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "revenue_trend_pct",
+            "dataType": "double",
+            "sourceColumn": "revenue_trend_pct",
+            "lineageTag": "gold_customer_health_revenue_trend_pct_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "recency_score",
+            "dataType": "double",
+            "sourceColumn": "recency_score",
+            "lineageTag": "gold_customer_health_recency_score_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00"
+          },
+          {
+            "name": "frequency_score",
+            "dataType": "double",
+            "sourceColumn": "frequency_score",
+            "lineageTag": "gold_customer_health_frequency_score_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00"
+          },
+          {
+            "name": "monetary_score",
+            "dataType": "double",
+            "sourceColumn": "monetary_score",
+            "lineageTag": "gold_customer_health_monetary_score_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00"
+          },
+          {
+            "name": "profitability_score",
+            "dataType": "double",
+            "sourceColumn": "profitability_score",
+            "lineageTag": "gold_customer_health_profitability_score_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00"
+          },
+          {
+            "name": "trend_score",
+            "dataType": "double",
+            "sourceColumn": "trend_score",
+            "lineageTag": "gold_customer_health_trend_score_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00"
+          },
+          {
+            "name": "behavior_score",
+            "dataType": "double",
+            "sourceColumn": "behavior_score",
+            "lineageTag": "gold_customer_health_behavior_score_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00"
+          },
+          {
+            "name": "health_score",
+            "dataType": "double",
+            "sourceColumn": "health_score",
+            "lineageTag": "gold_customer_health_health_score_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00"
+          },
+          {
+            "name": "health_tier",
+            "dataType": "string",
+            "sourceColumn": "health_tier",
+            "lineageTag": "gold_customer_health_health_tier_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "run_id",
+            "dataType": "string",
+            "sourceColumn": "run_id",
+            "lineageTag": "gold_customer_health_run_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "computed_at",
+            "dataType": "dateTime",
+            "sourceColumn": "computed_at",
+            "lineageTag": "gold_customer_health_computed_at_tag",
+            "summarizeBy": "none",
+            "formatString": "General Date"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "gold_customer_health",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_cust_health = Source{[Schema=\"gold\",Item=\"gold_customer_health\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_cust_health,{",
+                "        {\"customer_id\", type text},",
+                "        {\"customer_name\", type text},",
+                "        {\"segment\", type text},",
+                "        {\"region\", type text},",
+                "        {\"total_revenue\", Currency.Type},",
+                "        {\"total_gross_profit\", Currency.Type},",
+                "        {\"gross_margin_pct\", Percentage.Type},",
+                "        {\"order_count\", Int64.Type},",
+                "        {\"avg_order_value\", Currency.Type},",
+                "        {\"return_rate\", Percentage.Type},",
+                "        {\"discount_dependency\", Percentage.Type},",
+                "        {\"payment_fail_rate\", Percentage.Type},",
+                "        {\"days_since_last_order\", Int64.Type},",
+                "        {\"revenue_last_30d\", Currency.Type},",
+                "        {\"revenue_prev_30d\", Currency.Type},",
+                "        {\"revenue_trend_pct\", Percentage.Type},",
+                "        {\"recency_score\", type number},",
+                "        {\"frequency_score\", type number},",
+                "        {\"monetary_score\", type number},",
+                "        {\"profitability_score\", type number},",
+                "        {\"trend_score\", type number},",
+                "        {\"behavior_score\", type number},",
+                "        {\"health_score\", type number},",
+                "        {\"health_tier\", type text},",
+                "        {\"run_id\", type text},",
+                "        {\"computed_at\", type datetimezone}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "gold_inventory_risk",
+        "lineageTag": "gold_inventory_risk_table_tag",
+        "columns": [
+          {
+            "name": "product_id",
+            "dataType": "string",
+            "sourceColumn": "product_id",
+            "lineageTag": "gold_inventory_risk_product_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "warehouse",
+            "dataType": "string",
+            "sourceColumn": "warehouse",
+            "lineageTag": "gold_inventory_risk_warehouse_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "snapshot_date",
+            "dataType": "dateTime",
+            "sourceColumn": "snapshot_date",
+            "lineageTag": "gold_inventory_risk_snapshot_date_tag",
+            "summarizeBy": "none",
+            "formatString": "Short Date"
+          },
+          {
+            "name": "product_name",
+            "dataType": "string",
+            "sourceColumn": "product_name",
+            "lineageTag": "gold_inventory_risk_product_name_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "category",
+            "dataType": "string",
+            "sourceColumn": "category",
+            "lineageTag": "gold_inventory_risk_category_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "supplier",
+            "dataType": "string",
+            "sourceColumn": "supplier",
+            "lineageTag": "gold_inventory_risk_supplier_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "units_available",
+            "dataType": "int64",
+            "sourceColumn": "units_available",
+            "lineageTag": "gold_inventory_risk_units_available_tag",
+            "summarizeBy": "sum",
+            "formatString": "#,0"
+          },
+          {
+            "name": "inventory_value",
+            "dataType": "decimal",
+            "sourceColumn": "inventory_value",
+            "lineageTag": "gold_inventory_risk_inventory_value_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "stockout_days",
+            "dataType": "int64",
+            "sourceColumn": "stockout_days",
+            "lineageTag": "gold_inventory_risk_stockout_days_tag",
+            "summarizeBy": "sum",
+            "formatString": "0"
+          },
+          {
+            "name": "days_of_inventory",
+            "dataType": "double",
+            "sourceColumn": "days_of_inventory",
+            "lineageTag": "gold_inventory_risk_days_of_inventory_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0"
+          },
+          {
+            "name": "inventory_turnover",
+            "dataType": "double",
+            "sourceColumn": "inventory_turnover",
+            "lineageTag": "gold_inventory_risk_inventory_turnover_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.00"
+          },
+          {
+            "name": "sell_through_rate",
+            "dataType": "double",
+            "sourceColumn": "sell_through_rate",
+            "lineageTag": "gold_inventory_risk_sell_through_rate_tag",
+            "summarizeBy": "sum",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "estimated_stockout_impact",
+            "dataType": "decimal",
+            "sourceColumn": "estimated_stockout_impact",
+            "lineageTag": "gold_inventory_risk_estimated_stockout_impact_tag",
+            "summarizeBy": "sum",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "is_dead_stock",
+            "dataType": "boolean",
+            "sourceColumn": "is_dead_stock",
+            "lineageTag": "gold_inventory_risk_is_dead_stock_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "risk_tier",
+            "dataType": "string",
+            "sourceColumn": "risk_tier",
+            "lineageTag": "gold_inventory_risk_risk_tier_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "run_id",
+            "dataType": "string",
+            "sourceColumn": "run_id",
+            "lineageTag": "gold_inventory_risk_run_id_tag",
+            "summarizeBy": "none"
+          },
+          {
+            "name": "computed_at",
+            "dataType": "dateTime",
+            "sourceColumn": "computed_at",
+            "lineageTag": "gold_inventory_risk_computed_at_tag",
+            "summarizeBy": "none",
+            "formatString": "General Date"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "gold_inventory_risk",
+            "mode": "import",
+            "source": {
+              "type": "m",
+              "expression": [
+                "let",
+                "    Source = PostgreSQL.Database(DBServer, DBDatabase),",
+                "    gold_inv_risk = Source{[Schema=\"gold\",Item=\"gold_inventory_risk\"]}[Data],",
+                "    ChangedTypes = Table.TransformColumnTypes(gold_inv_risk,{",
+                "        {\"product_id\", type text},",
+                "        {\"warehouse\", type text},",
+                "        {\"snapshot_date\", type date},",
+                "        {\"product_name\", type text},",
+                "        {\"category\", type text},",
+                "        {\"supplier\", type text},",
+                "        {\"units_available\", Int64.Type},",
+                "        {\"inventory_value\", Currency.Type},",
+                "        {\"stockout_days\", Int64.Type},",
+                "        {\"days_of_inventory\", type number},",
+                "        {\"inventory_turnover\", type number},",
+                "        {\"sell_through_rate\", Percentage.Type},",
+                "        {\"estimated_stockout_impact\", Currency.Type},",
+                "        {\"is_dead_stock\", type logical},",
+                "        {\"risk_tier\", type text},",
+                "        {\"run_id\", type text},",
+                "        {\"computed_at\", type datetimezone}",
+                "    })",
+                "in",
+                "    ChangedTypes"
+              ]
+            }
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      },
+      {
+        "name": "_Measures",
+        "lineageTag": "measures_container_table_tag",
+        "columns": [
+          {
+            "name": "Placeholder",
+            "dataType": "string",
+            "isNameInferred": true,
+            "isDataTypeInferred": true,
+            "isHidden": true,
+            "sourceColumn": "[Placeholder]",
+            "lineageTag": "placeholder_col_tag"
+          }
+        ],
+        "partitions": [
+          {
+            "name": "_Measures",
+            "mode": "import",
+            "source": {
+              "type": "calculated",
+              "expression": "Row(\"Placeholder\", BLANK())"
+            }
+          }
+        ],
+        "measures": [
+          {
+            "name": "Gross Revenue",
+            "expression": "SUM(fact_orders[gross_revenue])",
+            "lineageTag": "m_35512286ae70",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Total Discounts",
+            "expression": "SUM(fact_orders[discount_amount])",
+            "lineageTag": "m_e1d21d7a5367",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Net Sales",
+            "expression": "SUM(fact_orders[net_sales])",
+            "lineageTag": "m_22cd01b823b3",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Total Returns",
+            "expression": "SUM(fact_returns[return_value])",
+            "lineageTag": "m_7f31becd0003",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Net Revenue",
+            "expression": "[Net Sales] - [Total Returns]",
+            "lineageTag": "m_f43deca60f05",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Total COGS",
+            "expression": "SUM(fact_orders[cogs])",
+            "lineageTag": "m_ae10dfdb1f15",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Gross Profit",
+            "expression": "[Net Sales] - [Total COGS]",
+            "lineageTag": "m_8d0be7d6aab4",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Gross Margin %",
+            "expression": "DIVIDE([Gross Profit], [Net Sales], 0)",
+            "lineageTag": "m_510269ccd545",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Order Count",
+            "expression": "DISTINCTCOUNT(fact_orders[order_id])",
+            "lineageTag": "m_16f43a864a30",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Units Sold",
+            "expression": "SUM(fact_orders[quantity])",
+            "lineageTag": "m_150f18951a9f",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Units Returned",
+            "expression": "SUM(fact_returns[quantity_returned])",
+            "lineageTag": "m_8ef6d9eab4e4",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Average Order Value",
+            "expression": "DIVIDE([Net Sales], [Order Count], 0)",
+            "lineageTag": "m_e98e0f674a3c",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "Average Selling Price",
+            "expression": "DIVIDE([Net Sales], [Units Sold], 0)",
+            "lineageTag": "m_c21376ba2c45",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "Discount Rate %",
+            "expression": "DIVIDE([Total Discounts], [Gross Revenue], 0)",
+            "lineageTag": "m_ce34c8a3c83c",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Return Rate %",
+            "expression": "DIVIDE([Units Returned], [Units Sold], 0)",
+            "lineageTag": "m_a3bbcbf9a2df",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Return Value Rate %",
+            "expression": "DIVIDE([Total Returns], [Net Sales], 0)",
+            "lineageTag": "m_24e770693ae5",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Net Sales PY",
+            "expression": "CALCULATE([Net Sales], SAMEPERIODLASTYEAR(dim_date[full_date]))",
+            "lineageTag": "m_2f5c518b6682",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Net Sales YoY $",
+            "expression": "[Net Sales] - [Net Sales PY]",
+            "lineageTag": "m_3c052965a112",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Net Sales YoY %",
+            "expression": "DIVIDE([Net Sales YoY $], [Net Sales PY], 0)",
+            "lineageTag": "m_72f149f62c9a",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Net Sales PM",
+            "expression": "CALCULATE([Net Sales], PREVIOUSMONTH(dim_date[full_date]))",
+            "lineageTag": "m_a08f459733ee",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Net Sales MoM $",
+            "expression": "[Net Sales] - [Net Sales PM]",
+            "lineageTag": "m_9ce815dd2798",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Net Sales MoM %",
+            "expression": "DIVIDE([Net Sales MoM $], [Net Sales PM], 0)",
+            "lineageTag": "m_3c5d0245f870",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Net Sales YTD",
+            "expression": "TOTALYTD([Net Sales], dim_date[full_date])",
+            "lineageTag": "m_8c2d15d1a460",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Gross Profit YTD",
+            "expression": "TOTALYTD([Gross Profit], dim_date[full_date])",
+            "lineageTag": "m_2cdbf2bb03ef",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Rolling 7D Net Sales",
+            "expression": "CALCULATE([Net Sales], DATESINPERIOD(dim_date[full_date], LASTDATE(dim_date[full_date]), -7, DAY))",
+            "lineageTag": "m_2e2aa4724079",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Rolling 30D Net Sales",
+            "expression": "CALCULATE([Net Sales], DATESINPERIOD(dim_date[full_date], LASTDATE(dim_date[full_date]), -30, DAY))",
+            "lineageTag": "m_412d5d245c6f",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Discount Leakage Amount",
+            "expression": "CALCULATE(SUM(fact_orders[discount_amount]), fact_orders[discount_pct] > 0.15)",
+            "lineageTag": "m_ea944d9ead98",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Return Leakage Amount",
+            "expression": "[Total Returns]",
+            "lineageTag": "m_6b985efe87a9",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Payment Failure Amount",
+            "expression": "CALCULATE(SUM(fact_payments[amount]), fact_payments[payment_status] = \"FAILED\")",
+            "lineageTag": "m_efbf8bef9f0f",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Payment Failure Rate %",
+            "expression": "DIVIDE(CALCULATE(COUNTROWS(fact_payments), fact_payments[payment_status] = \"FAILED\"), COUNTROWS(fact_payments), 0)",
+            "lineageTag": "m_99c7d635a331",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Cancellation Leakage Amount",
+            "expression": "CALCULATE(SUM(fact_orders[net_sales]), fact_orders[status] = \"CANCELLED\")",
+            "lineageTag": "m_7e85b98a7cfc",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Cancellation Rate %",
+            "expression": "DIVIDE(CALCULATE([Order Count], fact_orders[status] = \"CANCELLED\"), [Order Count], 0)",
+            "lineageTag": "m_0816206f6097",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Estimated Stockout Revenue Loss",
+            "expression": "SUM(gold_inventory_risk[estimated_stockout_impact])",
+            "lineageTag": "m_efef0a899a2a",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Total Revenue Leakage",
+            "expression": "[Discount Leakage Amount] + [Return Leakage Amount] + [Payment Failure Amount] + [Cancellation Leakage Amount] + [Estimated Stockout Revenue Loss]",
+            "lineageTag": "m_1d1b632321cb",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Leakage % of Gross Revenue",
+            "expression": "DIVIDE([Total Revenue Leakage], [Gross Revenue], 0)",
+            "lineageTag": "m_eb3271f659bf",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Total Customers",
+            "expression": "DISTINCTCOUNT(dim_customer[customer_id])",
+            "lineageTag": "m_3a17e6817efe",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Active Customers 90D",
+            "expression": "CALCULATE(DISTINCTCOUNT(fact_orders[customer_key]), DATESINPERIOD(dim_date[full_date], LASTDATE(dim_date[full_date]), -90, DAY))",
+            "lineageTag": "m_40ea23a34c35",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Churned Customers",
+            "expression": "[Total Customers] - [Active Customers 90D]",
+            "lineageTag": "m_3b7bb524acec",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Churn Rate %",
+            "expression": "DIVIDE([Churned Customers], [Total Customers], 0)",
+            "lineageTag": "m_3bc1260b91d9",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Customer Lifetime Value (LTV)",
+            "expression": "DIVIDE([Net Sales], [Total Customers], 0)",
+            "lineageTag": "m_2e6c53d0075a",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "Avg Customer Health Score",
+            "expression": "AVERAGE(gold_customer_health[health_score])",
+            "lineageTag": "m_c2963319d620",
+            "formatString": "0.00"
+          },
+          {
+            "name": "Healthy Customer Count",
+            "expression": "CALCULATE(DISTINCTCOUNT(gold_customer_health[customer_id]), gold_customer_health[health_tier] = \"HIGH\")",
+            "lineageTag": "m_aa2fd680d2f9",
+            "formatString": "#,0"
+          },
+          {
+            "name": "At Risk Customer Count",
+            "expression": "CALCULATE(DISTINCTCOUNT(gold_customer_health[customer_id]), gold_customer_health[health_tier] = \"AT-RISK\")",
+            "lineageTag": "m_27d7b4295637",
+            "formatString": "#,0"
+          },
+          {
+            "name": "At Risk Revenue Exposure",
+            "expression": "CALCULATE(SUM(gold_customer_health[total_revenue]), gold_customer_health[health_tier] = \"AT-RISK\")",
+            "lineageTag": "m_6a8f44a547b1",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Revenue Trap Revenue",
+            "expression": "CALCULATE([Net Sales], gold_product_profitability[classification] = \"Revenue Trap\")",
+            "lineageTag": "m_68be2cd82fd8",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Revenue Trap SKU Count",
+            "expression": "CALCULATE(DISTINCTCOUNT(gold_product_profitability[product_id]), gold_product_profitability[classification] = \"Revenue Trap\")",
+            "lineageTag": "m_05e06127f582",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Revenue Winner Gross Profit",
+            "expression": "CALCULATE([Gross Profit], gold_product_profitability[classification] = \"Revenue Winner\")",
+            "lineageTag": "m_444f704f9406",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Revenue Winner SKU Count",
+            "expression": "CALCULATE(DISTINCTCOUNT(gold_product_profitability[product_id]), gold_product_profitability[classification] = \"Revenue Winner\")",
+            "lineageTag": "m_97a88da19dc5",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Product Contribution Margin %",
+            "expression": "DIVIDE([Gross Profit], [Net Sales], 0)",
+            "lineageTag": "m_b87dde72c180",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Defective Return %",
+            "expression": "DIVIDE(CALCULATE(SUM(fact_returns[quantity_returned]), fact_returns[return_reason] = \"DEFECTIVE_ITEM\"), [Units Sold], 0)",
+            "lineageTag": "m_7c9557cd01e3",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Current Available Units",
+            "expression": "SUM(fact_inventory[units_available])",
+            "lineageTag": "m_17198a1b9157",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Inventory Holding Value",
+            "expression": "SUM(fact_inventory[inventory_value])",
+            "lineageTag": "m_5ddc07d2c238",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Stockout Warehouse SKU Count",
+            "expression": "CALCULATE(COUNTROWS(fact_inventory), fact_inventory[is_stockout] = TRUE())",
+            "lineageTag": "m_62f6f11610ea",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Inventory Turnover Rate",
+            "expression": "DIVIDE([Total COGS], [Inventory Holding Value], 0)",
+            "lineageTag": "m_6c9cf97b8ff0",
+            "formatString": "0.00"
+          },
+          {
+            "name": "Days of Inventory (DOI)",
+            "expression": "DIVIDE([Inventory Holding Value], DIVIDE([Total COGS], 365, 0), 0)",
+            "lineageTag": "m_a97c7f1b3bd9",
+            "formatString": "0.0"
+          },
+          {
+            "name": "Total Ad Spend",
+            "expression": "SUM(fact_marketing[spend])",
+            "lineageTag": "m_5069fae77872",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Total Impressions",
+            "expression": "SUM(fact_marketing[impressions])",
+            "lineageTag": "m_8704acbbb96d",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Total Clicks",
+            "expression": "SUM(fact_marketing[clicks])",
+            "lineageTag": "m_6cdd60ee4eab",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Marketing Attributed Orders",
+            "expression": "SUM(fact_marketing[orders_attributed])",
+            "lineageTag": "m_c0c465678bcf",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Marketing Attributed Revenue",
+            "expression": "SUM(fact_marketing[revenue_attributed])",
+            "lineageTag": "m_d736e3254641",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Click Through Rate (CTR) %",
+            "expression": "DIVIDE([Total Clicks], [Total Impressions], 0)",
+            "lineageTag": "m_10f28b8487ef",
+            "formatString": "0.00%"
+          },
+          {
+            "name": "Cost Per Click (CPC)",
+            "expression": "DIVIDE([Total Ad Spend], [Total Clicks], 0)",
+            "lineageTag": "m_bfe26c3db220",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "Blended Customer Acquisition Cost (CAC)",
+            "expression": "DIVIDE([Total Ad Spend], [Marketing Attributed Orders], 0)",
+            "lineageTag": "m_f1bc2a7a5d9b",
+            "formatString": "\\$#,##0.00;(\\$#,##0.00);\\$#,##0.00"
+          },
+          {
+            "name": "Return on Ad Spend (ROAS)",
+            "expression": "DIVIDE([Marketing Attributed Revenue], [Total Ad Spend], 0)",
+            "lineageTag": "m_dcb060ff49bc",
+            "formatString": "0.00"
+          },
+          {
+            "name": "Net Contribution After Marketing",
+            "expression": "[Gross Profit] - [Total Ad Spend]",
+            "lineageTag": "m_4eff5db65cd8",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Marketing Margin %",
+            "expression": "DIVIDE([Net Contribution After Marketing], [Net Sales], 0)",
+            "lineageTag": "m_9816c850170e",
+            "formatString": "0.0%"
+          },
+          {
+            "name": "Total Open Investigations",
+            "expression": "CALCULATE(COUNTROWS(gold_investigation_queue), gold_investigation_queue[status] = \"OPEN\")",
+            "lineageTag": "m_d7b67c6b29e3",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Critical Priority Investigations",
+            "expression": "CALCULATE(COUNTROWS(gold_investigation_queue), gold_investigation_queue[priority] = \"CRITICAL\" || gold_investigation_queue[priority] = \"HIGH\")",
+            "lineageTag": "m_419c44e38daf",
+            "formatString": "#,0"
+          },
+          {
+            "name": "Total Financial Exposure at Risk",
+            "expression": "CALCULATE(SUM(gold_investigation_queue[estimated_impact]), gold_investigation_queue[status] = \"OPEN\")",
+            "lineageTag": "m_05053de304c6",
+            "formatString": "\\$#,0;(\\$#,0);\\$#,0"
+          },
+          {
+            "name": "Avg Priority Score",
+            "expression": "AVERAGE(gold_investigation_queue[priority_score])",
+            "lineageTag": "m_7fd8cb0a928e",
+            "formatString": "0.0"
+          }
+        ],
+        "annotations": [
+          {
+            "name": "PBI_ResultType",
+            "value": "Table"
+          }
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "name": "rel_fact_orders_date_key_to_dim_date",
+        "fromTable": "fact_orders",
+        "fromColumn": "date_key",
+        "toTable": "dim_date",
+        "toColumn": "date_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_orders_customer_key_to_dim_customer",
+        "fromTable": "fact_orders",
+        "fromColumn": "customer_key",
+        "toTable": "dim_customer",
+        "toColumn": "customer_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_orders_product_key_to_dim_product",
+        "fromTable": "fact_orders",
+        "fromColumn": "product_key",
+        "toTable": "dim_product",
+        "toColumn": "product_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_orders_channel_key_to_dim_channel",
+        "fromTable": "fact_orders",
+        "fromColumn": "channel_key",
+        "toTable": "dim_channel",
+        "toColumn": "channel_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_orders_location_key_to_dim_location",
+        "fromTable": "fact_orders",
+        "fromColumn": "location_key",
+        "toTable": "dim_location",
+        "toColumn": "location_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_payments_date_key_to_dim_date",
+        "fromTable": "fact_payments",
+        "fromColumn": "date_key",
+        "toTable": "dim_date",
+        "toColumn": "date_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_payments_payment_method_key_to_dim_payment_method",
+        "fromTable": "fact_payments",
+        "fromColumn": "payment_method_key",
+        "toTable": "dim_payment_method",
+        "toColumn": "payment_method_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_returns_date_key_to_dim_date",
+        "fromTable": "fact_returns",
+        "fromColumn": "date_key",
+        "toTable": "dim_date",
+        "toColumn": "date_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_returns_product_key_to_dim_product",
+        "fromTable": "fact_returns",
+        "fromColumn": "product_key",
+        "toTable": "dim_product",
+        "toColumn": "product_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_inventory_date_key_to_dim_date",
+        "fromTable": "fact_inventory",
+        "fromColumn": "date_key",
+        "toTable": "dim_date",
+        "toColumn": "date_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_inventory_product_key_to_dim_product",
+        "fromTable": "fact_inventory",
+        "fromColumn": "product_key",
+        "toTable": "dim_product",
+        "toColumn": "product_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_inventory_supplier_key_to_dim_supplier",
+        "fromTable": "fact_inventory",
+        "fromColumn": "supplier_key",
+        "toTable": "dim_supplier",
+        "toColumn": "supplier_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_marketing_date_key_to_dim_date",
+        "fromTable": "fact_marketing",
+        "fromColumn": "date_key",
+        "toTable": "dim_date",
+        "toColumn": "date_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      },
+      {
+        "name": "rel_fact_marketing_campaign_key_to_dim_campaign",
+        "fromTable": "fact_marketing",
+        "fromColumn": "campaign_key",
+        "toTable": "dim_campaign",
+        "toColumn": "campaign_key",
+        "crossFilteringBehavior": "oneDirection",
+        "isActive": true
+      }
+    ],
+    "expressions": [
+      {
+        "name": "DBServer",
+        "kind": "m",
+        "expression": [
+          "\"localhost:5432\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+        ],
+        "lineageTag": "dbserver_param_tag",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ]
+      },
+      {
+        "name": "DBDatabase",
+        "kind": "m",
+        "expression": [
+          "\"revenueos\" meta [IsParameterQuery=true, Type=\"Text\", IsParameterQueryRequired=true]"
+        ],
+        "lineageTag": "dbdatabase_param_tag",
+        "annotations": [
+          {
+            "name": "PBI_NavigationStepName",
+            "value": "Navigation"
+          },
+          {
+            "name": "PBI_ResultType",
+            "value": "Text"
+          }
+        ]
+      }
+    ],
+    "annotations": [
+      {
+        "name": "PBI_QueryOrder",
+        "value": "[\"DBServer\", \"DBDatabase\", \"dim_date\", \"dim_customer\", \"dim_product\", \"dim_channel\", \"dim_location\", \"dim_supplier\", \"dim_campaign\", \"dim_payment_method\", \"fact_orders\", \"fact_payments\", \"fact_returns\", \"fact_inventory\", \"fact_marketing\", \"gold_investigation_queue\", \"gold_product_profitability\", \"gold_customer_health\", \"gold_inventory_risk\", \"_Measures\"]"
+      }
+    ]
+  }
+}

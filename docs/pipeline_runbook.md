@@ -76,6 +76,38 @@ python pipeline.py --phase gold
 
 ---
 
+## Continuous Automation Pipeline Engine
+
+The engine (`engine/pipeline_engine.py`) provides hands-off automation for enterprise data platforms:
+
+```bash
+# 1. Pre-flight Health & Diagnostic Checks
+# Validates database connectivity, Bronze/Silver/Gold schemas, and raw data readiness
+python pipeline.py --health
+
+# 2. Continuous File Watcher
+# Actively monitors data/raw/ and data/raw/excel/ for new or modified files.
+# Features a 3-second debounce window to ensure file transfer completes before ingestion.
+python pipeline.py --watch
+
+# 3. Headless Scheduled Daemon
+# Runs recurring batch ingestion on a background interval (default: 3600 seconds / 1 hour).
+# Handles SIGINT and SIGTERM gracefully to complete in-flight transactions.
+python pipeline.py --daemon --interval 3600
+
+# 4. Gold Mart Artifact Export
+# Exports all Kimball star schema tables and 8 analytical marts to data/processed/gold/*.csv
+# Automatically compiles powerbi/RevenueOS.pbit and powerbi/RevenueOS.pbip
+python pipeline.py --export
+```
+
+### Execution Telemetry & Audit Logs
+- In PostgreSQL: `SELECT * FROM bronze.pipeline_runs ORDER BY started_at DESC LIMIT 10;`
+- Local JSON audit trail: `data/pipeline_runs.json` (persisted even when PostgreSQL connection is offline).
+
+
+---
+
 ## Adding New Data Files
 
 ### Excel workbooks

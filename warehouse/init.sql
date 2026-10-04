@@ -131,6 +131,20 @@ CREATE TABLE IF NOT EXISTS bronze.quality_log (
     sample_values        TEXT
 );
 
+-- Pipeline execution audit log (written by automation engine)
+CREATE TABLE IF NOT EXISTS bronze.pipeline_runs (
+    run_id               TEXT PRIMARY KEY,
+    started_at           TIMESTAMPTZ NOT NULL,
+    completed_at         TIMESTAMPTZ,
+    duration_seconds     NUMERIC,
+    trigger_type         TEXT,          -- MANUAL | SCHEDULED | WATCHER | API
+    phase                TEXT,
+    status               TEXT,          -- RUNNING | SUCCESS | FAILED | CRITICAL_QUALITY_FAILURE
+    records_processed    INTEGER DEFAULT 0,
+    metrics_summary      JSONB,
+    error_message        TEXT
+);
+
 -- ---------------------------------------------------------------------------
 -- SILVER LAYER
 -- Standardized, validated, typed data. Transformations documented in code.

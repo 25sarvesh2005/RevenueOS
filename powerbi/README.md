@@ -8,6 +8,9 @@ This directory contains the production assets for connecting, modeling, and styl
 
 | File | Purpose |
 | :--- | :--- |
+| **[`RevenueOS.pbit`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/powerbi/RevenueOS.pbit)** | **One-click Power BI Template: pre-wired relationships, 70 measures, all 18 tables, 8 pages** |
+| **[`RevenueOS.pbip`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/powerbi/RevenueOS.pbip)** | **Power BI Project entrypoint (modern developer format with TMDL/PBIR structure)** |
+| [`build_powerbi_file.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/powerbi/build_powerbi_file.py) | Automated Python compiler to regenerate `.pbit` and `.pbip` from code |
 | [`dax_measures.dax`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/powerbi/dax_measures.dax) | Complete DAX measure library organized across all 8 pages |
 | [`power_query_m.pq`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/powerbi/power_query_m.pq) | Copy-paste M scripts to ingest PostgreSQL `gold` star schema |
 | [`revenueos_theme.json`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/powerbi/revenueos_theme.json) | High-contrast Dark Slate executive UI theme |
@@ -15,7 +18,27 @@ This directory contains the production assets for connecting, modeling, and styl
 
 ---
 
-## 6-Step Setup Instructions
+## ⚡ Quickest Way (Single-Click Ready File)
+
+You do **not** need to manually copy-paste queries, drag relationship lines, or create measures one-by-one.
+
+1. **Start the database and pipeline** (if not already running):
+   ```bash
+   docker compose up -d
+   python pipeline.py --truncate
+   ```
+2. **Double-click [`RevenueOS.pbit`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/powerbi/RevenueOS.pbit)** (or open [`RevenueOS.pbip`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/powerbi/RevenueOS.pbip)).
+3. Power BI Desktop will launch with:
+   - **All 18 tables** loaded from the Gold schema via Power Query M.
+   - **All 14 Star Schema Relationships** pre-joined (Single cross-filter direction, 1-to-Many `1:*`).
+   - **All 70 DAX Measures** pre-calculated inside the dedicated `_Measures` table.
+   - **All 8 Executive Report Pages** configured at 1920×1080 canvas size.
+   - **Dark Slate Executive Theme** pre-applied.
+4. When prompted, confirm or enter your database connection (defaults: `DBServer = localhost:5432`, `DBDatabase = revenueos`), then click **Load**.
+
+---
+
+## 🛠 Manual Setup Instructions (Alternative)
 
 ### Step 1: Spin Up the Database
 Ensure PostgreSQL is running (either locally or via Docker):

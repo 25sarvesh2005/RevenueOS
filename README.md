@@ -1,15 +1,15 @@
-# RevenueOS — Revenue Intelligence & Decision Engine
+# RevenueOS — Revenue Intelligence & Automated Decision Engine
 
-> *From raw transactions to financial decisions.*
+> *From raw transactions to auditable financial intelligence and automated operational decisions.*
 
 [![CI Pipeline](https://github.com/25sarvesh2005/RevenueOS/actions/workflows/ci.yml/badge.svg)](https://github.com/25sarvesh2005/RevenueOS/actions)
 ![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue.svg)
 ![Database](https://img.shields.io/badge/PostgreSQL-16-336791.svg?logo=postgresql&logoColor=white)
-![Power BI](https://img.shields.io/badge/Power_BI-8_Page_Dashboard-F2C811.svg?logo=powerbi&logoColor=black)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-![Tests](https://img.shields.io/badge/Tests-51%20Passed-brightgreen.svg)
+![Power BI](https://img.shields.io/badge/Power_BI-8_Page_Semantic_App-F2C811.svg?logo=powerbi&logoColor=black)
+[![License: Commercial Royalty](https://img.shields.io/badge/License-Commercial%20Royalty-crimson.svg)](LICENSE)
+![Tests](https://img.shields.io/badge/Tests-63%20Passed-brightgreen.svg)
 
-RevenueOS is an end-to-end Data Analytics and Decision Intelligence platform engineered for omnichannel retail enterprises. It transforms messy, multi-source operational data into validated financial metrics, leakage radars, statistical anomaly detections, and an actionable, prioritized business investigation queue.
+RevenueOS is an enterprise-grade Data Analytics, Analytics Engineering, and Automated Decision Intelligence platform engineered for omnichannel retail enterprises. It transforms high-velocity, multi-source operational data into validated financial metrics, automated leakage radars, statistical anomaly detections, and an actionable, prioritized business investigation queue.
 
 ---
 
@@ -18,11 +18,15 @@ RevenueOS is an end-to-end Data Analytics and Decision Intelligence platform eng
 ```
 revenueos/
 │
-├── pipeline.py              # Main pipeline orchestrator
-├── config.py                # Shared config, DB engine, paths
+├── pipeline.py              # Main pipeline orchestrator & CLI
+├── config.py                # Shared config, connection pools, paths
 ├── requirements.txt
 ├── .env.example
 ├── docker-compose.yml
+├── LICENSE                  # Source-Available Commercial & Royalty License
+│
+├── engine/                  # Continuous Automation Pipeline Engine
+│   └── pipeline_engine.py   # Continuous watcher, background daemon, health diagnostics, exports
 │
 ├── data/
 │   ├── raw/                 # Drop Excel workbooks or canonical CSV files here
@@ -37,7 +41,7 @@ revenueos/
 │   ├── processed/
 │   │   ├── bronze/
 │   │   ├── silver/
-│   │   └── gold/
+│   │   └── gold/            # Serialized gold mart CSV exports
 │   └── sample/
 │
 ├── ingestion/
@@ -45,26 +49,24 @@ revenueos/
 │   └── ingest_bronze.py     # CSV → Bronze PostgreSQL
 │
 ├── quality/
-│   └── run_checks.py        # Data Quality Engine
+│   └── run_checks.py        # Enterprise Data Quality & Reconciliation Engine
 │
 ├── transformation/
-│   ├── transform_silver.py  # Bronze → Silver
-│   └── build_gold.py        # Silver → Gold (star schema + analytics)
+│   ├── transform_silver.py  # Bronze → Silver (normalization, typing, deduplication)
+│   └── build_gold.py        # Silver → Gold (Kimball star schema + analytical marts)
 │
 ├── warehouse/
-│   └── init.sql             # All DDL: Bronze / Silver / Gold schemas
+│   └── init.sql             # Complete DDL: Bronze, Silver, Gold schemas + pipeline_runs
 │
-├── analytics/               # SQL analytics scripts
-├── python/                  # Advanced Python analytics
-│   ├── anomaly_detection/
-│   ├── forecasting/
-│   └── reporting/
+├── analytics/               # Gold SQL analytical queries
+├── python/                  # Advanced Python analytics & ML
+│   ├── anomaly_detection/   # IQR, Z-Score, and Isolation Forest detectors
+│   ├── forecasting/         # Holt-Winters & linear trend 30-day forecast engine
+│   └── reporting/           # AI Investigation Copilot & Executive Brief generator
 │
-├── tests/
-│   └── test_core.py         # pytest test suite
-│
-├── powerbi/                 # Power BI .pbix files
-├── docs/                    # Full documentation
+├── tests/                   # 63 passing unit and integration tests
+├── powerbi/                 # Power BI .pbix, .pbit templates, .pbip developer projects
+├── docs/                    # Architecture, BRD, Data Dictionary, Runbooks
 └── screenshots/
 ```
 
@@ -119,24 +121,42 @@ If you already have canonical CSVs, place them directly into the corresponding `
 | Inventory | `data/raw/inventory/`   | product_id, warehouse, snapshot_date, units_available, units_reserved, units_sold|
 | Marketing | `data/raw/marketing/`   | campaign_id, date, channel, spend, impressions, clicks, orders_attributed, revenue_attributed |
 
-### 5. Run the full pipeline
+### 5. Run the pipeline
 
 ```bash
+# Full end-to-end batch execution
 python pipeline.py
+
+# Idempotent clean rerun (truncate + reload)
+python pipeline.py --truncate
+
+# Or run individual phases:
+python pipeline.py --phase excel       # convert Excel sheets to canonical raw CSVs
+python pipeline.py --phase bronze      # ingest CSVs to raw Bronze schema
+python pipeline.py --phase quality     # execute data quality & reconciliation gates
+python pipeline.py --phase silver      # transform Bronze to normalized Silver
+python pipeline.py --phase gold        # materialize Kimball star schema & analytical marts
 ```
 
-Or run individual phases:
+### 6. Continuous Automation Engine
+
+RevenueOS incorporates an autonomous execution engine for zero-touch continuous operation, real-time file drop watching, scheduled daemon execution, pre-flight diagnostics, and gold mart export:
 
 ```bash
-python pipeline.py --phase excel       # convert Excel sheets to raw CSVs
-python pipeline.py --phase bronze      # ingest CSVs to Bronze
-python pipeline.py --phase quality     # run data quality checks
-python pipeline.py --phase silver      # transform to Silver
-python pipeline.py --phase gold        # build Gold analytics
-python pipeline.py --truncate          # idempotent rerun
+# Pre-flight infrastructure & schema health diagnostics
+python pipeline.py --health
+
+# Continuous debounced file watcher (watches data/raw/ and data/raw/excel/)
+python pipeline.py --watch
+
+# Headless scheduled background daemon (runs hourly, graceful SIGINT/SIGTERM handling)
+python pipeline.py --daemon --interval 3600
+
+# Export Gold marts to CSV & compile Power BI templates (.pbit and .pbip)
+python pipeline.py --export
 ```
 
-### 6. Run tests
+### 7. Run test suite
 
 ```bash
 pytest tests/ -v
@@ -147,31 +167,35 @@ pytest tests/ -v
 ## 📐 Architecture
 
 ```
-SOURCE SYSTEMS (Excel workbooks / CSV files)
+SOURCE SYSTEMS (Excel workbooks / drop-directory CSV files)
+        │
+        ├──► CONTINUOUS FILE WATCHER (engine/pipeline_engine.py)
+        │      Debounced SHA256/mtime change detection
+        │
+        ▼
+EXCEL IMPORTER (ingestion/import_excel.py)
+  Sheet mapping + column normalization + canonical raw CSV generation
         ↓
-EXCEL IMPORTER
-  Sheet mapping + column normalization + raw CSV generation
+BRONZE LAYER (PostgreSQL bronze schema)
+  Raw data preserved + ingestion metadata + pipeline_runs telemetry
         ↓
-BRONZE LAYER (PostgreSQL)
-  Raw data preserved + ingestion metadata
+DATA QUALITY ENGINE (quality/run_checks.py)
+  Schema · Nulls · Duplicates · Referential Integrity · Cross-Layer Reconciliation
         ↓
-DATA QUALITY ENGINE
-  Schema · Nulls · Duplicates · Referential Integrity · Reconciliation
+SILVER LAYER (PostgreSQL silver schema)
+  Standardized · Strongly Typed · Cleansed · Deduped · Derived fields
         ↓
-SILVER LAYER (PostgreSQL)
-  Standardized · Typed · Cleaned · Derived fields
-        ↓
-GOLD LAYER – Star Schema
-  dim_date · dim_customer · dim_product · dim_channel · ...
+GOLD LAYER – Kimball Star Schema (PostgreSQL gold schema)
+  dim_date · dim_customer · dim_product · dim_channel · dim_campaign
   fact_orders · fact_payments · fact_returns · fact_inventory · fact_marketing
         ↓
-GOLD ANALYTICS
+GOLD ANALYTICS & DECISION MARTS
   Daily Financials · Customer Health · Product Profitability
   Revenue Leakage · Inventory Risk · Marketing Efficiency
-  Business Anomalies · Investigation Queue
+  Statistical Anomaly Detection · Prioritized Investigation Queue
         ↓
-POWER BI DECISION LAYER
-  8 Dashboard Pages + Drill-through
+POWER BI SEMANTIC LAYER & ARTIFACT EXPORT
+  8 Executive Pages · PBIT / PBIP Templates · Investigation Copilot Briefs
 ```
 
 ---
@@ -191,59 +215,61 @@ POWER BI DECISION LAYER
 
 ---
 
-## 🔍 Revenue Intelligence Features
+## 🔍 Revenue Intelligence & Automation Features
 
 | Engine | Description |
 |--------|-------------|
-| **Revenue Leakage Radar** | Identifies estimated impact from Returns, Discounts, Payment Failures, Low-Margin sales |
-| **Customer Health Score** | Weighted composite of Recency, Frequency, Monetary, Profitability, Trend, Behavior |
+| **Automation Pipeline Engine** | Event-driven watcher, background daemon scheduler, pre-flight diagnostics, and mart exporter |
+| **Revenue Leakage Radar** | Identifies quantified impact from Returns, Discounts, Payment Failures, and Low-Margin erosion |
+| **Customer Health Score** | Weighted composite of Recency, Frequency, Monetary, Profitability, Trend, and Behavior |
 | **Product Profitability** | Classifies products: Revenue Winner / Revenue Trap / Hidden Winner / Dead Stock |
-| **Anomaly Detection** | IQR-based detection on order value, quantity, discount |
-| **Investigation Queue** | Prioritized list of business signals requiring analyst attention |
+| **Statistical Anomaly Detection** | IQR, Z-Score, and multivariate Isolation Forest anomaly interceptors |
+| **Investigation Queue & Copilot**| Prioritized work queue with automated AI executive diagnostic memos |
 
 ---
 
-## 📊 Power BI Pages
+## 📊 Power BI Semantic Suite
 
 | Page | Focus |
 |------|-------|
-| 01 Executive Command Center | KPIs: Revenue, Profit, Margin, Leakage |
-| 02 Revenue Intelligence | Trends, channels, categories, drill-down |
-| 03 Revenue Leakage Radar | Waterfall by leakage mechanism |
-| 04 Customer Intelligence | Scatter: Revenue × Margin, health tiers |
-| 05 Product & Profitability | Quadrant: Revenue vs Margin |
-| 06 Inventory & Operations | Stockout days, dead stock, turnover |
-| 07 Marketing Efficiency | ROAS, CAC, Contribution After Marketing |
-| 08 Investigation Queue | Analyst work queue with evidence |
+| 01 Executive Command Center | Strategic KPIs: Revenue, Gross Profit, Margin %, Leakage Impact |
+| 02 Revenue Intelligence | Channel, category, and regional performance with drill-down |
+| 03 Revenue Leakage Radar | Waterfall attribution across return, discount, and margin leakages |
+| 04 Customer Intelligence | Customer health tiers, CLV, churn risk, and profitability scatter |
+| 05 Product & Profitability | Quadrant analysis: Margin % vs Net Revenue, SKU classifications |
+| 06 Inventory & Operations | Stockout estimates, dead stock risk, and inventory turnover |
+| 07 Marketing Efficiency | ROAS, CAC, contribution after marketing, and channel ROI |
+| 08 Investigation Queue | Operational triage queue with prioritized evidence dossiers |
 
 ---
 
-## ⚠️ Data Assumptions
+## ⚠️ Data Assumptions & Operating Boundaries
 
-- Product cost is treated as full COGS proxy.
-- Returns are valued at the transaction selling price.
-- Stockout revenue impact is an **estimate**, not confirmed lost revenue.
-- Campaign attribution follows the available `orders_attributed` field.
-- Customer Health Score is a **prioritization model**, not a causal model.
-- Anomaly detection identifies unusual behavior — **not fraud**.
-- Discount leakage flags products/orders exceeding the configured threshold.
+- Product cost is treated as the full unit COGS proxy.
+- Returns are valued at the original transaction selling price.
+- Stockout revenue impact is an **estimate**, calculated from velocity during stockout windows.
+- Campaign attribution follows the available `orders_attributed` model.
+- Customer Health Score is a **prioritization model**, not a causal churn predictor.
+- Anomaly detection identifies statistical deviations — **not fraudulent intent**.
+- Discount leakage flags products/orders exceeding configured business thresholds.
 
 ---
 
 ## 🏗 Implementation Roadmap
 
 - [x] Phase 1: Project scaffold & business definition
-- [x] Phase 2: Synthetic data generator & source mapping
-- [x] Phase 3: Bronze ingestion pipeline
-- [x] Phase 4: Data Quality & Reconciliation Engine
-- [x] Phase 5: Silver transformation & deduplication
-- [x] Phase 6: Kimball star schema DDL & indexes
-- [x] Phase 7: Gold financial waterfall engine
+- [x] Phase 2: Omnichannel synthetic dataset generator & source mapping
+- [x] Phase 3: Bronze ingestion pipeline with audit run tracking
+- [x] Phase 4: Enterprise Data Quality & Reconciliation Engine
+- [x] Phase 5: Silver transformation, normalization & deduplication
+- [x] Phase 6: Kimball star schema DDL, indexes & integrity constraints
+- [x] Phase 7: Gold financial waterfall & reconciled P&L engine
 - [x] Phase 8: Intelligence SQL engines (Customer, Product, Leakage, Inventory, Marketing)
-- [x] Phase 9: Decision & Investigation Queue
-- [x] Phase 10: Power BI suite (DAX measures, Power Query M, dark theme, 8-page spec)
+- [x] Phase 9: Prioritized Decision & Investigation Queue
+- [x] Phase 10: Power BI semantic suite (DAX measures, M scripts, dark theme, 8-page spec)
 - [x] Phase 11: Python statistical/ML anomalies, forecasting & Investigation Copilot
-- [x] Phase 12: Complete documentation & comprehensive test suite (51 tests passing)
+- [x] Phase 12: Complete documentation & comprehensive test suite (63 tests passing)
+- [x] Phase 13: Continuous Automation Pipeline Engine (watcher, daemon, health, export) & Commercial Royalty Licensing
 
 ---
 
@@ -251,26 +277,39 @@ POWER BI DECISION LAYER
 
 | Module / File | Purpose |
 | :--- | :--- |
-| [`pipeline.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/pipeline.py) | Main end-to-end pipeline runner with modular phase execution |
-| [`config.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/config.py) | Global configuration, connection pools, and leakage thresholds |
-| [`data/generate_sample_data.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/data/generate_sample_data.py) | Omnichannel synthetic dataset generator for all 7 raw entities |
-| [`ingestion/import_excel.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/ingestion/import_excel.py) | Excel workbook importer that creates canonical raw CSVs for preprocessing |
-| [`ingestion/ingest_bronze.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/ingestion/ingest_bronze.py) | Multi-source CSV ingestion into raw Bronze layer with run tracking |
-| [`quality/run_checks.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/quality/run_checks.py) | Data quality rules, foreign key integrity, and reconciliation engine |
-| [`transformation/transform_silver.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/transformation/transform_silver.py) | Bronze to Silver normalization, typing, and deduplication |
-| [`transformation/build_gold.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/transformation/build_gold.py) | Kimball star schema dimensional modeling & gold table materialization |
-| [`warehouse/init.sql`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/warehouse/init.sql) | Complete DDL for Bronze, Silver, and Gold star schema + indexes |
-| [`analytics/*.sql`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/analytics/) | 7 Gold analytical SQL queries (Financials, Leakage, Health, etc.) |
-| [`python/anomaly_detection/detector.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/python/anomaly_detection/detector.py) | IQR, Z-Score, and Isolation Forest anomaly detection engine |
-| [`python/forecasting/forecast_engine.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/python/forecasting/forecast_engine.py) | Holt-Winters and linear trend 30-day forward-looking forecasting |
-| [`python/reporting/investigation_copilot.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/python/reporting/investigation_copilot.py) | AI / Analytical Copilot synthesizing signals into executive diagnostic briefs |
-| [`python/reporting/executive_report.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/python/reporting/executive_report.py) | Automated executive financial briefing and decision memo generator |
-| [`powerbi/dax_measures.dax`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/powerbi/dax_measures.dax) | Full semantic DAX measures library organized across all 8 pages |
-| [`powerbi/power_query_m.pq`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/powerbi/power_query_m.pq) | Copy-paste M scripts to ingest PostgreSQL gold star schema |
-| [`powerbi/revenueos_theme.json`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/powerbi/revenueos_theme.json) | High-contrast Dark Slate executive UI theme |
-| [`powerbi/page_specifications.md`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/powerbi/page_specifications.md) | Visual blueprints and drill-through specs for all 8 dashboard pages |
-| [`tests/`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/tests/) | Comprehensive pytest suite (51 passing unit & integration tests) |
-| [`docs/`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/docs/) | Full documentation: Architecture, BRD, Data Dictionary, Runbook, Assumptions |
+| [`pipeline.py`](pipeline.py) | Main end-to-end pipeline runner with modular phase execution & CLI |
+| [`engine/pipeline_engine.py`](engine/pipeline_engine.py) | Automation Engine: continuous file watcher, daemon scheduler, pre-flight diagnostics, export |
+| [`config.py`](config.py) | Global configuration, connection pools, and leakage thresholds |
+| [`data/generate_sample_data.py`](data/generate_sample_data.py) | Omnichannel synthetic dataset generator for all 7 raw entities |
+| [`ingestion/import_excel.py`](ingestion/import_excel.py) | Excel workbook importer that creates canonical raw CSVs for preprocessing |
+| [`ingestion/ingest_bronze.py`](ingestion/ingest_bronze.py) | Multi-source CSV ingestion into raw Bronze layer with run tracking |
+| [`quality/run_checks.py`](quality/run_checks.py) | Data quality rules, foreign key integrity, and reconciliation engine |
+| [`transformation/transform_silver.py`](transformation/transform_silver.py) | Bronze to Silver normalization, typing, and deduplication |
+| [`transformation/build_gold.py`](transformation/build_gold.py) | Kimball star schema dimensional modeling & gold table materialization |
+| [`warehouse/init.sql`](warehouse/init.sql) | Complete DDL for Bronze, Silver, and Gold star schema + pipeline_runs table |
+| [`analytics/*.sql`](analytics/) | 7 Gold analytical SQL queries (Financials, Leakage, Health, etc.) |
+| [`python/anomaly_detection/detector.py`](python/anomaly_detection/detector.py) | IQR, Z-Score, and Isolation Forest anomaly detection engine |
+| [`python/forecasting/forecast_engine.py`](python/forecasting/forecast_engine.py) | Holt-Winters and linear trend 30-day forward-looking forecasting |
+| [`python/reporting/investigation_copilot.py`](python/reporting/investigation_copilot.py) | AI / Analytical Copilot synthesizing signals into executive diagnostic briefs |
+| [`python/reporting/executive_report.py`](python/reporting/executive_report.py) | Automated executive financial briefing and decision memo generator |
+| [`powerbi/dax_measures.dax`](powerbi/dax_measures.dax) | Full semantic DAX measures library organized across all 8 pages |
+| [`powerbi/power_query_m.pq`](powerbi/power_query_m.pq) | Copy-paste M scripts to ingest PostgreSQL gold star schema |
+| [`powerbi/revenueos_theme.json`](powerbi/revenueos_theme.json) | High-contrast Dark Slate executive UI theme |
+| [`powerbi/page_specifications.md`](powerbi/page_specifications.md) | Visual blueprints and drill-through specs for all 8 dashboard pages |
+| [`powerbi/RevenueOS.pbit`](powerbi/RevenueOS.pbit) | Compiled Power BI Template with embedded Dark Theme & DAX schema |
+| [`powerbi/RevenueOS.pbip`](powerbi/RevenueOS.pbip) | Power BI Developer Project definition for CI/CD version control |
+| [`tests/`](tests/) | Comprehensive pytest suite (63 passing unit & integration tests) |
+| [`docs/`](docs/) | Full documentation: Architecture, BRD, Data Dictionary, Runbooks, Assumptions |
+
+---
+
+## 📜 Commercial Source-Available & Royalty License
+
+RevenueOS is licensed under the **RevenueOS Source-Available Commercial & Royalty License (Version 1.0)**.
+
+- **Non-Commercial Use**: You are free to view, evaluate, test, and conduct academic/educational research using this repository.
+- **Commercial Exploitation Strictly Prohibited**: No individual, company, or organization has the right to profit, commercialize, resell, sub-license, host as SaaS, or monetize RevenueOS or any derivative works without an executed commercial license agreement and royalty payments to the author (**Sarvesh Sharma**).
+- **Inquiries & Commercial Licensing**: For commercial licensing inquiries or royalty agreements, please open an issue or contact the copyright holder via GitHub (`@25sarvesh2005`).
 
 ---
 
