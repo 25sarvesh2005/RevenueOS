@@ -19,6 +19,7 @@ import argparse
 import sys
 import time
 from datetime import datetime, timezone
+from pathlib import Path
 
 from config import get_run_id, logger
 
@@ -44,9 +45,14 @@ def main():
     )
     parser.add_argument(
         "--phase",
-        choices=["bronze", "quality", "silver", "gold", "anomalies", "forecast", "report", "all"],
+        choices=["excel", "bronze", "quality", "silver", "gold", "anomalies", "forecast", "report", "all"],
         default="all",
         help="Which pipeline phase to run.",
+    )
+    parser.add_argument(
+        "--excel-path",
+        default=None,
+        help="Excel workbook or folder to import before Bronze. Defaults to data/raw/excel.",
     )
     parser.add_argument(
         "--truncate",
@@ -65,6 +71,16 @@ def main():
     logger.info("Truncate: %s", args.truncate)
     logger.info("Started : %s UTC", started.strftime("%Y-%m-%d %H:%M:%S"))
     logger.info("=" * 60)
+
+    # ----------------------------------------------------------------
+    # Excel import / preprocessing
+    # ----------------------------------------------------------------
+    if args.phase in ("excel", "all"):
+        from config import RAW_DIR
+        from ingestion.import_excel import import_excel_paths
+
+        sources = [Path(args.excel_path)] if args.excel_path else [RAW_DIR / "excel"]
+        run_phase("Excel Import", import_excel_paths, sources, out_dir=RAW_DIR, overwrite=True)
 
     # ----------------------------------------------------------------
     # Bronze ingestion

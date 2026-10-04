@@ -7,7 +7,7 @@ RevenueOS is an end-to-end Data Analytics and Decision Intelligence platform eng
 ```
 ┌────────────────────────────────────────────────────────────────────────────────────────┐
 │                               OPERATIONAL DATA SOURCES                                 │
-│  Orders CSV/API │ Customers │ Products │ Payments │ Returns │ Inventory │ Marketing   │
+│  Excel/CSV/API  │ Customers │ Products │ Payments │ Returns │ Inventory │ Marketing   │
 └───────────────────────────────────────────┬────────────────────────────────────────────┘
                                             │
                                             ▼

@@ -101,6 +101,11 @@ ENTITIES: dict[str, dict] = {
     },
 }
 
+OPTIONAL_SOURCE_COLUMNS: dict[str, set[str]] = {
+    "orders": {"location", "status"},
+    "payments": {"failure_reason"},
+}
+
 
 # ---------------------------------------------------------------------------
 # Core ingestion logic
@@ -131,8 +136,7 @@ def _check_schema(df: pd.DataFrame, expected: set[str], entity: str,
     """Warn if source columns are missing or unexpected."""
     actual = set(df.columns.str.lower())
     missing = expected - actual
-    unexpected = actual - expected - {"location", "status", "failure_reason",
-                                       "return_reason"}  # known optional cols
+    unexpected = actual - expected - OPTIONAL_SOURCE_COLUMNS.get(entity, set())
 
     if missing:
         msg = f"Missing expected columns in {filepath.name}: {sorted(missing)}"
@@ -196,6 +200,12 @@ def ingest_entity(entity: str, truncate: bool = False,
 
         # Schema drift check
         _check_schema(df, cfg["expected_columns"], entity, filepath, engine, run_id)
+
+        allowed_source_cols = cfg["expected_columns"] | OPTIONAL_SOURCE_COLUMNS.get(entity, set())
+        extra_cols = [c for c in df.columns if c not in allowed_source_cols]
+        if extra_cols:
+            logger.info("Dropping columns not present in bronze.%s: %s", entity, extra_cols)
+            df = df[[c for c in df.columns if c in allowed_source_cols]]
 
         # Add pipeline metadata
         df["run_id"]              = run_id

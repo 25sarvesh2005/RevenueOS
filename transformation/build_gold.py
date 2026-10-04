@@ -67,6 +67,21 @@ def _read_silver(engine, table: str) -> pd.DataFrame:
     return pd.read_sql(f"SELECT * FROM {SCHEMA_SILVER}.{table}", engine)
 
 
+def _read_gold_key_map(engine, table: str, natural_col: str,
+                       key_col: str) -> pd.Series:
+    """Return a natural-key to surrogate-key mapping from a gold dimension."""
+    df = pd.read_sql(
+        f"SELECT {natural_col}, {key_col} FROM {SCHEMA_GOLD}.{table}",
+        engine,
+    )
+    return df.dropna(subset=[natural_col]).drop_duplicates(natural_col).set_index(natural_col)[key_col]
+
+
+def _nullable_int(series: pd.Series) -> pd.Series:
+    """Convert mapped surrogate keys to nullable integers for SQL loading."""
+    return pd.to_numeric(series, errors="coerce").astype("Int64")
+
+
 # ---------------------------------------------------------------------------
 # Step 1 – Dimension: Date
 # ---------------------------------------------------------------------------
@@ -170,6 +185,11 @@ def build_fact_orders(engine, orders: pd.DataFrame,
 
     # Join product cost for COGS
     cost_map = products.set_index("product_id")["cost"]
+    customer_key_map = _read_gold_key_map(engine, "dim_customer", "customer_id", "customer_key")
+    product_key_map = _read_gold_key_map(engine, "dim_product", "product_id", "product_key")
+    channel_key_map = _read_gold_key_map(engine, "dim_channel", "channel_name", "channel_key")
+    location_key_map = _read_gold_key_map(engine, "dim_location", "location_name", "location_key")
+
     orders = orders.copy()
     orders["cogs"] = orders["quantity"] * orders["product_id"].map(cost_map)
     orders["gross_profit"] = orders["net_sales"] - orders["cogs"]
@@ -179,25 +199,31 @@ def build_fact_orders(engine, orders: pd.DataFrame,
         np.nan,
     )
     orders["date_key"] = _date_key(orders["order_date"])
+    orders["customer_key"] = _nullable_int(orders["customer_id"].map(customer_key_map))
+    orders["product_key"] = _nullable_int(orders["product_id"].map(product_key_map))
+    orders["channel_key"] = _nullable_int(orders["channel"].map(channel_key_map)) if "channel" in orders.columns else pd.Series(index=orders.index, dtype="Int64")
+    orders["location_key"] = _nullable_int(orders["location"].map(location_key_map)) if "location" in orders.columns else pd.Series(index=orders.index, dtype="Int64")
 
     fact = orders.rename(columns={"discount": "discount_pct"}).copy()
-    fact_cols = ["order_id","date_key","customer_id","product_id","channel",
-                 "location","status","quantity","unit_price","discount_pct",
+    fact_cols = ["order_id","date_key","customer_key","product_key",
+                 "channel_key","location_key","status","quantity","unit_price","discount_pct",
                  "gross_revenue","discount_amount","net_sales",
                  "cogs","gross_profit","gross_margin_pct","run_id"]
     fact = fact[[c for c in fact_cols if c in fact.columns]]
 
-    # Note: We write without FK key integers for simplicity (IDs are used directly).
-    # In a production system you would look up surrogate keys here.
     _upsert(fact, "fact_orders", engine)
     return fact
 
 
 def build_fact_payments(engine, payments: pd.DataFrame) -> None:
     logger.info("[fact_payments] Building")
+    payment_method_key_map = _read_gold_key_map(
+        engine, "dim_payment_method", "method_name", "payment_method_key"
+    )
     df = payments.copy()
     df["date_key"] = _date_key(df["payment_date"])
-    fact_cols = ["payment_id","order_id","date_key","payment_method",
+    df["payment_method_key"] = _nullable_int(df["payment_method"].map(payment_method_key_map))
+    fact_cols = ["payment_id","order_id","date_key","payment_method_key",
                  "amount","payment_status","failure_reason","run_id"]
     df = df[[c for c in fact_cols if c in df.columns]]
     _upsert(df, "fact_payments", engine)
@@ -208,11 +234,13 @@ def build_fact_returns(engine, returns: pd.DataFrame,
     logger.info("[fact_returns] Building")
     # Look up unit_price from orders to calculate return_value
     price_map = orders.groupby("order_id")["unit_price"].first()
+    product_key_map = _read_gold_key_map(engine, "dim_product", "product_id", "product_key")
     df = returns.copy()
     df["unit_price"]   = df["order_id"].map(price_map)
     df["return_value"] = df["quantity_returned"] * df["unit_price"]
     df["date_key"]     = _date_key(df["return_date"])
-    fact_cols = ["return_id","order_id","product_id","date_key",
+    df["product_key"]  = _nullable_int(df["product_id"].map(product_key_map))
+    fact_cols = ["return_id","order_id","date_key","product_key",
                  "quantity_returned","return_reason","return_value","run_id"]
     df = df[[c for c in fact_cols if c in df.columns]]
     _upsert(df, "fact_returns", engine)
@@ -223,11 +251,17 @@ def build_fact_inventory(engine, inventory: pd.DataFrame,
                          products: pd.DataFrame) -> None:
     logger.info("[fact_inventory] Building")
     cost_map = products.set_index("product_id")["cost"]
+    product_key_map = _read_gold_key_map(engine, "dim_product", "product_id", "product_key")
+    supplier_key_map = _read_gold_key_map(engine, "dim_supplier", "supplier_name", "supplier_key")
+    supplier_map = products.set_index("product_id")["supplier"] if "supplier" in products.columns else pd.Series(dtype=object)
     df = inventory.copy()
     df["inventory_value"] = df["units_available"] * df["product_id"].map(cost_map)
     df["is_stockout"]     = df["units_available"] == 0
     df["date_key"]        = _date_key(df["snapshot_date"])
-    fact_cols = ["product_id","warehouse","date_key","units_available",
+    df["product_key"]     = _nullable_int(df["product_id"].map(product_key_map))
+    df["supplier_key"]    = _nullable_int(df["product_id"].map(supplier_map).map(supplier_key_map)) if not supplier_map.empty else pd.Series(index=df.index, dtype="Int64")
+    fact_cols = ["date_key","product_key","supplier_key","warehouse","units_available",
+                 "units_reserved","units_sold","inventory_value","is_stockout","run_id"]
                  "units_reserved","units_sold","inventory_value","is_stockout","run_id"]
     df = df[[c for c in fact_cols if c in df.columns]]
     _upsert(df, "fact_inventory", engine)
@@ -235,6 +269,7 @@ def build_fact_inventory(engine, inventory: pd.DataFrame,
 
 def build_fact_marketing(engine, marketing: pd.DataFrame) -> None:
     logger.info("[fact_marketing] Building")
+    campaign_key_map = _read_gold_key_map(engine, "dim_campaign", "campaign_id", "campaign_key")
     df = marketing.copy()
     df["conversion_rate"] = np.where(
         df["clicks"] > 0, df["orders_attributed"] / df["clicks"], np.nan
@@ -243,7 +278,8 @@ def build_fact_marketing(engine, marketing: pd.DataFrame) -> None:
         df["spend"] > 0, df["revenue_attributed"] / df["spend"], np.nan
     )
     df["date_key"] = _date_key(df["date"])
-    fact_cols = ["campaign_id","date_key","spend","impressions","clicks",
+    df["campaign_key"] = _nullable_int(df["campaign_id"].map(campaign_key_map))
+    fact_cols = ["date_key","campaign_key","spend","impressions","clicks",
                  "orders_attributed","revenue_attributed","ctr",
                  "conversion_rate","roas","run_id"]
     df = df[[c for c in fact_cols if c in df.columns]]
@@ -467,15 +503,15 @@ def build_gold_customer_health(engine, orders: pd.DataFrame,
     df["run_id"]         = run_id
     df["computed_at"]    = datetime.now(timezone.utc).isoformat()
 
-    cols = ["customer_id","name","segment","region","total_revenue",
+    df = df.rename(columns={"name": "customer_name"})
+    cols = ["customer_id","customer_name","segment","region","total_revenue",
             "total_gross_profit","gross_margin_pct","order_count","avg_order_value",
             "return_rate","discount_dependency","payment_fail_rate",
             "days_since_last_order","revenue_last_30d","revenue_prev_30d",
             "revenue_trend_pct","recency_score","frequency_score","monetary_score",
             "profitability_score","trend_score","behavior_score","health_score",
             "health_tier","run_id","computed_at"]
-    df = df.rename(columns={"name": "customer_name"})
-    df = df[[c for c in cols if c in df.columns or c == "customer_name"]]
+    df = df[[c for c in cols if c in df.columns]]
 
     _upsert(df, "gold_customer_health", engine)
 

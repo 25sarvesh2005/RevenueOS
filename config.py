@@ -18,7 +18,7 @@ from sqlalchemy.engine import Engine
 # ---------------------------------------------------------------------------
 # Load .env
 # ---------------------------------------------------------------------------
-load_dotenv(Path(__file__).parent.parent / ".env")
+load_dotenv(Path(__file__).parent / ".env")
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -77,7 +77,7 @@ SCHEMA_SILVER = os.getenv("SCHEMA_SILVER", "silver")
 SCHEMA_GOLD   = os.getenv("SCHEMA_GOLD",   "gold")
 
 # Source data paths
-ROOT_DIR      = Path(__file__).parent.parent
+ROOT_DIR      = Path(__file__).parent
 DATA_DIR      = ROOT_DIR / "data"
 RAW_DIR       = DATA_DIR / "raw"
 PROCESSED_DIR = DATA_DIR / "processed"

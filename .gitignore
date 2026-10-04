@@ -44,6 +44,9 @@ coverage.xml
 
 # Raw & Processed Data (ignore large CSVs but keep folder structure)
 data/raw/**/*.csv
+data/raw/**/*.xlsx
+data/raw/**/*.xlsm
+data/raw/**/*.xls
 data/processed/**/*
 !data/raw/**/.gitkeep
 !data/sample/.gitkeep

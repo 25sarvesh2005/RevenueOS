@@ -111,7 +111,7 @@ CALCULATE(
 Discount Leakage Amount = 
 CALCULATE(
     SUM(fact_orders[discount_amount]),
-    fact_orders[discount_rate] > 0.15
+    fact_orders[discount_pct] > 0.15
 )
 
 Return Leakage Amount = 
@@ -133,21 +133,18 @@ DIVIDE(
 Cancellation Leakage Amount = 
 CALCULATE(
     SUM(fact_orders[net_sales]),
-    fact_orders[order_status] = "CANCELLED"
+    fact_orders[status] = "CANCELLED"
 )
 
 Cancellation Rate % = 
 DIVIDE(
-    CALCULATE([Order Count], fact_orders[order_status] = "CANCELLED"),
+    CALCULATE([Order Count], fact_orders[status] = "CANCELLED"),
     [Order Count],
     0
 )
 
 Estimated Stockout Revenue Loss = 
-CALCULATE(
-    SUM(fact_inventory[estimated_lost_revenue]),
-    fact_inventory[is_stockout] = TRUE()
-)
+SUM(gold_inventory_risk[estimated_stockout_impact])
 
 Total Revenue Leakage = 
 [Discount Leakage Amount] + 
@@ -188,19 +185,19 @@ AVERAGE(gold_customer_health[health_score])
 Healthy Customer Count = 
 CALCULATE(
     DISTINCTCOUNT(gold_customer_health[customer_id]),
-    gold_customer_health[health_status] = "Healthy"
+    gold_customer_health[health_tier] = "HIGH"
 )
 
 At Risk Customer Count = 
 CALCULATE(
     DISTINCTCOUNT(gold_customer_health[customer_id]),
-    gold_customer_health[health_status] = "At Risk"
+    gold_customer_health[health_tier] = "AT-RISK"
 )
 
 At Risk Revenue Exposure = 
 CALCULATE(
-    SUM(gold_customer_health[total_spend]),
-    gold_customer_health[health_status] = "At Risk"
+    SUM(gold_customer_health[total_revenue]),
+    gold_customer_health[health_tier] = "AT-RISK"
 )
 
 
@@ -220,16 +217,16 @@ CALCULATE(
     gold_product_profitability[classification] = "Revenue Trap"
 )
 
-Profit Driver Gross Profit = 
+Revenue Winner Gross Profit = 
 CALCULATE(
     [Gross Profit],
-    gold_product_profitability[classification] = "Profit Driver"
+    gold_product_profitability[classification] = "Revenue Winner"
 )
 
-Profit Driver SKU Count = 
+Revenue Winner SKU Count = 
 CALCULATE(
     DISTINCTCOUNT(gold_product_profitability[product_id]),
-    gold_product_profitability[classification] = "Profit Driver"
+    gold_product_profitability[classification] = "Revenue Winner"
 )
 
 Product Contribution Margin % = 
@@ -279,8 +276,11 @@ SUM(fact_marketing[impressions])
 Total Clicks = 
 SUM(fact_marketing[clicks])
 
-Total Marketing Conversions = 
-SUM(fact_marketing[conversions])
+Marketing Attributed Orders = 
+SUM(fact_marketing[orders_attributed])
+
+Marketing Attributed Revenue = 
+SUM(fact_marketing[revenue_attributed])
 
 Click Through Rate (CTR) % = 
 DIVIDE([Total Clicks], [Total Impressions], 0)
@@ -289,10 +289,10 @@ Cost Per Click (CPC) =
 DIVIDE([Total Ad Spend], [Total Clicks], 0)
 
 Blended Customer Acquisition Cost (CAC) = 
-DIVIDE([Total Ad Spend], [Order Count], 0)
+DIVIDE([Total Ad Spend], [Marketing Attributed Orders], 0)
 
 Return on Ad Spend (ROAS) = 
-DIVIDE([Net Sales], [Total Ad Spend], 0)
+DIVIDE([Marketing Attributed Revenue], [Total Ad Spend], 0)
 
 Net Contribution After Marketing = 
 [Gross Profit] - [Total Ad Spend]

@@ -139,7 +139,6 @@ def generate_products() -> pd.DataFrame:
 
     records = []
     for pid, name, cat, subcat, supp, cost, msrp in catalog:
-        margin = round((msrp - cost) / msrp, 4)
         records.append({
             "product_id": pid,
             "product_name": name,
@@ -148,7 +147,6 @@ def generate_products() -> pd.DataFrame:
             "supplier": supp,
             "cost": cost,
             "selling_price": msrp,
-            "margin_pct": margin,
         })
 
     return pd.DataFrame(records)
@@ -365,11 +363,16 @@ def generate_inventory(products_df: pd.DataFrame) -> pd.DataFrame:
                 else:
                     units_avail = max(0, int(np.random.normal(loc=120, scale=45)))
 
+                units_reserved = int(units_avail * random.uniform(0.02, 0.18)) if units_avail else 0
+                units_sold = max(0, int(np.random.normal(loc=18, scale=8)))
+
                 records.append({
                     "product_id": pid,
                     "warehouse": wh,
                     "snapshot_date": s_date,
                     "units_available": units_avail,
+                    "units_reserved": units_reserved,
+                    "units_sold": units_sold,
                 })
 
     return pd.DataFrame(records)
@@ -397,7 +400,9 @@ def generate_marketing() -> pd.DataFrame:
             spend = round(base_spend * mult, 2)
             impressions = int(base_imp * mult)
             clicks = int(base_clicks * mult)
-            conversions = max(1, int(base_conv * mult))
+            orders_attributed = max(1, int(base_conv * mult))
+            avg_order_value = random.uniform(1800.0, 6500.0)
+            revenue_attributed = round(orders_attributed * avg_order_value, 2)
 
             records.append({
                 "campaign_id": cmp_id,
@@ -406,7 +411,8 @@ def generate_marketing() -> pd.DataFrame:
                 "spend": spend,
                 "impressions": impressions,
                 "clicks": clicks,
-                "conversions": conversions,
+                "orders_attributed": orders_attributed,
+                "revenue_attributed": revenue_attributed,
             })
 
     return pd.DataFrame(records)
@@ -417,6 +423,7 @@ def main():
     parser.add_argument("--rows", type=int, default=12000, help="Number of orders to generate")
     parser.add_argument("--customers", type=int, default=1200, help="Number of customer profiles")
     parser.add_argument("--out-dir", type=str, default="data/raw", help="Output directory")
+    parser.add_argument("--excel", action="store_true", help="Also generate an Excel workbook with all entities in data/raw/excel/revenueos_sample.xlsx")
     args = parser.parse_args()
 
     if hasattr(sys.stdout, "reconfigure"):
@@ -487,6 +494,21 @@ def main():
     mkt_path.parent.mkdir(parents=True, exist_ok=True)
     df_mkt.to_csv(mkt_path, index=False)
     print(f"  [OK] Saved {len(df_mkt):,} marketing records to {mkt_path}")
+
+    if args.excel:
+        excel_dir = out_base / "excel"
+        excel_dir.mkdir(parents=True, exist_ok=True)
+        excel_path = excel_dir / "revenueos_sample.xlsx"
+        print(f"\n[EXCEL] Writing all entities to workbook: {excel_path}...")
+        with pd.ExcelWriter(excel_path, engine="openpyxl") as writer:
+            df_orders.to_excel(writer, sheet_name="orders", index=False)
+            df_cust.to_excel(writer, sheet_name="customers", index=False)
+            df_prod.to_excel(writer, sheet_name="products", index=False)
+            df_payments.to_excel(writer, sheet_name="payments", index=False)
+            df_returns.to_excel(writer, sheet_name="returns", index=False)
+            df_inv.to_excel(writer, sheet_name="inventory", index=False)
+            df_mkt.to_excel(writer, sheet_name="marketing", index=False)
+        print(f"  [OK] Saved multi-sheet Excel workbook to {excel_path}")
 
     print("=" * 65)
     print("[SUCCESS] All 7 omnichannel datasets successfully generated.")

@@ -14,7 +14,7 @@ Before assembling visuals, ensure the following star schema relationships are ac
        └───────┬───────┘
                │ 1:date_key
                ├───────────────────────┬──────────────────────┬──────────────────────┐
-               │ *:order_date_key      │ *:payment_date_key   │ *:return_date_key    │ *:snapshot_date_key
+               │ *:date_key            │ *:date_key           │ *:date_key           │ *:date_key
        ┌───────▼───────┐       ┌───────▼───────┐      ┌───────▼───────┐      ┌───────▼───────┐
        │  fact_orders  │       │ fact_payments │      │ fact_returns  │      │fact_inventory │
        └───────┬───────┘       └───────────────┘      └───────┬───────┘      └───────┬───────┘
@@ -119,7 +119,7 @@ Quantify, isolate, and trace the 6 commercial leakage vectors down to the transa
    - Values: `[Payment Failure Amount]`, `[Payment Failure Rate %]` (Conditional color formatting: red highlight on high timeout/decline)
 4. **Visual 3: Discount Abuse Outlier Scatter**:
    - Visual Type: Scatter Chart
-   - X-Axis: `fact_orders[discount_rate]`
+   - X-Axis: `fact_orders[discount_pct]`
    - Y-Axis: `fact_orders[gross_revenue]`
    - Details: `fact_orders[order_id]`
    - Play/Color Axis: `dim_channel[channel_name]`
@@ -218,7 +218,7 @@ Evaluate campaign spend, attribution, ROAS, and CAC against actual net margin.
    - X-Axis: `dim_date[full_date]`
    - Values: `[Total Ad Spend]`, `[Net Sales]`
 4. **Visual 3: Campaign Performance Matrix**:
-   - Columns: `campaign_name`, `channel`, `spend`, `impressions`, `clicks`, `conversions`, `cpc`, `roas`
+   - Columns: `campaign_id`, `channel`, `spend`, `impressions`, `clicks`, `orders_attributed`, `cpc`, `roas`
 
 ---
 

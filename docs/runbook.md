@@ -74,7 +74,10 @@ python pipeline.py --truncate
 The orchestrator [`pipeline.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/pipeline.py) supports modular execution:
 
 ```bash
-# Run only Bronze ingestion (Loads raw CSVs into bronze schema)
+# Convert Excel workbook sheets into canonical raw CSVs
+python pipeline.py --phase excel
+
+# Run only Bronze ingestion (loads canonical raw CSVs into bronze schema)
 python pipeline.py --phase bronze
 
 # Run only Data Quality validation (Logs checks to bronze.quality_log)

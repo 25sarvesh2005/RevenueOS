@@ -58,7 +58,10 @@ python pipeline.py --truncate
 ## Phase-by-Phase Run
 
 ```bash
-# Phase 1: Ingest CSVs → Bronze
+# Phase 0: Import Excel sheets → canonical raw CSVs
+python pipeline.py --phase excel
+
+# Phase 1: Ingest canonical CSVs → Bronze
 python pipeline.py --phase bronze
 
 # Phase 2: Run quality checks
@@ -75,10 +78,19 @@ python pipeline.py --phase gold
 
 ## Adding New Data Files
 
+### Excel workbooks
+
+1. Place `.xlsx` or `.xlsm` workbooks into `data/raw/excel/`.
+2. Use one sheet per entity: `orders`, `customers`, `products`, `payments`, `returns`, `inventory`, and `marketing`.
+3. Run `python pipeline.py --phase excel` to generate canonical CSVs into `data/raw/<entity>/`.
+4. Run `python pipeline.py --truncate` to preprocess and rebuild the Power BI-ready Gold layer.
+
+### Canonical CSVs
+
 1. Place new CSVs into `data/raw/<entity>/`.
 2. Run the pipeline or just the Bronze phase.
 3. New files are automatically discovered — no code changes needed.
-4. If the CSV has extra columns, they will be logged as "unexpected" but won't break ingestion.
+4. If the CSV has extra columns, they will be logged as "unexpected" and dropped before Bronze loading.
 
 ---
 

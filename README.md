@@ -25,7 +25,8 @@ revenueos/
 ├── docker-compose.yml
 │
 ├── data/
-│   ├── raw/                 # Drop your CSV files here
+│   ├── raw/                 # Drop Excel workbooks or canonical CSV files here
+│   │   ├── excel/           # Source .xlsx/.xlsm workbooks
 │   │   ├── orders/
 │   │   ├── customers/
 │   │   ├── products/
@@ -40,6 +41,7 @@ revenueos/
 │   └── sample/
 │
 ├── ingestion/
+│   ├── import_excel.py      # Excel sheets → canonical raw CSVs
 │   └── ingest_bronze.py     # CSV → Bronze PostgreSQL
 │
 ├── quality/
@@ -91,9 +93,21 @@ docker compose up -d
 pip install -r requirements.txt
 ```
 
-### 4. Drop your CSV files
+### 4. Import Excel or drop CSV files
 
-Place your CSV files into the corresponding `data/raw/<entity>/` folders:
+Preferred Excel workflow:
+
+```bash
+# Put workbooks in data/raw/excel/ and convert sheets to canonical raw CSVs
+python pipeline.py --phase excel
+
+# Or import one workbook explicitly
+python pipeline.py --phase excel --excel-path data/raw/excel/revenueos_source.xlsx
+```
+
+The Excel importer expects one sheet per entity. Sheet names can be simple names such as `orders`, `customers`, `products`, `payments`, `returns`, `inventory`, and `marketing`. It normalizes friendly column names, trims text, fills safe optional defaults, and writes clean CSVs to `data/raw/<entity>/`.
+
+If you already have canonical CSVs, place them directly into the corresponding `data/raw/<entity>/` folders:
 
 | Entity    | Folder                  | Required Columns                                                                 |
 |-----------|-------------------------|----------------------------------------------------------------------------------|
@@ -103,7 +117,7 @@ Place your CSV files into the corresponding `data/raw/<entity>/` folders:
 | Payments  | `data/raw/payments/`    | payment_id, order_id, payment_date, payment_method, amount, payment_status       |
 | Returns   | `data/raw/returns/`     | return_id, order_id, product_id, return_date, quantity_returned, return_reason   |
 | Inventory | `data/raw/inventory/`   | product_id, warehouse, snapshot_date, units_available, units_reserved, units_sold|
-| Marketing | `data/raw/marketing/`   | campaign_id, date, channel, spend, impressions, clicks, orders_attributed        |
+| Marketing | `data/raw/marketing/`   | campaign_id, date, channel, spend, impressions, clicks, orders_attributed, revenue_attributed |
 
 ### 5. Run the full pipeline
 
@@ -114,6 +128,7 @@ python pipeline.py
 Or run individual phases:
 
 ```bash
+python pipeline.py --phase excel       # convert Excel sheets to raw CSVs
 python pipeline.py --phase bronze      # ingest CSVs to Bronze
 python pipeline.py --phase quality     # run data quality checks
 python pipeline.py --phase silver      # transform to Silver
@@ -132,7 +147,10 @@ pytest tests/ -v
 ## 📐 Architecture
 
 ```
-SOURCE SYSTEMS (CSV files)
+SOURCE SYSTEMS (Excel workbooks / CSV files)
+        ↓
+EXCEL IMPORTER
+  Sheet mapping + column normalization + raw CSV generation
         ↓
 BRONZE LAYER (PostgreSQL)
   Raw data preserved + ingestion metadata
@@ -236,6 +254,7 @@ POWER BI DECISION LAYER
 | [`pipeline.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/pipeline.py) | Main end-to-end pipeline runner with modular phase execution |
 | [`config.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/config.py) | Global configuration, connection pools, and leakage thresholds |
 | [`data/generate_sample_data.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/data/generate_sample_data.py) | Omnichannel synthetic dataset generator for all 7 raw entities |
+| [`ingestion/import_excel.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/ingestion/import_excel.py) | Excel workbook importer that creates canonical raw CSVs for preprocessing |
 | [`ingestion/ingest_bronze.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/ingestion/ingest_bronze.py) | Multi-source CSV ingestion into raw Bronze layer with run tracking |
 | [`quality/run_checks.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/quality/run_checks.py) | Data quality rules, foreign key integrity, and reconciliation engine |
 | [`transformation/transform_silver.py`](file:///c:/Partition/SERIOUS%20PROJECTS/RevenueOS/transformation/transform_silver.py) | Bronze to Silver normalization, typing, and deduplication |
