@@ -1789,6 +1789,7 @@ This automated pipeline and its generated assets are governed by the:
             "tables": [asdict(t) for t in self.tables],
             "relationships": [asdict(r) for r in self.relationships],
             "measures": [asdict(m) for m in self.dax_measures],
+            "daxMeasures": [asdict(m) for m in self.dax_measures],
             "paths": {
                 "outputDir": str(self.output_dir),
                 "csvDir": str(self.csv_dir),

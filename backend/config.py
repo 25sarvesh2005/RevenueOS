@@ -16,9 +16,21 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 
 # ---------------------------------------------------------------------------
-# Load .env
+# Load .env (Checks Workspace Root and Backend directory)
 # ---------------------------------------------------------------------------
-load_dotenv(Path(__file__).parent / ".env")
+root_env = Path(__file__).resolve().parent.parent / ".env"
+backend_env = Path(__file__).resolve().parent / ".env"
+if root_env.exists():
+    load_dotenv(root_env)
+elif backend_env.exists():
+    load_dotenv(backend_env)
+else:
+    load_dotenv()
+
+# Environment mode & security
+REVENUEOS_ENV = os.getenv("REVENUEOS_ENV", "development").lower()
+REVENUEOS_API_KEY = os.getenv("REVENUEOS_API_KEY", "")
+DEFAULT_CURRENCY = os.getenv("DEFAULT_CURRENCY", "$")
 
 # ---------------------------------------------------------------------------
 # Logging

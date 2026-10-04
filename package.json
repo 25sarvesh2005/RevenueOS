@@ -6,7 +6,9 @@
   "scripts": {
     "start": "electron frontend/main.js",
     "app": "electron frontend/main.js",
-    "test": "pytest tests/ -v"
+    "test": "python -m pytest tests/ -v",
+    "verify": "python scripts/verify_platform.py",
+    "api": "uvicorn backend.api.app:app --host 127.0.0.1 --port 8000"
   },
   "repository": {
     "type": "git",

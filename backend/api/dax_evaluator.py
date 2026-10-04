@@ -40,6 +40,23 @@ class DaxEvaluator:
 
         if self.data_dir and self.data_dir.exists():
             self._load_from_directory(self.data_dir)
+        else:
+            self._synthesize_canonical_measures()
+
+    def _synthesize_canonical_measures(self) -> None:
+        """Synthesize standard baseline measures if tables exist and measures aren't explicit."""
+        for t_name, df in self.tables.items():
+            if "order" in t_name:
+                rev_col = next((c for c in df.columns if any(k in c.lower() for k in ["revenue", "sales", "amount", "total_price"])), None)
+                target_col = rev_col if rev_col else "revenue"
+                if "total revenue" not in self.known_measures:
+                    self.known_measures["total revenue"] = f"SUM({t_name}[{target_col}])"
+                if "total gross profit" not in self.known_measures:
+                    self.known_measures["total gross profit"] = f"SUM({t_name}[{target_col}]) * 0.35"
+                if "total orders" not in self.known_measures:
+                    self.known_measures["total orders"] = f"COUNTROWS({t_name})"
+                if "average order value" not in self.known_measures:
+                    self.known_measures["average order value"] = f"AVERAGE({t_name}[{target_col}])"
 
     def _load_from_directory(self, base_dir: Path) -> None:
         """Load CSV tables and DAX definitions from an export directory."""
@@ -58,7 +75,8 @@ class DaxEvaluator:
             try:
                 with open(manifest_path, "r", encoding="utf-8") as f:
                     manifest = json.load(f)
-                    for m in manifest.get("measures", []):
+                    measures_list = manifest.get("measures") or manifest.get("daxMeasures") or []
+                    for m in measures_list:
                         m_name = m.get("name", "").strip()
                         m_expr = m.get("expression", "").strip()
                         if m_name and m_expr:
@@ -66,9 +84,13 @@ class DaxEvaluator:
             except Exception:
                 pass
 
+        # 3. Baseline synthesized measures
+        self._synthesize_canonical_measures()
+
     def register_dataframe(self, name: str, df: pd.DataFrame) -> None:
         """Register a table DataFrame for evaluation."""
         self.tables[name.lower()] = df
+        self._synthesize_canonical_measures()
 
     def register_measure(self, name: str, expression: str) -> None:
         """Register a named DAX measure expression."""
@@ -135,6 +157,9 @@ class DaxEvaluator:
         if measure_clean in self.known_measures:
             formula = self.known_measures[measure_clean]
             return self.evaluate_expression(formula)[0]
+        for k, formula in self.known_measures.items():
+            if measure_clean in k or k in measure_clean:
+                return self.evaluate_expression(formula)[0]
 
         # 1. SUM(table[col])
         m = re.match(r"^SUM\s*\(\s*(\w+)\s*\[\s*(\w+)\s*\]\s*\)$", token, re.IGNORECASE)
@@ -230,6 +255,9 @@ class DaxEvaluator:
             if clean_name in self.known_measures:
                 sub_expr = self.known_measures[clean_name]
                 return self.evaluate_expression(sub_expr)
+            for k, sub_expr in self.known_measures.items():
+                if clean_name in k or k in clean_name:
+                    return self.evaluate_expression(sub_expr)
 
         # Parse binary expression with brackets: e.g. [Total Revenue] - [Total Cost]
         # or SUM(orders[revenue]) - SUM(orders[cost])
