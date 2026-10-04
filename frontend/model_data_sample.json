@@ -1,0 +1,6008 @@
+{
+  "status": "SUCCESS",
+  "projectName": "Revenueos Sample",
+  "generatedAt": "2026-10-04T11:33:03.568308",
+  "sourceExcel": "data/raw/excel/revenueos_sample.xlsx",
+  "outputDirectory": "exports/default_model",
+  "summary": {
+    "tablesCount": 8,
+    "totalRows": 18029,
+    "relationshipsCount": 12,
+    "measuresCount": 77,
+    "hasDateDimension": true
+  },
+  "tables": [
+    {
+      "name": "orders",
+      "original_sheet": "orders",
+      "table_type": "dimension",
+      "row_count": 500,
+      "columns": [
+        {
+          "name": "order_id",
+          "original_name": "order_id",
+          "dtype": "string",
+          "is_key": true,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "ORD-20240001",
+            "ORD-20240002",
+            "ORD-20240003"
+          ],
+          "null_count": 0,
+          "unique_count": 500
+        },
+        {
+          "name": "customer_id",
+          "original_name": "customer_id",
+          "dtype": "string",
+          "is_key": true,
+          "is_foreign_key": true,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "CUST-00063",
+            "CUST-00023",
+            "CUST-00032"
+          ],
+          "null_count": 0,
+          "unique_count": 100
+        },
+        {
+          "name": "product_id",
+          "original_name": "product_id",
+          "dtype": "string",
+          "is_key": true,
+          "is_foreign_key": true,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "PRD-E107",
+            "PRD-E107",
+            "PRD-E107"
+          ],
+          "null_count": 0,
+          "unique_count": 31
+        },
+        {
+          "name": "order_date",
+          "original_name": "order_date",
+          "dtype": "datetime",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": true,
+          "is_category": false,
+          "sample_values": [
+            "2025-06-03",
+            "2024-07-15",
+            "2024-11-04"
+          ],
+          "null_count": 0,
+          "unique_count": 351
+        },
+        {
+          "name": "quantity",
+          "original_name": "quantity",
+          "dtype": "int64",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "1",
+            "1",
+            "1"
+          ],
+          "null_count": 0,
+          "unique_count": 17
+        },
+        {
+          "name": "unit_price",
+          "original_name": "unit_price",
+          "dtype": "double",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "5026.2",
+            "5056.75",
+            "4892.48"
+          ],
+          "null_count": 0,
+          "unique_count": 500
+        },
+        {
+          "name": "discount",
+          "original_name": "discount",
+          "dtype": "double",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "0.09",
+            "0.0",
+            "0.0"
+          ],
+          "null_count": 0,
+          "unique_count": 36
+        },
+        {
+          "name": "channel",
+          "original_name": "channel",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "Amazon Marketplace",
+            "Retail Store",
+            "Online Direct"
+          ],
+          "null_count": 0,
+          "unique_count": 5
+        },
+        {
+          "name": "location",
+          "original_name": "location",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "Pune Viman Nagar Store",
+            "Bengaluru Indiranagar Hub",
+            "Pune Viman Nagar Store"
+          ],
+          "null_count": 0,
+          "unique_count": 8
+        },
+        {
+          "name": "status",
+          "original_name": "status",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "COMPLETED",
+            "COMPLETED",
+            "CANCELLED"
+          ],
+          "null_count": 0,
+          "unique_count": 3
+        }
+      ],
+      "primary_key": "order_id",
+      "date_column": "order_date",
+      "csv_filename": "orders.csv",
+      "preview_rows": [
+        {
+          "order_id": "ORD-20240001",
+          "customer_id": "CUST-00063",
+          "product_id": "PRD-E107",
+          "order_date": "2025-06-03",
+          "quantity": 1,
+          "unit_price": 5026.2,
+          "discount": 0.09,
+          "channel": "Amazon Marketplace",
+          "location": "Pune Viman Nagar Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240002",
+          "customer_id": "CUST-00023",
+          "product_id": "PRD-E107",
+          "order_date": "2024-07-15",
+          "quantity": 1,
+          "unit_price": 5056.75,
+          "discount": 0.0,
+          "channel": "Retail Store",
+          "location": "Bengaluru Indiranagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240003",
+          "customer_id": "CUST-00032",
+          "product_id": "PRD-E107",
+          "order_date": "2024-11-04",
+          "quantity": 1,
+          "unit_price": 4892.48,
+          "discount": 0.0,
+          "channel": "Online Direct",
+          "location": "Pune Viman Nagar Store",
+          "status": "CANCELLED"
+        },
+        {
+          "order_id": "ORD-20240004",
+          "customer_id": "CUST-00045",
+          "product_id": "PRD-F502",
+          "order_date": "2025-03-16",
+          "quantity": 1,
+          "unit_price": 1294.45,
+          "discount": 0.0,
+          "channel": "Mobile App",
+          "location": "Chennai Anna Nagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240005",
+          "customer_id": "CUST-00044",
+          "product_id": "PRD-H302",
+          "order_date": "2025-03-28",
+          "quantity": 3,
+          "unit_price": 6602.24,
+          "discount": 0.0,
+          "channel": "Amazon Marketplace",
+          "location": "Bengaluru Indiranagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240006",
+          "customer_id": "CUST-00092",
+          "product_id": "PRD-B401",
+          "order_date": "2024-10-17",
+          "quantity": 1,
+          "unit_price": 1150.25,
+          "discount": 0.0,
+          "channel": "Online Direct",
+          "location": "Chennai Anna Nagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240007",
+          "customer_id": "CUST-00062",
+          "product_id": "PRD-B401",
+          "order_date": "2024-08-28",
+          "quantity": 2,
+          "unit_price": 1144.59,
+          "discount": 0.07,
+          "channel": "Mobile App",
+          "location": "Mumbai Central Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240008",
+          "customer_id": "CUST-00072",
+          "product_id": "PRD-B403",
+          "order_date": "2025-05-01",
+          "quantity": 1,
+          "unit_price": 742.59,
+          "discount": 0.0,
+          "channel": "Online Direct",
+          "location": "Ahmedabad SG Highway Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240009",
+          "customer_id": "CUST-00044",
+          "product_id": "PRD-H306",
+          "order_date": "2025-08-12",
+          "quantity": 3,
+          "unit_price": 1285.96,
+          "discount": 0.0,
+          "channel": "Online Direct",
+          "location": "Ahmedabad SG Highway Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240010",
+          "customer_id": "CUST-00052",
+          "product_id": "PRD-A207",
+          "order_date": "2024-05-31",
+          "quantity": 1,
+          "unit_price": 5138.18,
+          "discount": 0.39,
+          "channel": "Online Direct",
+          "location": "Delhi Connaught Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240011",
+          "customer_id": "CUST-00039",
+          "product_id": "PRD-E102",
+          "order_date": "2024-08-12",
+          "quantity": 2,
+          "unit_price": 5729.18,
+          "discount": 0.0,
+          "channel": "Online Direct",
+          "location": "Ahmedabad SG Highway Hub",
+          "status": "PENDING"
+        },
+        {
+          "order_id": "ORD-20240012",
+          "customer_id": "CUST-00059",
+          "product_id": "PRD-A207",
+          "order_date": "2024-09-12",
+          "quantity": 4,
+          "unit_price": 5082.77,
+          "discount": 0.06,
+          "channel": "Amazon Marketplace",
+          "location": "Ahmedabad SG Highway Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240013",
+          "customer_id": "CUST-00096",
+          "product_id": "PRD-E101",
+          "order_date": "2025-07-26",
+          "quantity": 1,
+          "unit_price": 65732.24,
+          "discount": 0.0,
+          "channel": "Retail Store",
+          "location": "Ahmedabad SG Highway Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240014",
+          "customer_id": "CUST-00090",
+          "product_id": "PRD-E106",
+          "order_date": "2025-05-31",
+          "quantity": 1,
+          "unit_price": 4157.84,
+          "discount": 0.0,
+          "channel": "Retail Store",
+          "location": "Ahmedabad SG Highway Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240015",
+          "customer_id": "CUST-00017",
+          "product_id": "PRD-F503",
+          "order_date": "2025-05-01",
+          "quantity": 2,
+          "unit_price": 1025.55,
+          "discount": 0.0,
+          "channel": "Amazon Marketplace",
+          "location": "Pune Viman Nagar Store",
+          "status": "PENDING"
+        },
+        {
+          "order_id": "ORD-20240016",
+          "customer_id": "CUST-00086",
+          "product_id": "PRD-A201",
+          "order_date": "2025-06-17",
+          "quantity": 2,
+          "unit_price": 1848.58,
+          "discount": 0.09,
+          "channel": "Retail Store",
+          "location": "Pune Viman Nagar Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240017",
+          "customer_id": "CUST-00059",
+          "product_id": "PRD-E106",
+          "order_date": "2024-12-09",
+          "quantity": 2,
+          "unit_price": 3859.37,
+          "discount": 0.0,
+          "channel": "Mobile App",
+          "location": "Bengaluru Indiranagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240018",
+          "customer_id": "CUST-00036",
+          "product_id": "PRD-H301",
+          "order_date": "2025-01-27",
+          "quantity": 2,
+          "unit_price": 7930.9,
+          "discount": 0.0,
+          "channel": "Retail Store",
+          "location": "Delhi Connaught Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240019",
+          "customer_id": "CUST-00071",
+          "product_id": "PRD-H302",
+          "order_date": "2024-12-04",
+          "quantity": 3,
+          "unit_price": 6427.17,
+          "discount": 0.07,
+          "channel": "Amazon Marketplace",
+          "location": "Kolkata Park Street Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240020",
+          "customer_id": "CUST-00001",
+          "product_id": "PRD-A201",
+          "order_date": "2025-08-21",
+          "quantity": 1,
+          "unit_price": 1894.63,
+          "discount": 0.42,
+          "channel": "Online Direct",
+          "location": "Kolkata Park Street Store",
+          "status": "CANCELLED"
+        },
+        {
+          "order_id": "ORD-20240021",
+          "customer_id": "CUST-00094",
+          "product_id": "PRD-E110",
+          "order_date": "2024-12-26",
+          "quantity": 1,
+          "unit_price": 3010.46,
+          "discount": 0.14,
+          "channel": "Retail Store",
+          "location": "Kolkata Park Street Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240022",
+          "customer_id": "CUST-00060",
+          "product_id": "PRD-A207",
+          "order_date": "2025-07-13",
+          "quantity": 1,
+          "unit_price": 4858.74,
+          "discount": 0.0,
+          "channel": "Online Direct",
+          "location": "Ahmedabad SG Highway Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240023",
+          "customer_id": "CUST-00037",
+          "product_id": "PRD-B403",
+          "order_date": "2025-03-22",
+          "quantity": 1,
+          "unit_price": 765.79,
+          "discount": 0.12,
+          "channel": "Online Direct",
+          "location": "Kolkata Park Street Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240024",
+          "customer_id": "CUST-00080",
+          "product_id": "PRD-E103",
+          "order_date": "2025-04-23",
+          "quantity": 2,
+          "unit_price": 2600.69,
+          "discount": 0.0,
+          "channel": "Amazon Marketplace",
+          "location": "Mumbai Central Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240025",
+          "customer_id": "CUST-00075",
+          "product_id": "PRD-A207",
+          "order_date": "2025-08-29",
+          "quantity": 1,
+          "unit_price": 5182.39,
+          "discount": 0.36,
+          "channel": "Mobile App",
+          "location": "Bengaluru Indiranagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240026",
+          "customer_id": "CUST-00099",
+          "product_id": "PRD-A206",
+          "order_date": "2024-07-05",
+          "quantity": 1,
+          "unit_price": 3934.02,
+          "discount": 0.07,
+          "channel": "Retail Store",
+          "location": "Chennai Anna Nagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240027",
+          "customer_id": "CUST-00082",
+          "product_id": "PRD-E102",
+          "order_date": "2025-01-23",
+          "quantity": 2,
+          "unit_price": 5850.39,
+          "discount": 0.0,
+          "channel": "Retail Store",
+          "location": "Kolkata Park Street Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240028",
+          "customer_id": "CUST-00033",
+          "product_id": "PRD-E104",
+          "order_date": "2024-03-24",
+          "quantity": 1,
+          "unit_price": 10498.86,
+          "discount": 0.0,
+          "channel": "Online Direct",
+          "location": "Mumbai Central Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240029",
+          "customer_id": "CUST-00008",
+          "product_id": "PRD-E107",
+          "order_date": "2024-12-24",
+          "quantity": 2,
+          "unit_price": 5126.09,
+          "discount": 0.44,
+          "channel": "Online Direct",
+          "location": "Mumbai Central Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240030",
+          "customer_id": "CUST-00059",
+          "product_id": "PRD-H301",
+          "order_date": "2024-09-10",
+          "quantity": 1,
+          "unit_price": 7977.85,
+          "discount": 0.24,
+          "channel": "Online Direct",
+          "location": "Bengaluru Indiranagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240031",
+          "customer_id": "CUST-00051",
+          "product_id": "PRD-H304",
+          "order_date": "2024-04-27",
+          "quantity": 3,
+          "unit_price": 1835.91,
+          "discount": 0.12,
+          "channel": "Amazon Marketplace",
+          "location": "Chennai Anna Nagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240032",
+          "customer_id": "CUST-00097",
+          "product_id": "PRD-B404",
+          "order_date": "2025-09-13",
+          "quantity": 2,
+          "unit_price": 3033.72,
+          "discount": 0.0,
+          "channel": "Mobile App",
+          "location": "Bengaluru Indiranagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240033",
+          "customer_id": "CUST-00048",
+          "product_id": "PRD-H301",
+          "order_date": "2024-04-20",
+          "quantity": 1,
+          "unit_price": 7916.33,
+          "discount": 0.0,
+          "channel": "Retail Store",
+          "location": "Kolkata Park Street Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240034",
+          "customer_id": "CUST-00044",
+          "product_id": "PRD-B404",
+          "order_date": "2024-07-22",
+          "quantity": 1,
+          "unit_price": 2783.59,
+          "discount": 0.0,
+          "channel": "Online Direct",
+          "location": "Hyderabad Jubilee Warehouse",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240035",
+          "customer_id": "CUST-00037",
+          "product_id": "PRD-H306",
+          "order_date": "2024-11-04",
+          "quantity": 1,
+          "unit_price": 1337.48,
+          "discount": 0.0,
+          "channel": "Amazon Marketplace",
+          "location": "Delhi Connaught Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240036",
+          "customer_id": "CUST-00060",
+          "product_id": "PRD-E101",
+          "order_date": "2025-08-02",
+          "quantity": 1,
+          "unit_price": 62198.22,
+          "discount": 0.09,
+          "channel": "Online Direct",
+          "location": "Chennai Anna Nagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240037",
+          "customer_id": "CUST-00033",
+          "product_id": "PRD-E103",
+          "order_date": "2024-12-15",
+          "quantity": 36,
+          "unit_price": 2482.39,
+          "discount": 0.0,
+          "channel": "Online Direct",
+          "location": "Delhi Connaught Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240038",
+          "customer_id": "CUST-00095",
+          "product_id": "PRD-H304",
+          "order_date": "2025-01-05",
+          "quantity": 2,
+          "unit_price": 1886.75,
+          "discount": 0.0,
+          "channel": "Amazon Marketplace",
+          "location": "Bengaluru Indiranagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240039",
+          "customer_id": "CUST-00032",
+          "product_id": "PRD-A205",
+          "order_date": "2025-06-18",
+          "quantity": 4,
+          "unit_price": 1792.68,
+          "discount": 0.13,
+          "channel": "Online Direct",
+          "location": "Ahmedabad SG Highway Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240040",
+          "customer_id": "CUST-00002",
+          "product_id": "PRD-B402",
+          "order_date": "2025-08-29",
+          "quantity": 2,
+          "unit_price": 976.91,
+          "discount": 0.0,
+          "channel": "Retail Store",
+          "location": "Delhi Connaught Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240041",
+          "customer_id": "CUST-00048",
+          "product_id": "PRD-E107",
+          "order_date": "2025-04-06",
+          "quantity": 1,
+          "unit_price": 4917.21,
+          "discount": 0.0,
+          "channel": "Retail Store",
+          "location": "Kolkata Park Street Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240042",
+          "customer_id": "CUST-00025",
+          "product_id": "PRD-H306",
+          "order_date": "2025-05-21",
+          "quantity": 3,
+          "unit_price": 1278.26,
+          "discount": 0.07,
+          "channel": "Amazon Marketplace",
+          "location": "Pune Viman Nagar Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240043",
+          "customer_id": "CUST-00045",
+          "product_id": "PRD-H302",
+          "order_date": "2025-09-02",
+          "quantity": 1,
+          "unit_price": 6229.69,
+          "discount": 0.05,
+          "channel": "Retail Store",
+          "location": "Hyderabad Jubilee Warehouse",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240044",
+          "customer_id": "CUST-00076",
+          "product_id": "PRD-H301",
+          "order_date": "2025-02-20",
+          "quantity": 1,
+          "unit_price": 8115.71,
+          "discount": 0.0,
+          "channel": "Amazon Marketplace",
+          "location": "Ahmedabad SG Highway Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240045",
+          "customer_id": "CUST-00087",
+          "product_id": "PRD-F503",
+          "order_date": "2025-05-17",
+          "quantity": 1,
+          "unit_price": 1018.16,
+          "discount": 0.27,
+          "channel": "Amazon Marketplace",
+          "location": "Kolkata Park Street Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240046",
+          "customer_id": "CUST-00022",
+          "product_id": "PRD-B402",
+          "order_date": "2024-11-09",
+          "quantity": 2,
+          "unit_price": 991.56,
+          "discount": 0.11,
+          "channel": "Online Direct",
+          "location": "Chennai Anna Nagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240047",
+          "customer_id": "CUST-00015",
+          "product_id": "PRD-H304",
+          "order_date": "2025-07-17",
+          "quantity": 1,
+          "unit_price": 1862.28,
+          "discount": 0.0,
+          "channel": "Online Direct",
+          "location": "Pune Viman Nagar Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240048",
+          "customer_id": "CUST-00060",
+          "product_id": "PRD-A202",
+          "order_date": "2024-08-24",
+          "quantity": 4,
+          "unit_price": 2421.92,
+          "discount": 0.06,
+          "channel": "Amazon Marketplace",
+          "location": "Bengaluru Indiranagar Hub",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240049",
+          "customer_id": "CUST-00096",
+          "product_id": "PRD-H302",
+          "order_date": "2025-05-10",
+          "quantity": 1,
+          "unit_price": 6811.28,
+          "discount": 0.0,
+          "channel": "Retail Store",
+          "location": "Pune Viman Nagar Store",
+          "status": "COMPLETED"
+        },
+        {
+          "order_id": "ORD-20240050",
+          "customer_id": "CUST-00016",
+          "product_id": "PRD-A203",
+          "order_date": "2024-07-17",
+          "quantity": 4,
+          "unit_price": 6352.32,
+          "discount": 0.08,
+          "channel": "Retail Store",
+          "location": "Bengaluru Indiranagar Hub",
+          "status": "COMPLETED"
+        }
+      ]
+    },
+    {
+      "name": "customers",
+      "original_sheet": "customers",
+      "table_type": "dimension",
+      "row_count": 100,
+      "columns": [
+        {
+          "name": "customer_id",
+          "original_name": "customer_id",
+          "dtype": "string",
+          "is_key": true,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "CUST-00001",
+            "CUST-00002",
+            "CUST-00003"
+          ],
+          "null_count": 0,
+          "unique_count": 100
+        },
+        {
+          "name": "name",
+          "original_name": "name",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "Sneha Sharma",
+            "Siddharth Reddy",
+            "Simran Verma"
+          ],
+          "null_count": 0,
+          "unique_count": 94
+        },
+        {
+          "name": "email",
+          "original_name": "email",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "sneha.sharma769@example.com",
+            "siddharth.reddy764@example.com",
+            "simran.verma40@example.com"
+          ],
+          "null_count": 0,
+          "unique_count": 100
+        },
+        {
+          "name": "city",
+          "original_name": "city",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "Noida",
+            "Pune",
+            "Pune"
+          ],
+          "null_count": 0,
+          "unique_count": 14
+        },
+        {
+          "name": "region",
+          "original_name": "region",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "North",
+            "West",
+            "West"
+          ],
+          "null_count": 0,
+          "unique_count": 4
+        },
+        {
+          "name": "signup_date",
+          "original_name": "signup_date",
+          "dtype": "datetime",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": true,
+          "is_category": false,
+          "sample_values": [
+            "2024-05-16",
+            "2023-06-28",
+            "2024-03-23"
+          ],
+          "null_count": 0,
+          "unique_count": 93
+        },
+        {
+          "name": "segment",
+          "original_name": "segment",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "SMB",
+            "VIP",
+            "Consumer"
+          ],
+          "null_count": 0,
+          "unique_count": 5
+        }
+      ],
+      "primary_key": "customer_id",
+      "date_column": "signup_date",
+      "csv_filename": "customers.csv",
+      "preview_rows": [
+        {
+          "customer_id": "CUST-00001",
+          "name": "Sneha Sharma",
+          "email": "sneha.sharma769@example.com",
+          "city": "Noida",
+          "region": "North",
+          "signup_date": "2024-05-16",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00002",
+          "name": "Siddharth Reddy",
+          "email": "siddharth.reddy764@example.com",
+          "city": "Pune",
+          "region": "West",
+          "signup_date": "2023-06-28",
+          "segment": "VIP"
+        },
+        {
+          "customer_id": "CUST-00003",
+          "name": "Simran Verma",
+          "email": "simran.verma40@example.com",
+          "city": "Pune",
+          "region": "West",
+          "signup_date": "2024-03-23",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00004",
+          "name": "Siddharth Rao",
+          "email": "siddharth.rao626@example.com",
+          "city": "Mumbai",
+          "region": "West",
+          "signup_date": "2024-02-12",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00005",
+          "name": "Nikhil Gupta",
+          "email": "nikhil.gupta469@example.com",
+          "city": "Chennai",
+          "region": "South",
+          "signup_date": "2024-07-23",
+          "segment": "Mid-Market"
+        },
+        {
+          "customer_id": "CUST-00006",
+          "name": "Aarav Nair",
+          "email": "aarav.nair724@example.com",
+          "city": "Jaipur",
+          "region": "North",
+          "signup_date": "2024-11-27",
+          "segment": "Mid-Market"
+        },
+        {
+          "customer_id": "CUST-00007",
+          "name": "Divya Reddy",
+          "email": "divya.reddy230@example.com",
+          "city": "Bhubaneswar",
+          "region": "East",
+          "signup_date": "2024-11-20",
+          "segment": "Mid-Market"
+        },
+        {
+          "customer_id": "CUST-00008",
+          "name": "Rahul Patel",
+          "email": "rahul.patel399@example.com",
+          "city": "Pune",
+          "region": "West",
+          "signup_date": "2025-01-05",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00009",
+          "name": "Manish Chatterjee",
+          "email": "manish.chatterjee280@example.com",
+          "city": "Bhubaneswar",
+          "region": "East",
+          "signup_date": "2023-03-30",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00010",
+          "name": "Sunita Menon",
+          "email": "sunita.menon137@example.com",
+          "city": "Jaipur",
+          "region": "North",
+          "signup_date": "2023-06-11",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00011",
+          "name": "Rajesh Banerjee",
+          "email": "rajesh.banerjee643@example.com",
+          "city": "Patna",
+          "region": "East",
+          "signup_date": "2025-01-10",
+          "segment": "Enterprise"
+        },
+        {
+          "customer_id": "CUST-00012",
+          "name": "Karan Kulkarni",
+          "email": "karan.kulkarni81@example.com",
+          "city": "Mumbai",
+          "region": "West",
+          "signup_date": "2024-04-11",
+          "segment": "VIP"
+        },
+        {
+          "customer_id": "CUST-00013",
+          "name": "Rajesh Patel",
+          "email": "rajesh.patel885@example.com",
+          "city": "Delhi",
+          "region": "North",
+          "signup_date": "2023-07-26",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00014",
+          "name": "Deepak Singh",
+          "email": "deepak.singh474@example.com",
+          "city": "Kochi",
+          "region": "South",
+          "signup_date": "2025-01-17",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00015",
+          "name": "Kabir Kapoor",
+          "email": "kabir.kapoor373@example.com",
+          "city": "Delhi",
+          "region": "North",
+          "signup_date": "2024-06-30",
+          "segment": "Mid-Market"
+        },
+        {
+          "customer_id": "CUST-00016",
+          "name": "Vikram Chatterjee",
+          "email": "vikram.chatterjee660@example.com",
+          "city": "Ahmedabad",
+          "region": "West",
+          "signup_date": "2025-12-29",
+          "segment": "Mid-Market"
+        },
+        {
+          "customer_id": "CUST-00017",
+          "name": "Ishita Nair",
+          "email": "ishita.nair483@example.com",
+          "city": "Jaipur",
+          "region": "North",
+          "signup_date": "2024-07-06",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00018",
+          "name": "Siddharth Pillai",
+          "email": "siddharth.pillai342@example.com",
+          "city": "Patna",
+          "region": "East",
+          "signup_date": "2023-04-25",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00019",
+          "name": "Siddharth Verma",
+          "email": "siddharth.verma834@example.com",
+          "city": "Gurugram",
+          "region": "North",
+          "signup_date": "2025-04-01",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00020",
+          "name": "Divya Patel",
+          "email": "divya.patel226@example.com",
+          "city": "Chennai",
+          "region": "South",
+          "signup_date": "2024-10-06",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00021",
+          "name": "Tanvi Banerjee",
+          "email": "tanvi.banerjee521@example.com",
+          "city": "Jaipur",
+          "region": "North",
+          "signup_date": "2025-07-28",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00022",
+          "name": "Pooja Singh",
+          "email": "pooja.singh152@example.com",
+          "city": "Delhi",
+          "region": "North",
+          "signup_date": "2024-06-22",
+          "segment": "Mid-Market"
+        },
+        {
+          "customer_id": "CUST-00023",
+          "name": "Simran Ghosh",
+          "email": "simran.ghosh418@example.com",
+          "city": "Gurugram",
+          "region": "North",
+          "signup_date": "2024-03-25",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00024",
+          "name": "Arjun Rao",
+          "email": "arjun.rao515@example.com",
+          "city": "Pune",
+          "region": "West",
+          "signup_date": "2023-04-07",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00025",
+          "name": "Sneha Reddy",
+          "email": "sneha.reddy652@example.com",
+          "city": "Ahmedabad",
+          "region": "West",
+          "signup_date": "2025-05-14",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00026",
+          "name": "Vikram Bhatia",
+          "email": "vikram.bhatia400@example.com",
+          "city": "Chennai",
+          "region": "South",
+          "signup_date": "2025-08-16",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00027",
+          "name": "Amit Menon",
+          "email": "amit.menon891@example.com",
+          "city": "Mumbai",
+          "region": "West",
+          "signup_date": "2023-08-23",
+          "segment": "Mid-Market"
+        },
+        {
+          "customer_id": "CUST-00028",
+          "name": "Divya Banerjee",
+          "email": "divya.banerjee358@example.com",
+          "city": "Pune",
+          "region": "West",
+          "signup_date": "2024-08-24",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00029",
+          "name": "Simran Nair",
+          "email": "simran.nair474@example.com",
+          "city": "Mumbai",
+          "region": "West",
+          "signup_date": "2024-06-23",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00030",
+          "name": "Neha Rao",
+          "email": "neha.rao944@example.com",
+          "city": "Pune",
+          "region": "West",
+          "signup_date": "2024-09-03",
+          "segment": "Enterprise"
+        },
+        {
+          "customer_id": "CUST-00031",
+          "name": "Karan Reddy",
+          "email": "karan.reddy392@example.com",
+          "city": "Bhubaneswar",
+          "region": "East",
+          "signup_date": "2023-11-27",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00032",
+          "name": "Aarav Chatterjee",
+          "email": "aarav.chatterjee341@example.com",
+          "city": "Bengaluru",
+          "region": "South",
+          "signup_date": "2023-02-09",
+          "segment": "Mid-Market"
+        },
+        {
+          "customer_id": "CUST-00033",
+          "name": "Sneha Kapoor",
+          "email": "sneha.kapoor909@example.com",
+          "city": "Patna",
+          "region": "East",
+          "signup_date": "2024-09-21",
+          "segment": "Mid-Market"
+        },
+        {
+          "customer_id": "CUST-00034",
+          "name": "Ishita Verma",
+          "email": "ishita.verma256@example.com",
+          "city": "Chennai",
+          "region": "South",
+          "signup_date": "2023-06-11",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00035",
+          "name": "Ananya Joshi",
+          "email": "ananya.joshi507@example.com",
+          "city": "Patna",
+          "region": "East",
+          "signup_date": "2023-05-22",
+          "segment": "VIP"
+        },
+        {
+          "customer_id": "CUST-00036",
+          "name": "Arjun Reddy",
+          "email": "arjun.reddy685@example.com",
+          "city": "Bengaluru",
+          "region": "South",
+          "signup_date": "2023-12-05",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00037",
+          "name": "Amit Rao",
+          "email": "amit.rao903@example.com",
+          "city": "Chennai",
+          "region": "South",
+          "signup_date": "2025-05-16",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00038",
+          "name": "Tanvi Menon",
+          "email": "tanvi.menon783@example.com",
+          "city": "Kolkata",
+          "region": "East",
+          "signup_date": "2024-02-16",
+          "segment": "Mid-Market"
+        },
+        {
+          "customer_id": "CUST-00039",
+          "name": "Kavita Bhatia",
+          "email": "kavita.bhatia697@example.com",
+          "city": "Kochi",
+          "region": "South",
+          "signup_date": "2025-02-03",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00040",
+          "name": "Varun Rao",
+          "email": "varun.rao472@example.com",
+          "city": "Pune",
+          "region": "West",
+          "signup_date": "2024-05-22",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00041",
+          "name": "Siddharth Patel",
+          "email": "siddharth.patel356@example.com",
+          "city": "Mumbai",
+          "region": "West",
+          "signup_date": "2024-04-16",
+          "segment": "Mid-Market"
+        },
+        {
+          "customer_id": "CUST-00042",
+          "name": "Siddharth Sharma",
+          "email": "siddharth.sharma82@example.com",
+          "city": "Kolkata",
+          "region": "East",
+          "signup_date": "2023-05-01",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00043",
+          "name": "Siddharth Patel",
+          "email": "siddharth.patel937@example.com",
+          "city": "Mumbai",
+          "region": "West",
+          "signup_date": "2024-11-07",
+          "segment": "Enterprise"
+        },
+        {
+          "customer_id": "CUST-00044",
+          "name": "Vikram Rao",
+          "email": "vikram.rao253@example.com",
+          "city": "Noida",
+          "region": "North",
+          "signup_date": "2025-09-21",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00045",
+          "name": "Tanvi Menon",
+          "email": "tanvi.menon145@example.com",
+          "city": "Kolkata",
+          "region": "East",
+          "signup_date": "2025-08-26",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00046",
+          "name": "Ishita Deshmukh",
+          "email": "ishita.deshmukh836@example.com",
+          "city": "Jaipur",
+          "region": "North",
+          "signup_date": "2024-01-25",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00047",
+          "name": "Rahul Mehta",
+          "email": "rahul.mehta684@example.com",
+          "city": "Jaipur",
+          "region": "North",
+          "signup_date": "2024-12-26",
+          "segment": "SMB"
+        },
+        {
+          "customer_id": "CUST-00048",
+          "name": "Simran Jain",
+          "email": "simran.jain488@example.com",
+          "city": "Patna",
+          "region": "East",
+          "signup_date": "2023-04-21",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00049",
+          "name": "Rahul Verma",
+          "email": "rahul.verma422@example.com",
+          "city": "Kolkata",
+          "region": "East",
+          "signup_date": "2024-11-25",
+          "segment": "Consumer"
+        },
+        {
+          "customer_id": "CUST-00050",
+          "name": "Rahul Gupta",
+          "email": "rahul.gupta206@example.com",
+          "city": "Delhi",
+          "region": "North",
+          "signup_date": "2025-07-07",
+          "segment": "Mid-Market"
+        }
+      ]
+    },
+    {
+      "name": "products",
+      "original_sheet": "products",
+      "table_type": "dimension",
+      "row_count": 31,
+      "columns": [
+        {
+          "name": "product_id",
+          "original_name": "product_id",
+          "dtype": "string",
+          "is_key": true,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "PRD-E101",
+            "PRD-E102",
+            "PRD-E103"
+          ],
+          "null_count": 0,
+          "unique_count": 31
+        },
+        {
+          "name": "product_name",
+          "original_name": "product_name",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "UltraBook Pro 15",
+            "ErgoMechanical Keyboard",
+            "Precision Wireless Mouse"
+          ],
+          "null_count": 0,
+          "unique_count": 31
+        },
+        {
+          "name": "category",
+          "original_name": "category",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "Electronics",
+            "Electronics",
+            "Electronics"
+          ],
+          "null_count": 0,
+          "unique_count": 5
+        },
+        {
+          "name": "subcategory",
+          "original_name": "subcategory",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "Laptops",
+            "Peripherals",
+            "Peripherals"
+          ],
+          "null_count": 0,
+          "unique_count": 21
+        },
+        {
+          "name": "supplier",
+          "original_name": "supplier",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "TechSource Ltd",
+            "Keytronics",
+            "Keytronics"
+          ],
+          "null_count": 0,
+          "unique_count": 15
+        },
+        {
+          "name": "cost",
+          "original_name": "cost",
+          "dtype": "int64",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "45000",
+            "3200",
+            "1100"
+          ],
+          "null_count": 0,
+          "unique_count": 26
+        },
+        {
+          "name": "selling_price",
+          "original_name": "selling_price",
+          "dtype": "int64",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "65000",
+            "5999",
+            "2499"
+          ],
+          "null_count": 0,
+          "unique_count": 22
+        }
+      ],
+      "primary_key": "product_id",
+      "date_column": null,
+      "csv_filename": "products.csv",
+      "preview_rows": [
+        {
+          "product_id": "PRD-E101",
+          "product_name": "UltraBook Pro 15",
+          "category": "Electronics",
+          "subcategory": "Laptops",
+          "supplier": "TechSource Ltd",
+          "cost": 45000,
+          "selling_price": 65000
+        },
+        {
+          "product_id": "PRD-E102",
+          "product_name": "ErgoMechanical Keyboard",
+          "category": "Electronics",
+          "subcategory": "Peripherals",
+          "supplier": "Keytronics",
+          "cost": 3200,
+          "selling_price": 5999
+        },
+        {
+          "product_id": "PRD-E103",
+          "product_name": "Precision Wireless Mouse",
+          "category": "Electronics",
+          "subcategory": "Peripherals",
+          "supplier": "Keytronics",
+          "cost": 1100,
+          "selling_price": 2499
+        },
+        {
+          "product_id": "PRD-E104",
+          "product_name": "Noise-Cancelling Headphones",
+          "category": "Electronics",
+          "subcategory": "Audio",
+          "supplier": "SoundVibe",
+          "cost": 5500,
+          "selling_price": 9999
+        },
+        {
+          "product_id": "PRD-E105",
+          "product_name": "4K Ultra-Wide Monitor 34",
+          "category": "Electronics",
+          "subcategory": "Displays",
+          "supplier": "VisionDisplay",
+          "cost": 28000,
+          "selling_price": 42000
+        },
+        {
+          "product_id": "PRD-E106",
+          "product_name": "Smart Home Hub v2",
+          "category": "Electronics",
+          "subcategory": "Smart Home",
+          "supplier": "ConnectLife",
+          "cost": 2200,
+          "selling_price": 3999
+        },
+        {
+          "product_id": "PRD-E107",
+          "product_name": "USB-C Dual Dock Station",
+          "category": "Electronics",
+          "subcategory": "Accessories",
+          "supplier": "TechSource Ltd",
+          "cost": 2800,
+          "selling_price": 4999
+        },
+        {
+          "product_id": "PRD-E108",
+          "product_name": "Fast Wireless Charger 30W",
+          "category": "Electronics",
+          "subcategory": "Accessories",
+          "supplier": "ConnectLife",
+          "cost": 850,
+          "selling_price": 1699
+        },
+        {
+          "product_id": "PRD-E109",
+          "product_name": "Flagship Smartphone X12",
+          "category": "Electronics",
+          "subcategory": "Mobiles",
+          "supplier": "ApexMobile",
+          "cost": 48000,
+          "selling_price": 52000
+        },
+        {
+          "product_id": "PRD-E110",
+          "product_name": "TrueWireless Earbuds Neo",
+          "category": "Electronics",
+          "subcategory": "Audio",
+          "supplier": "SoundVibe",
+          "cost": 1600,
+          "selling_price": 2999
+        },
+        {
+          "product_id": "PRD-A201",
+          "product_name": "Classic Oxford Cotton Shirt",
+          "category": "Apparel",
+          "subcategory": "Men",
+          "supplier": "FabricCrafters",
+          "cost": 650,
+          "selling_price": 1899
+        },
+        {
+          "product_id": "PRD-A202",
+          "product_name": "Slim Fit Denim Jeans",
+          "category": "Apparel",
+          "subcategory": "Men",
+          "supplier": "FabricCrafters",
+          "cost": 850,
+          "selling_price": 2499
+        },
+        {
+          "product_id": "PRD-A203",
+          "product_name": "Tailored Linen Blazer",
+          "category": "Apparel",
+          "subcategory": "Men",
+          "supplier": "LuxeWear",
+          "cost": 2200,
+          "selling_price": 6499
+        },
+        {
+          "product_id": "PRD-A204",
+          "product_name": "Breathable Floral Midi Dress",
+          "category": "Apparel",
+          "subcategory": "Women",
+          "supplier": "LuxeWear",
+          "cost": 950,
+          "selling_price": 2899
+        },
+        {
+          "product_id": "PRD-A205",
+          "product_name": "High-Waist Performance Leggings",
+          "category": "Apparel",
+          "subcategory": "Women",
+          "supplier": "ActivePulse",
+          "cost": 550,
+          "selling_price": 1799
+        },
+        {
+          "product_id": "PRD-A206",
+          "product_name": "Merino Wool Crewneck Sweater",
+          "category": "Apparel",
+          "subcategory": "Unisex",
+          "supplier": "LuxeWear",
+          "cost": 1400,
+          "selling_price": 3999
+        },
+        {
+          "product_id": "PRD-A207",
+          "product_name": "Waterproof All-Weather Jacket",
+          "category": "Apparel",
+          "subcategory": "Outerwear",
+          "supplier": "ActivePulse",
+          "cost": 1800,
+          "selling_price": 4999
+        },
+        {
+          "product_id": "PRD-A208",
+          "product_name": "Cushioned Running Shoes",
+          "category": "Apparel",
+          "subcategory": "Footwear",
+          "supplier": "ActivePulse",
+          "cost": 1900,
+          "selling_price": 4499
+        },
+        {
+          "product_id": "PRD-H301",
+          "product_name": "Cold Press Slow Juicer",
+          "category": "Home & Kitchen",
+          "subcategory": "Appliances",
+          "supplier": "NutriBlend",
+          "cost": 3800,
+          "selling_price": 7999
+        },
+        {
+          "product_id": "PRD-H302",
+          "product_name": "Smart Air Fryer XL",
+          "category": "Home & Kitchen",
+          "subcategory": "Appliances",
+          "supplier": "NutriBlend",
+          "cost": 3200,
+          "selling_price": 6499
+        },
+        {
+          "product_id": "PRD-H303",
+          "product_name": "Cast Iron Dutch Oven 5L",
+          "category": "Home & Kitchen",
+          "subcategory": "Cookware",
+          "supplier": "HeritageCook",
+          "cost": 1600,
+          "selling_price": 3499
+        },
+        {
+          "product_id": "PRD-H304",
+          "product_name": "Ergonomic Memory Foam Pillow",
+          "category": "Home & Kitchen",
+          "subcategory": "Bedding",
+          "supplier": "ComfortSleep",
+          "cost": 600,
+          "selling_price": 1899
+        },
+        {
+          "product_id": "PRD-H305",
+          "product_name": "Microfiber Sheet Set Queen",
+          "category": "Home & Kitchen",
+          "subcategory": "Bedding",
+          "supplier": "ComfortSleep",
+          "cost": 750,
+          "selling_price": 2199
+        },
+        {
+          "product_id": "PRD-H306",
+          "product_name": "Aroma Ultrasonic Diffuser",
+          "category": "Home & Kitchen",
+          "subcategory": "Home Fragrance",
+          "supplier": "HeritageCook",
+          "cost": 450,
+          "selling_price": 1299
+        },
+        {
+          "product_id": "PRD-B401",
+          "product_name": "Vitamin C Radiance Serum",
+          "category": "Beauty",
+          "subcategory": "Skincare",
+          "supplier": "DermaGlow",
+          "cost": 320,
+          "selling_price": 1199
+        },
+        {
+          "product_id": "PRD-B402",
+          "product_name": "Hydrating Hyaluronic Gel",
+          "category": "Beauty",
+          "subcategory": "Skincare",
+          "supplier": "DermaGlow",
+          "cost": 280,
+          "selling_price": 999
+        },
+        {
+          "product_id": "PRD-B403",
+          "product_name": "Botanical Sulfate-Free Shampoo",
+          "category": "Beauty",
+          "subcategory": "Haircare",
+          "supplier": "DermaGlow",
+          "cost": 220,
+          "selling_price": 749
+        },
+        {
+          "product_id": "PRD-B404",
+          "product_name": "Sonic Facial Cleansing Brush",
+          "category": "Beauty",
+          "subcategory": "Tools",
+          "supplier": "AuraTech",
+          "cost": 1100,
+          "selling_price": 2899
+        },
+        {
+          "product_id": "PRD-F501",
+          "product_name": "Adjustable Dumbbell Set 20kg",
+          "category": "Fitness",
+          "subcategory": "Strength",
+          "supplier": "IronCore",
+          "cost": 2900,
+          "selling_price": 5999
+        },
+        {
+          "product_id": "PRD-F502",
+          "product_name": "Eco-Friendly Yoga Mat 6mm",
+          "category": "Fitness",
+          "subcategory": "Accessories",
+          "supplier": "IronCore",
+          "cost": 400,
+          "selling_price": 1299
+        },
+        {
+          "product_id": "PRD-F503",
+          "product_name": "Insulated Hydro Flask 1000ml",
+          "category": "Fitness",
+          "subcategory": "Hydration",
+          "supplier": "ActivePulse",
+          "cost": 350,
+          "selling_price": 999
+        }
+      ]
+    },
+    {
+      "name": "payments",
+      "original_sheet": "payments",
+      "table_type": "fact",
+      "row_count": 520,
+      "columns": [
+        {
+          "name": "payment_id",
+          "original_name": "payment_id",
+          "dtype": "string",
+          "is_key": true,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "PAY-0000001",
+            "PAY-0000002",
+            "PAY-0000003"
+          ],
+          "null_count": 0,
+          "unique_count": 520
+        },
+        {
+          "name": "order_id",
+          "original_name": "order_id",
+          "dtype": "string",
+          "is_key": true,
+          "is_foreign_key": true,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "ORD-20240001",
+            "ORD-20240002",
+            "ORD-20240003"
+          ],
+          "null_count": 0,
+          "unique_count": 500
+        },
+        {
+          "name": "payment_date",
+          "original_name": "payment_date",
+          "dtype": "datetime",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": true,
+          "is_category": false,
+          "sample_values": [
+            "2025-06-03 00:00:00",
+            "2024-07-15 00:00:00",
+            "2024-11-04 00:00:00"
+          ],
+          "null_count": 0,
+          "unique_count": 369
+        },
+        {
+          "name": "payment_method",
+          "original_name": "payment_method",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "Credit Card",
+            "Credit Card",
+            "Credit Card"
+          ],
+          "null_count": 0,
+          "unique_count": 6
+        },
+        {
+          "name": "amount",
+          "original_name": "amount",
+          "dtype": "double",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "4573.84",
+            "5056.75",
+            "4892.48"
+          ],
+          "null_count": 0,
+          "unique_count": 499
+        },
+        {
+          "name": "payment_status",
+          "original_name": "payment_status",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "SUCCESS",
+            "SUCCESS",
+            "FAILED"
+          ],
+          "null_count": 0,
+          "unique_count": 2
+        },
+        {
+          "name": "failure_reason",
+          "original_name": "failure_reason",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "AUTH_DECLINED",
+            "3DS_VERIFICATION_FAILED",
+            "INSUFFICIENT_FUNDS"
+          ],
+          "null_count": 470,
+          "unique_count": 5
+        }
+      ],
+      "primary_key": "payment_id",
+      "date_column": "payment_date",
+      "csv_filename": "payments.csv",
+      "preview_rows": [
+        {
+          "payment_id": "PAY-0000001",
+          "order_id": "ORD-20240001",
+          "payment_date": "2025-06-03 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 4573.84,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000002",
+          "order_id": "ORD-20240002",
+          "payment_date": "2024-07-15 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 5056.75,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000003",
+          "order_id": "ORD-20240003",
+          "payment_date": "2024-11-04 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 4892.48,
+          "payment_status": "FAILED",
+          "failure_reason": "AUTH_DECLINED"
+        },
+        {
+          "payment_id": "PAY-0000004",
+          "order_id": "ORD-20240004",
+          "payment_date": "2025-03-15 23:55:00",
+          "payment_method": "UPI",
+          "amount": 1294.45,
+          "payment_status": "FAILED",
+          "failure_reason": "3DS_VERIFICATION_FAILED"
+        },
+        {
+          "payment_id": "PAY-0000005",
+          "order_id": "ORD-20240004",
+          "payment_date": "2025-03-16 00:00:00",
+          "payment_method": "UPI",
+          "amount": 1294.45,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000006",
+          "order_id": "ORD-20240005",
+          "payment_date": "2025-03-28 00:00:00",
+          "payment_method": "Net Banking",
+          "amount": 19806.72,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000007",
+          "order_id": "ORD-20240006",
+          "payment_date": "2024-10-17 00:00:00",
+          "payment_method": "UPI",
+          "amount": 1150.25,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000008",
+          "order_id": "ORD-20240007",
+          "payment_date": "2024-08-28 00:00:00",
+          "payment_method": "UPI",
+          "amount": 2128.94,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000009",
+          "order_id": "ORD-20240008",
+          "payment_date": "2025-05-01 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 742.59,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000010",
+          "order_id": "ORD-20240009",
+          "payment_date": "2025-08-12 00:00:00",
+          "payment_method": "Debit Card",
+          "amount": 3857.88,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000011",
+          "order_id": "ORD-20240010",
+          "payment_date": "2024-05-31 00:00:00",
+          "payment_method": "UPI",
+          "amount": 3134.29,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000012",
+          "order_id": "ORD-20240011",
+          "payment_date": "2024-08-12 00:00:00",
+          "payment_method": "COD",
+          "amount": 11458.36,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000013",
+          "order_id": "ORD-20240012",
+          "payment_date": "2024-09-12 00:00:00",
+          "payment_method": "UPI",
+          "amount": 19111.22,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000014",
+          "order_id": "ORD-20240013",
+          "payment_date": "2025-07-26 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 65732.24,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000015",
+          "order_id": "ORD-20240014",
+          "payment_date": "2025-05-31 00:00:00",
+          "payment_method": "UPI",
+          "amount": 4157.84,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000016",
+          "order_id": "ORD-20240015",
+          "payment_date": "2025-05-01 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 2051.1,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000017",
+          "order_id": "ORD-20240016",
+          "payment_date": "2025-06-17 00:00:00",
+          "payment_method": "UPI",
+          "amount": 3364.42,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000018",
+          "order_id": "ORD-20240017",
+          "payment_date": "2024-12-09 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 7718.74,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000019",
+          "order_id": "ORD-20240018",
+          "payment_date": "2025-01-27 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 15861.8,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000020",
+          "order_id": "ORD-20240019",
+          "payment_date": "2024-12-04 00:00:00",
+          "payment_method": "Debit Card",
+          "amount": 17931.8,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000021",
+          "order_id": "ORD-20240020",
+          "payment_date": "2025-08-21 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 1098.89,
+          "payment_status": "FAILED",
+          "failure_reason": "INSUFFICIENT_FUNDS"
+        },
+        {
+          "payment_id": "PAY-0000022",
+          "order_id": "ORD-20240021",
+          "payment_date": "2024-12-26 00:00:00",
+          "payment_method": "Debit Card",
+          "amount": 2589.0,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000023",
+          "order_id": "ORD-20240022",
+          "payment_date": "2025-07-12 23:55:00",
+          "payment_method": "Credit Card",
+          "amount": 4858.74,
+          "payment_status": "FAILED",
+          "failure_reason": "BANK_GATEWAY_TIMEOUT"
+        },
+        {
+          "payment_id": "PAY-0000024",
+          "order_id": "ORD-20240022",
+          "payment_date": "2025-07-13 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 4858.74,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000025",
+          "order_id": "ORD-20240023",
+          "payment_date": "2025-03-22 00:00:00",
+          "payment_method": "UPI",
+          "amount": 673.9,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000026",
+          "order_id": "ORD-20240024",
+          "payment_date": "2025-04-23 00:00:00",
+          "payment_method": "UPI",
+          "amount": 5201.38,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000027",
+          "order_id": "ORD-20240025",
+          "payment_date": "2025-08-29 00:00:00",
+          "payment_method": "UPI",
+          "amount": 3316.73,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000028",
+          "order_id": "ORD-20240026",
+          "payment_date": "2024-07-05 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 3658.64,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000029",
+          "order_id": "ORD-20240027",
+          "payment_date": "2025-01-22 23:55:00",
+          "payment_method": "Credit Card",
+          "amount": 11700.78,
+          "payment_status": "FAILED",
+          "failure_reason": "BANK_GATEWAY_TIMEOUT"
+        },
+        {
+          "payment_id": "PAY-0000030",
+          "order_id": "ORD-20240027",
+          "payment_date": "2025-01-23 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 11700.78,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000031",
+          "order_id": "ORD-20240028",
+          "payment_date": "2024-03-24 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 10498.86,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000032",
+          "order_id": "ORD-20240029",
+          "payment_date": "2024-12-24 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 5741.22,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000033",
+          "order_id": "ORD-20240030",
+          "payment_date": "2024-09-10 00:00:00",
+          "payment_method": "UPI",
+          "amount": 6063.17,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000034",
+          "order_id": "ORD-20240031",
+          "payment_date": "2024-04-27 00:00:00",
+          "payment_method": "Digital Wallet",
+          "amount": 4846.8,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000035",
+          "order_id": "ORD-20240032",
+          "payment_date": "2025-09-13 00:00:00",
+          "payment_method": "Debit Card",
+          "amount": 6067.44,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000036",
+          "order_id": "ORD-20240033",
+          "payment_date": "2024-04-20 00:00:00",
+          "payment_method": "Net Banking",
+          "amount": 7916.33,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000037",
+          "order_id": "ORD-20240034",
+          "payment_date": "2024-07-22 00:00:00",
+          "payment_method": "Net Banking",
+          "amount": 2783.59,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000038",
+          "order_id": "ORD-20240035",
+          "payment_date": "2024-11-04 00:00:00",
+          "payment_method": "UPI",
+          "amount": 1337.48,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000039",
+          "order_id": "ORD-20240036",
+          "payment_date": "2025-08-02 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 56600.38,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000040",
+          "order_id": "ORD-20240037",
+          "payment_date": "2024-12-15 00:00:00",
+          "payment_method": "Debit Card",
+          "amount": 89366.04,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000041",
+          "order_id": "ORD-20240038",
+          "payment_date": "2025-01-05 00:00:00",
+          "payment_method": "UPI",
+          "amount": 3773.5,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000042",
+          "order_id": "ORD-20240039",
+          "payment_date": "2025-06-18 00:00:00",
+          "payment_method": "UPI",
+          "amount": 6238.53,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000043",
+          "order_id": "ORD-20240040",
+          "payment_date": "2025-08-29 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 1953.82,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000044",
+          "order_id": "ORD-20240041",
+          "payment_date": "2025-04-06 00:00:00",
+          "payment_method": "UPI",
+          "amount": 4917.21,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000045",
+          "order_id": "ORD-20240042",
+          "payment_date": "2025-05-21 00:00:00",
+          "payment_method": "UPI",
+          "amount": 3566.35,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000046",
+          "order_id": "ORD-20240043",
+          "payment_date": "2025-09-02 00:00:00",
+          "payment_method": "Debit Card",
+          "amount": 5918.21,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000047",
+          "order_id": "ORD-20240044",
+          "payment_date": "2025-02-20 00:00:00",
+          "payment_method": "UPI",
+          "amount": 8115.71,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000048",
+          "order_id": "ORD-20240045",
+          "payment_date": "2025-05-17 00:00:00",
+          "payment_method": "UPI",
+          "amount": 743.26,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000049",
+          "order_id": "ORD-20240046",
+          "payment_date": "2024-11-09 00:00:00",
+          "payment_method": "COD",
+          "amount": 1764.98,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        },
+        {
+          "payment_id": "PAY-0000050",
+          "order_id": "ORD-20240047",
+          "payment_date": "2025-07-17 00:00:00",
+          "payment_method": "Credit Card",
+          "amount": 1862.28,
+          "payment_status": "SUCCESS",
+          "failure_reason": ""
+        }
+      ]
+    },
+    {
+      "name": "returns",
+      "original_sheet": "returns",
+      "table_type": "fact",
+      "row_count": 25,
+      "columns": [
+        {
+          "name": "return_id",
+          "original_name": "return_id",
+          "dtype": "string",
+          "is_key": true,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "RET-000001",
+            "RET-000002",
+            "RET-000003"
+          ],
+          "null_count": 0,
+          "unique_count": 25
+        },
+        {
+          "name": "order_id",
+          "original_name": "order_id",
+          "dtype": "string",
+          "is_key": true,
+          "is_foreign_key": true,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "ORD-20240001",
+            "ORD-20240021",
+            "ORD-20240061"
+          ],
+          "null_count": 0,
+          "unique_count": 25
+        },
+        {
+          "name": "product_id",
+          "original_name": "product_id",
+          "dtype": "string",
+          "is_key": true,
+          "is_foreign_key": true,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "PRD-E107",
+            "PRD-E110",
+            "PRD-A203"
+          ],
+          "null_count": 0,
+          "unique_count": 15
+        },
+        {
+          "name": "return_date",
+          "original_name": "return_date",
+          "dtype": "datetime",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": true,
+          "is_category": false,
+          "sample_values": [
+            "2025-06-24",
+            "2024-12-28",
+            "2024-11-12"
+          ],
+          "null_count": 0,
+          "unique_count": 24
+        },
+        {
+          "name": "quantity_returned",
+          "original_name": "quantity_returned",
+          "dtype": "int64",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "1",
+            "1",
+            "1"
+          ],
+          "null_count": 0,
+          "unique_count": 4
+        },
+        {
+          "name": "return_reason",
+          "original_name": "return_reason",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "LATE_DELIVERY",
+            "DEFECTIVE_ITEM",
+            "WRONG_SIZE_FIT"
+          ],
+          "null_count": 0,
+          "unique_count": 5
+        }
+      ],
+      "primary_key": "return_id",
+      "date_column": "return_date",
+      "csv_filename": "returns.csv",
+      "preview_rows": [
+        {
+          "return_id": "RET-000001",
+          "order_id": "ORD-20240001",
+          "product_id": "PRD-E107",
+          "return_date": "2025-06-24",
+          "quantity_returned": 1,
+          "return_reason": "LATE_DELIVERY"
+        },
+        {
+          "return_id": "RET-000002",
+          "order_id": "ORD-20240021",
+          "product_id": "PRD-E110",
+          "return_date": "2024-12-28",
+          "quantity_returned": 1,
+          "return_reason": "DEFECTIVE_ITEM"
+        },
+        {
+          "return_id": "RET-000003",
+          "order_id": "ORD-20240061",
+          "product_id": "PRD-A203",
+          "return_date": "2024-11-12",
+          "quantity_returned": 1,
+          "return_reason": "WRONG_SIZE_FIT"
+        },
+        {
+          "return_id": "RET-000004",
+          "order_id": "ORD-20240110",
+          "product_id": "PRD-A207",
+          "return_date": "2024-05-08",
+          "quantity_returned": 1,
+          "return_reason": "WRONG_SIZE_FIT"
+        },
+        {
+          "return_id": "RET-000005",
+          "order_id": "ORD-20240111",
+          "product_id": "PRD-A204",
+          "return_date": "2025-01-23",
+          "quantity_returned": 1,
+          "return_reason": "WRONG_SIZE_FIT"
+        },
+        {
+          "return_id": "RET-000006",
+          "order_id": "ORD-20240115",
+          "product_id": "PRD-E104",
+          "return_date": "2025-07-18",
+          "quantity_returned": 1,
+          "return_reason": "DEFECTIVE_ITEM"
+        },
+        {
+          "return_id": "RET-000007",
+          "order_id": "ORD-20240159",
+          "product_id": "PRD-E110",
+          "return_date": "2024-06-19",
+          "quantity_returned": 1,
+          "return_reason": "DEFECTIVE_ITEM"
+        },
+        {
+          "return_id": "RET-000008",
+          "order_id": "ORD-20240162",
+          "product_id": "PRD-B403",
+          "return_date": "2024-11-25",
+          "quantity_returned": 2,
+          "return_reason": "DEFECTIVE_ITEM"
+        },
+        {
+          "return_id": "RET-000009",
+          "order_id": "ORD-20240163",
+          "product_id": "PRD-E104",
+          "return_date": "2025-09-18",
+          "quantity_returned": 1,
+          "return_reason": "DEFECTIVE_ITEM"
+        },
+        {
+          "return_id": "RET-000010",
+          "order_id": "ORD-20240174",
+          "product_id": "PRD-A205",
+          "return_date": "2024-04-11",
+          "quantity_returned": 1,
+          "return_reason": "WRONG_SIZE_FIT"
+        },
+        {
+          "return_id": "RET-000011",
+          "order_id": "ORD-20240198",
+          "product_id": "PRD-H303",
+          "return_date": "2025-05-10",
+          "quantity_returned": 1,
+          "return_reason": "DEFECTIVE_ITEM"
+        },
+        {
+          "return_id": "RET-000012",
+          "order_id": "ORD-20240207",
+          "product_id": "PRD-E110",
+          "return_date": "2025-04-03",
+          "quantity_returned": 3,
+          "return_reason": "DEFECTIVE_ITEM"
+        },
+        {
+          "return_id": "RET-000013",
+          "order_id": "ORD-20240229",
+          "product_id": "PRD-A202",
+          "return_date": "2025-06-16",
+          "quantity_returned": 1,
+          "return_reason": "WRONG_SIZE_FIT"
+        },
+        {
+          "return_id": "RET-000014",
+          "order_id": "ORD-20240242",
+          "product_id": "PRD-E105",
+          "return_date": "2024-07-01",
+          "quantity_returned": 1,
+          "return_reason": "DEFECTIVE_ITEM"
+        },
+        {
+          "return_id": "RET-000015",
+          "order_id": "ORD-20240254",
+          "product_id": "PRD-A206",
+          "return_date": "2025-06-17",
+          "quantity_returned": 2,
+          "return_reason": "WRONG_SIZE_FIT"
+        },
+        {
+          "return_id": "RET-000016",
+          "order_id": "ORD-20240272",
+          "product_id": "PRD-A207",
+          "return_date": "2024-06-30",
+          "quantity_returned": 1,
+          "return_reason": "WRONG_SIZE_FIT"
+        },
+        {
+          "return_id": "RET-000017",
+          "order_id": "ORD-20240303",
+          "product_id": "PRD-A202",
+          "return_date": "2024-08-28",
+          "quantity_returned": 1,
+          "return_reason": "WRONG_SIZE_FIT"
+        },
+        {
+          "return_id": "RET-000018",
+          "order_id": "ORD-20240304",
+          "product_id": "PRD-E109",
+          "return_date": "2025-03-17",
+          "quantity_returned": 1,
+          "return_reason": "CHANGED_MIND"
+        },
+        {
+          "return_id": "RET-000019",
+          "order_id": "ORD-20240313",
+          "product_id": "PRD-A205",
+          "return_date": "2024-03-09",
+          "quantity_returned": 1,
+          "return_reason": "DAMAGED_IN_SHIPPING"
+        },
+        {
+          "return_id": "RET-000020",
+          "order_id": "ORD-20240333",
+          "product_id": "PRD-E104",
+          "return_date": "2024-10-22",
+          "quantity_returned": 5,
+          "return_reason": "DAMAGED_IN_SHIPPING"
+        },
+        {
+          "return_id": "RET-000021",
+          "order_id": "ORD-20240334",
+          "product_id": "PRD-E106",
+          "return_date": "2024-04-28",
+          "quantity_returned": 1,
+          "return_reason": "WRONG_SIZE_FIT"
+        },
+        {
+          "return_id": "RET-000022",
+          "order_id": "ORD-20240407",
+          "product_id": "PRD-A207",
+          "return_date": "2025-04-22",
+          "quantity_returned": 2,
+          "return_reason": "WRONG_SIZE_FIT"
+        },
+        {
+          "return_id": "RET-000023",
+          "order_id": "ORD-20240460",
+          "product_id": "PRD-H304",
+          "return_date": "2025-07-08",
+          "quantity_returned": 1,
+          "return_reason": "LATE_DELIVERY"
+        },
+        {
+          "return_id": "RET-000024",
+          "order_id": "ORD-20240464",
+          "product_id": "PRD-A202",
+          "return_date": "2024-07-01",
+          "quantity_returned": 1,
+          "return_reason": "WRONG_SIZE_FIT"
+        },
+        {
+          "return_id": "RET-000025",
+          "order_id": "ORD-20240500",
+          "product_id": "PRD-A206",
+          "return_date": "2025-02-02",
+          "quantity_returned": 1,
+          "return_reason": "DAMAGED_IN_SHIPPING"
+        }
+      ]
+    },
+    {
+      "name": "inventory",
+      "original_sheet": "inventory",
+      "table_type": "fact",
+      "row_count": 11284,
+      "columns": [
+        {
+          "name": "product_id",
+          "original_name": "product_id",
+          "dtype": "string",
+          "is_key": true,
+          "is_foreign_key": true,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "PRD-E101",
+            "PRD-E101",
+            "PRD-E101"
+          ],
+          "null_count": 0,
+          "unique_count": 31
+        },
+        {
+          "name": "warehouse",
+          "original_name": "warehouse",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "Bhiwandi Central DC (West)",
+            "Gurugram Fulfillment Center (North)",
+            "Hosur Main Warehouse (South)"
+          ],
+          "null_count": 0,
+          "unique_count": 4
+        },
+        {
+          "name": "snapshot_date",
+          "original_name": "snapshot_date",
+          "dtype": "datetime",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": true,
+          "is_category": false,
+          "sample_values": [
+            "2024-01-07",
+            "2024-01-07",
+            "2024-01-07"
+          ],
+          "null_count": 0,
+          "unique_count": 91
+        },
+        {
+          "name": "units_available",
+          "original_name": "units_available",
+          "dtype": "int64",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "175",
+            "102",
+            "103"
+          ],
+          "null_count": 0,
+          "unique_count": 266
+        },
+        {
+          "name": "units_reserved",
+          "original_name": "units_reserved",
+          "dtype": "int64",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "26",
+            "8",
+            "3"
+          ],
+          "null_count": 0,
+          "unique_count": 46
+        },
+        {
+          "name": "units_sold",
+          "original_name": "units_sold",
+          "dtype": "int64",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "15",
+            "21",
+            "34"
+          ],
+          "null_count": 0,
+          "unique_count": 48
+        }
+      ],
+      "primary_key": null,
+      "date_column": "snapshot_date",
+      "csv_filename": "inventory.csv",
+      "preview_rows": [
+        {
+          "product_id": "PRD-E101",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 175,
+          "units_reserved": 26,
+          "units_sold": 15
+        },
+        {
+          "product_id": "PRD-E101",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 102,
+          "units_reserved": 8,
+          "units_sold": 21
+        },
+        {
+          "product_id": "PRD-E101",
+          "warehouse": "Hosur Main Warehouse (South)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 103,
+          "units_reserved": 3,
+          "units_sold": 34
+        },
+        {
+          "product_id": "PRD-E101",
+          "warehouse": "Dankuni Logistics Center (East)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 107,
+          "units_reserved": 9,
+          "units_sold": 20
+        },
+        {
+          "product_id": "PRD-E102",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 163,
+          "units_reserved": 18,
+          "units_sold": 30
+        },
+        {
+          "product_id": "PRD-E102",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 86,
+          "units_reserved": 5,
+          "units_sold": 14
+        },
+        {
+          "product_id": "PRD-E102",
+          "warehouse": "Hosur Main Warehouse (South)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 177,
+          "units_reserved": 18,
+          "units_sold": 24
+        },
+        {
+          "product_id": "PRD-E102",
+          "warehouse": "Dankuni Logistics Center (East)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 168,
+          "units_reserved": 18,
+          "units_sold": 7
+        },
+        {
+          "product_id": "PRD-E103",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 189,
+          "units_reserved": 22,
+          "units_sold": 11
+        },
+        {
+          "product_id": "PRD-E103",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 128,
+          "units_reserved": 22,
+          "units_sold": 16
+        },
+        {
+          "product_id": "PRD-E103",
+          "warehouse": "Hosur Main Warehouse (South)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 80,
+          "units_reserved": 6,
+          "units_sold": 6
+        },
+        {
+          "product_id": "PRD-E103",
+          "warehouse": "Dankuni Logistics Center (East)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 41,
+          "units_reserved": 2,
+          "units_sold": 18
+        },
+        {
+          "product_id": "PRD-E104",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 51,
+          "units_reserved": 5,
+          "units_sold": 8
+        },
+        {
+          "product_id": "PRD-E104",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 110,
+          "units_reserved": 12,
+          "units_sold": 0
+        },
+        {
+          "product_id": "PRD-E104",
+          "warehouse": "Hosur Main Warehouse (South)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 155,
+          "units_reserved": 7,
+          "units_sold": 0
+        },
+        {
+          "product_id": "PRD-E104",
+          "warehouse": "Dankuni Logistics Center (East)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 116,
+          "units_reserved": 12,
+          "units_sold": 18
+        },
+        {
+          "product_id": "PRD-E105",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 144,
+          "units_reserved": 14,
+          "units_sold": 17
+        },
+        {
+          "product_id": "PRD-E105",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 210,
+          "units_reserved": 37,
+          "units_sold": 19
+        },
+        {
+          "product_id": "PRD-E105",
+          "warehouse": "Hosur Main Warehouse (South)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 167,
+          "units_reserved": 18,
+          "units_sold": 12
+        },
+        {
+          "product_id": "PRD-E105",
+          "warehouse": "Dankuni Logistics Center (East)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 125,
+          "units_reserved": 17,
+          "units_sold": 30
+        },
+        {
+          "product_id": "PRD-E106",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 109,
+          "units_reserved": 9,
+          "units_sold": 19
+        },
+        {
+          "product_id": "PRD-E106",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 164,
+          "units_reserved": 6,
+          "units_sold": 12
+        },
+        {
+          "product_id": "PRD-E106",
+          "warehouse": "Hosur Main Warehouse (South)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 22,
+          "units_reserved": 3,
+          "units_sold": 20
+        },
+        {
+          "product_id": "PRD-E106",
+          "warehouse": "Dankuni Logistics Center (East)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 164,
+          "units_reserved": 6,
+          "units_sold": 7
+        },
+        {
+          "product_id": "PRD-E107",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 150,
+          "units_reserved": 8,
+          "units_sold": 23
+        },
+        {
+          "product_id": "PRD-E107",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 17,
+          "units_reserved": 2,
+          "units_sold": 10
+        },
+        {
+          "product_id": "PRD-E107",
+          "warehouse": "Hosur Main Warehouse (South)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 102,
+          "units_reserved": 17,
+          "units_sold": 16
+        },
+        {
+          "product_id": "PRD-E107",
+          "warehouse": "Dankuni Logistics Center (East)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 86,
+          "units_reserved": 3,
+          "units_sold": 11
+        },
+        {
+          "product_id": "PRD-E108",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 195,
+          "units_reserved": 19,
+          "units_sold": 17
+        },
+        {
+          "product_id": "PRD-E108",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 88,
+          "units_reserved": 12,
+          "units_sold": 17
+        },
+        {
+          "product_id": "PRD-E108",
+          "warehouse": "Hosur Main Warehouse (South)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 144,
+          "units_reserved": 21,
+          "units_sold": 18
+        },
+        {
+          "product_id": "PRD-E108",
+          "warehouse": "Dankuni Logistics Center (East)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 110,
+          "units_reserved": 13,
+          "units_sold": 12
+        },
+        {
+          "product_id": "PRD-E109",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 90,
+          "units_reserved": 11,
+          "units_sold": 13
+        },
+        {
+          "product_id": "PRD-E109",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 135,
+          "units_reserved": 3,
+          "units_sold": 10
+        },
+        {
+          "product_id": "PRD-E109",
+          "warehouse": "Hosur Main Warehouse (South)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 137,
+          "units_reserved": 11,
+          "units_sold": 29
+        },
+        {
+          "product_id": "PRD-E109",
+          "warehouse": "Dankuni Logistics Center (East)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 134,
+          "units_reserved": 16,
+          "units_sold": 15
+        },
+        {
+          "product_id": "PRD-E110",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 61,
+          "units_reserved": 9,
+          "units_sold": 30
+        },
+        {
+          "product_id": "PRD-E110",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 67,
+          "units_reserved": 10,
+          "units_sold": 24
+        },
+        {
+          "product_id": "PRD-E110",
+          "warehouse": "Hosur Main Warehouse (South)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 148,
+          "units_reserved": 14,
+          "units_sold": 16
+        },
+        {
+          "product_id": "PRD-E110",
+          "warehouse": "Dankuni Logistics Center (East)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 108,
+          "units_reserved": 12,
+          "units_sold": 3
+        },
+        {
+          "product_id": "PRD-A201",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 134,
+          "units_reserved": 4,
+          "units_sold": 22
+        },
+        {
+          "product_id": "PRD-A201",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 70,
+          "units_reserved": 4,
+          "units_sold": 16
+        },
+        {
+          "product_id": "PRD-A201",
+          "warehouse": "Hosur Main Warehouse (South)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 121,
+          "units_reserved": 9,
+          "units_sold": 22
+        },
+        {
+          "product_id": "PRD-A201",
+          "warehouse": "Dankuni Logistics Center (East)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 120,
+          "units_reserved": 14,
+          "units_sold": 4
+        },
+        {
+          "product_id": "PRD-A202",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 96,
+          "units_reserved": 13,
+          "units_sold": 19
+        },
+        {
+          "product_id": "PRD-A202",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 157,
+          "units_reserved": 26,
+          "units_sold": 13
+        },
+        {
+          "product_id": "PRD-A202",
+          "warehouse": "Hosur Main Warehouse (South)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 218,
+          "units_reserved": 18,
+          "units_sold": 2
+        },
+        {
+          "product_id": "PRD-A202",
+          "warehouse": "Dankuni Logistics Center (East)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 94,
+          "units_reserved": 11,
+          "units_sold": 17
+        },
+        {
+          "product_id": "PRD-A203",
+          "warehouse": "Bhiwandi Central DC (West)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 110,
+          "units_reserved": 7,
+          "units_sold": 8
+        },
+        {
+          "product_id": "PRD-A203",
+          "warehouse": "Gurugram Fulfillment Center (North)",
+          "snapshot_date": "2024-01-07",
+          "units_available": 140,
+          "units_reserved": 24,
+          "units_sold": 20
+        }
+      ]
+    },
+    {
+      "name": "marketing",
+      "original_sheet": "marketing",
+      "table_type": "fact",
+      "row_count": 4473,
+      "columns": [
+        {
+          "name": "campaign_id",
+          "original_name": "campaign_id",
+          "dtype": "string",
+          "is_key": true,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "CMP-GOOGLE-SEARCH-BRAND",
+            "CMP-GOOGLE-SEARCH-GENERIC",
+            "CMP-META-RETARGETING"
+          ],
+          "null_count": 0,
+          "unique_count": 7
+        },
+        {
+          "name": "channel",
+          "original_name": "channel",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "Paid Search",
+            "Paid Search",
+            "Social"
+          ],
+          "null_count": 0,
+          "unique_count": 5
+        },
+        {
+          "name": "date",
+          "original_name": "date",
+          "dtype": "datetime",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": true,
+          "is_category": false,
+          "sample_values": [
+            "2024-01-01",
+            "2024-01-01",
+            "2024-01-01"
+          ],
+          "null_count": 0,
+          "unique_count": 639
+        },
+        {
+          "name": "spend",
+          "original_name": "spend",
+          "dtype": "double",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "355.86",
+            "975.15",
+            "442.39"
+          ],
+          "null_count": 0,
+          "unique_count": 4322
+        },
+        {
+          "name": "impressions",
+          "original_name": "impressions",
+          "dtype": "int64",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "18301",
+            "51625",
+            "52746"
+          ],
+          "null_count": 0,
+          "unique_count": 4361
+        },
+        {
+          "name": "clicks",
+          "original_name": "clicks",
+          "dtype": "int64",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "1423",
+            "2523",
+            "2637"
+          ],
+          "null_count": 0,
+          "unique_count": 2828
+        },
+        {
+          "name": "orders_attributed",
+          "original_name": "orders_attributed",
+          "dtype": "int64",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "198",
+            "137",
+            "221"
+          ],
+          "null_count": 0,
+          "unique_count": 311
+        },
+        {
+          "name": "revenue_attributed",
+          "original_name": "revenue_attributed",
+          "dtype": "double",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "1085384.89",
+            "860292.66",
+            "1351935.29"
+          ],
+          "null_count": 0,
+          "unique_count": 4473
+        }
+      ],
+      "primary_key": null,
+      "date_column": "date",
+      "csv_filename": "marketing.csv",
+      "preview_rows": [
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-BRAND",
+          "channel": "Paid Search",
+          "date": "2024-01-01",
+          "spend": 355.86,
+          "impressions": 18301,
+          "clicks": 1423,
+          "orders_attributed": 198,
+          "revenue_attributed": 1085384.89
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-GENERIC",
+          "channel": "Paid Search",
+          "date": "2024-01-01",
+          "spend": 975.15,
+          "impressions": 51625,
+          "clicks": 2523,
+          "orders_attributed": 137,
+          "revenue_attributed": 860292.66
+        },
+        {
+          "campaign_id": "CMP-META-RETARGETING",
+          "channel": "Social",
+          "date": "2024-01-01",
+          "spend": 442.39,
+          "impressions": 52746,
+          "clicks": 2637,
+          "orders_attributed": 221,
+          "revenue_attributed": 1351935.29
+        },
+        {
+          "campaign_id": "CMP-META-PROSPECTING",
+          "channel": "Social",
+          "date": "2024-01-01",
+          "spend": 1071.93,
+          "impressions": 125438,
+          "clicks": 4447,
+          "orders_attributed": 165,
+          "revenue_attributed": 916147.64
+        },
+        {
+          "campaign_id": "CMP-EMAIL-NEWSLETTER-WEEKLY",
+          "channel": "Email",
+          "date": "2024-01-01",
+          "spend": 88.54,
+          "impressions": 33055,
+          "clicks": 4958,
+          "orders_attributed": 401,
+          "revenue_attributed": 2025622.77
+        },
+        {
+          "campaign_id": "CMP-TIKTOK-CREATOR-BLITZ",
+          "channel": "Influencer",
+          "date": "2024-01-01",
+          "spend": 1070.3,
+          "impressions": 165005,
+          "clicks": 4994,
+          "orders_attributed": 160,
+          "revenue_attributed": 921006.44
+        },
+        {
+          "campaign_id": "CMP-AMAZON-SPONSORED-PROD",
+          "channel": "Affiliate",
+          "date": "2024-01-01",
+          "spend": 661.82,
+          "impressions": 50609,
+          "clicks": 2725,
+          "orders_attributed": 204,
+          "revenue_attributed": 1056758.36
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-BRAND",
+          "channel": "Paid Search",
+          "date": "2024-01-02",
+          "spend": 380.35,
+          "impressions": 19560,
+          "clicks": 1521,
+          "orders_attributed": 211,
+          "revenue_attributed": 628489.9
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-GENERIC",
+          "channel": "Paid Search",
+          "date": "2024-01-02",
+          "spend": 1009.48,
+          "impressions": 53443,
+          "clicks": 2612,
+          "orders_attributed": 142,
+          "revenue_attributed": 688322.57
+        },
+        {
+          "campaign_id": "CMP-META-RETARGETING",
+          "channel": "Social",
+          "date": "2024-01-02",
+          "spend": 478.01,
+          "impressions": 56993,
+          "clicks": 2849,
+          "orders_attributed": 239,
+          "revenue_attributed": 1110467.82
+        },
+        {
+          "campaign_id": "CMP-META-PROSPECTING",
+          "channel": "Social",
+          "date": "2024-01-02",
+          "spend": 1070.15,
+          "impressions": 125229,
+          "clicks": 4439,
+          "orders_attributed": 165,
+          "revenue_attributed": 769845.59
+        },
+        {
+          "campaign_id": "CMP-EMAIL-NEWSLETTER-WEEKLY",
+          "channel": "Email",
+          "date": "2024-01-02",
+          "spend": 76.61,
+          "impressions": 28599,
+          "clicks": 4289,
+          "orders_attributed": 347,
+          "revenue_attributed": 732267.56
+        },
+        {
+          "campaign_id": "CMP-TIKTOK-CREATOR-BLITZ",
+          "channel": "Influencer",
+          "date": "2024-01-02",
+          "spend": 1000.33,
+          "impressions": 154217,
+          "clicks": 4668,
+          "orders_attributed": 150,
+          "revenue_attributed": 514479.46
+        },
+        {
+          "campaign_id": "CMP-AMAZON-SPONSORED-PROD",
+          "channel": "Affiliate",
+          "date": "2024-01-02",
+          "spend": 714.29,
+          "impressions": 54622,
+          "clicks": 2941,
+          "orders_attributed": 220,
+          "revenue_attributed": 920791.09
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-BRAND",
+          "channel": "Paid Search",
+          "date": "2024-01-03",
+          "spend": 414.74,
+          "impressions": 21329,
+          "clicks": 1658,
+          "orders_attributed": 231,
+          "revenue_attributed": 1231350.03
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-GENERIC",
+          "channel": "Paid Search",
+          "date": "2024-01-03",
+          "spend": 692.17,
+          "impressions": 36644,
+          "clicks": 1791,
+          "orders_attributed": 97,
+          "revenue_attributed": 473138.31
+        },
+        {
+          "campaign_id": "CMP-META-RETARGETING",
+          "channel": "Social",
+          "date": "2024-01-03",
+          "spend": 435.07,
+          "impressions": 51873,
+          "clicks": 2593,
+          "orders_attributed": 217,
+          "revenue_attributed": 1332629.99
+        },
+        {
+          "campaign_id": "CMP-META-PROSPECTING",
+          "channel": "Social",
+          "date": "2024-01-03",
+          "spend": 840.47,
+          "impressions": 98352,
+          "clicks": 3487,
+          "orders_attributed": 129,
+          "revenue_attributed": 562008.35
+        },
+        {
+          "campaign_id": "CMP-EMAIL-NEWSLETTER-WEEKLY",
+          "channel": "Email",
+          "date": "2024-01-03",
+          "spend": 73.43,
+          "impressions": 27412,
+          "clicks": 4111,
+          "orders_attributed": 332,
+          "revenue_attributed": 1342849.28
+        },
+        {
+          "campaign_id": "CMP-TIKTOK-CREATOR-BLITZ",
+          "channel": "Influencer",
+          "date": "2024-01-03",
+          "spend": 1218.85,
+          "impressions": 187905,
+          "clicks": 5687,
+          "orders_attributed": 182,
+          "revenue_attributed": 1159142.54
+        },
+        {
+          "campaign_id": "CMP-AMAZON-SPONSORED-PROD",
+          "channel": "Affiliate",
+          "date": "2024-01-03",
+          "spend": 594.8,
+          "impressions": 45484,
+          "clicks": 2449,
+          "orders_attributed": 183,
+          "revenue_attributed": 1132651.14
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-BRAND",
+          "channel": "Paid Search",
+          "date": "2024-01-04",
+          "spend": 343.28,
+          "impressions": 17654,
+          "clicks": 1373,
+          "orders_attributed": 191,
+          "revenue_attributed": 685328.43
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-GENERIC",
+          "channel": "Paid Search",
+          "date": "2024-01-04",
+          "spend": 706.52,
+          "impressions": 37403,
+          "clicks": 1828,
+          "orders_attributed": 99,
+          "revenue_attributed": 463905.47
+        },
+        {
+          "campaign_id": "CMP-META-RETARGETING",
+          "channel": "Social",
+          "date": "2024-01-04",
+          "spend": 565.64,
+          "impressions": 67441,
+          "clicks": 3372,
+          "orders_attributed": 282,
+          "revenue_attributed": 1387257.64
+        },
+        {
+          "campaign_id": "CMP-META-PROSPECTING",
+          "channel": "Social",
+          "date": "2024-01-04",
+          "spend": 925.49,
+          "impressions": 108301,
+          "clicks": 3839,
+          "orders_attributed": 142,
+          "revenue_attributed": 663002.27
+        },
+        {
+          "campaign_id": "CMP-EMAIL-NEWSLETTER-WEEKLY",
+          "channel": "Email",
+          "date": "2024-01-04",
+          "spend": 74.77,
+          "impressions": 27915,
+          "clicks": 4187,
+          "orders_attributed": 338,
+          "revenue_attributed": 1469384.31
+        },
+        {
+          "campaign_id": "CMP-TIKTOK-CREATOR-BLITZ",
+          "channel": "Influencer",
+          "date": "2024-01-04",
+          "spend": 1371.37,
+          "impressions": 211419,
+          "clicks": 6399,
+          "orders_attributed": 205,
+          "revenue_attributed": 922620.22
+        },
+        {
+          "campaign_id": "CMP-AMAZON-SPONSORED-PROD",
+          "channel": "Affiliate",
+          "date": "2024-01-04",
+          "spend": 662.72,
+          "impressions": 50678,
+          "clicks": 2728,
+          "orders_attributed": 204,
+          "revenue_attributed": 843940.37
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-BRAND",
+          "channel": "Paid Search",
+          "date": "2024-01-05",
+          "spend": 398.37,
+          "impressions": 20487,
+          "clicks": 1593,
+          "orders_attributed": 221,
+          "revenue_attributed": 1267238.65
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-GENERIC",
+          "channel": "Paid Search",
+          "date": "2024-01-05",
+          "spend": 724.03,
+          "impressions": 38330,
+          "clicks": 1873,
+          "orders_attributed": 102,
+          "revenue_attributed": 431026.42
+        },
+        {
+          "campaign_id": "CMP-META-RETARGETING",
+          "channel": "Social",
+          "date": "2024-01-05",
+          "spend": 456.8,
+          "impressions": 54464,
+          "clicks": 2723,
+          "orders_attributed": 228,
+          "revenue_attributed": 1475776.05
+        },
+        {
+          "campaign_id": "CMP-META-PROSPECTING",
+          "channel": "Social",
+          "date": "2024-01-05",
+          "spend": 766.36,
+          "impressions": 89679,
+          "clicks": 3179,
+          "orders_attributed": 118,
+          "revenue_attributed": 569177.32
+        },
+        {
+          "campaign_id": "CMP-EMAIL-NEWSLETTER-WEEKLY",
+          "channel": "Email",
+          "date": "2024-01-05",
+          "spend": 69.55,
+          "impressions": 25964,
+          "clicks": 3894,
+          "orders_attributed": 315,
+          "revenue_attributed": 1343354.6
+        },
+        {
+          "campaign_id": "CMP-TIKTOK-CREATOR-BLITZ",
+          "channel": "Influencer",
+          "date": "2024-01-05",
+          "spend": 1151.32,
+          "impressions": 177495,
+          "clicks": 5372,
+          "orders_attributed": 172,
+          "revenue_attributed": 460154.14
+        },
+        {
+          "campaign_id": "CMP-AMAZON-SPONSORED-PROD",
+          "channel": "Affiliate",
+          "date": "2024-01-05",
+          "spend": 714.05,
+          "impressions": 54604,
+          "clicks": 2940,
+          "orders_attributed": 220,
+          "revenue_attributed": 641556.0
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-BRAND",
+          "channel": "Paid Search",
+          "date": "2024-01-06",
+          "spend": 287.26,
+          "impressions": 14773,
+          "clicks": 1149,
+          "orders_attributed": 160,
+          "revenue_attributed": 490534.07
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-GENERIC",
+          "channel": "Paid Search",
+          "date": "2024-01-06",
+          "spend": 690.17,
+          "impressions": 36538,
+          "clicks": 1786,
+          "orders_attributed": 97,
+          "revenue_attributed": 582501.36
+        },
+        {
+          "campaign_id": "CMP-META-RETARGETING",
+          "channel": "Social",
+          "date": "2024-01-06",
+          "spend": 490.95,
+          "impressions": 58536,
+          "clicks": 2926,
+          "orders_attributed": 245,
+          "revenue_attributed": 1586135.69
+        },
+        {
+          "campaign_id": "CMP-META-PROSPECTING",
+          "channel": "Social",
+          "date": "2024-01-06",
+          "spend": 895.23,
+          "impressions": 104761,
+          "clicks": 3714,
+          "orders_attributed": 138,
+          "revenue_attributed": 650233.1
+        },
+        {
+          "campaign_id": "CMP-EMAIL-NEWSLETTER-WEEKLY",
+          "channel": "Email",
+          "date": "2024-01-06",
+          "spend": 80.57,
+          "impressions": 30078,
+          "clicks": 4511,
+          "orders_attributed": 365,
+          "revenue_attributed": 1633451.42
+        },
+        {
+          "campaign_id": "CMP-TIKTOK-CREATOR-BLITZ",
+          "channel": "Influencer",
+          "date": "2024-01-06",
+          "spend": 974.7,
+          "impressions": 150266,
+          "clicks": 4548,
+          "orders_attributed": 146,
+          "revenue_attributed": 348455.24
+        },
+        {
+          "campaign_id": "CMP-AMAZON-SPONSORED-PROD",
+          "channel": "Affiliate",
+          "date": "2024-01-06",
+          "spend": 620.05,
+          "impressions": 47415,
+          "clicks": 2553,
+          "orders_attributed": 191,
+          "revenue_attributed": 830147.01
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-BRAND",
+          "channel": "Paid Search",
+          "date": "2024-01-07",
+          "spend": 388.97,
+          "impressions": 20004,
+          "clicks": 1555,
+          "orders_attributed": 216,
+          "revenue_attributed": 736639.49
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-GENERIC",
+          "channel": "Paid Search",
+          "date": "2024-01-07",
+          "spend": 807.34,
+          "impressions": 42741,
+          "clicks": 2089,
+          "orders_attributed": 113,
+          "revenue_attributed": 336815.37
+        },
+        {
+          "campaign_id": "CMP-META-RETARGETING",
+          "channel": "Social",
+          "date": "2024-01-07",
+          "spend": 610.32,
+          "impressions": 72768,
+          "clicks": 3638,
+          "orders_attributed": 305,
+          "revenue_attributed": 1112614.02
+        },
+        {
+          "campaign_id": "CMP-META-PROSPECTING",
+          "channel": "Social",
+          "date": "2024-01-07",
+          "spend": 975.19,
+          "impressions": 114118,
+          "clicks": 4046,
+          "orders_attributed": 150,
+          "revenue_attributed": 408255.61
+        },
+        {
+          "campaign_id": "CMP-EMAIL-NEWSLETTER-WEEKLY",
+          "channel": "Email",
+          "date": "2024-01-07",
+          "spend": 70.59,
+          "impressions": 26353,
+          "clicks": 3953,
+          "orders_attributed": 320,
+          "revenue_attributed": 1802100.78
+        },
+        {
+          "campaign_id": "CMP-TIKTOK-CREATOR-BLITZ",
+          "channel": "Influencer",
+          "date": "2024-01-07",
+          "spend": 1101.2,
+          "impressions": 169768,
+          "clicks": 5138,
+          "orders_attributed": 165,
+          "revenue_attributed": 792002.59
+        },
+        {
+          "campaign_id": "CMP-AMAZON-SPONSORED-PROD",
+          "channel": "Affiliate",
+          "date": "2024-01-07",
+          "spend": 716.43,
+          "impressions": 54786,
+          "clicks": 2950,
+          "orders_attributed": 221,
+          "revenue_attributed": 536048.8
+        },
+        {
+          "campaign_id": "CMP-GOOGLE-SEARCH-BRAND",
+          "channel": "Paid Search",
+          "date": "2024-01-08",
+          "spend": 354.58,
+          "impressions": 18235,
+          "clicks": 1418,
+          "orders_attributed": 197,
+          "revenue_attributed": 887967.66
+        }
+      ]
+    },
+    {
+      "name": "dim_date",
+      "original_sheet": "[Generated Calendar]",
+      "table_type": "dimension",
+      "row_count": 1096,
+      "columns": [
+        {
+          "name": "date",
+          "original_name": "date",
+          "dtype": "datetime",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": true,
+          "is_category": false,
+          "sample_values": [
+            "2023-01-01",
+            "2023-01-02",
+            "2023-01-03"
+          ],
+          "null_count": 0,
+          "unique_count": 1096
+        },
+        {
+          "name": "full_date",
+          "original_name": "full_date",
+          "dtype": "datetime",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": true,
+          "is_category": false,
+          "sample_values": [
+            "2023-01-01",
+            "2023-01-02",
+            "2023-01-03"
+          ],
+          "null_count": 0,
+          "unique_count": 1096
+        },
+        {
+          "name": "year",
+          "original_name": "year",
+          "dtype": "int64",
+          "is_key": true,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "2023",
+            "2023",
+            "2023"
+          ],
+          "null_count": 0,
+          "unique_count": 3
+        },
+        {
+          "name": "quarter",
+          "original_name": "quarter",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "Q1",
+            "Q1",
+            "Q1"
+          ],
+          "null_count": 0,
+          "unique_count": 4
+        },
+        {
+          "name": "quarter_number",
+          "original_name": "quarter_number",
+          "dtype": "int64",
+          "is_key": true,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "1",
+            "1",
+            "1"
+          ],
+          "null_count": 0,
+          "unique_count": 4
+        },
+        {
+          "name": "month",
+          "original_name": "month",
+          "dtype": "int64",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "1",
+            "1",
+            "1"
+          ],
+          "null_count": 0,
+          "unique_count": 12
+        },
+        {
+          "name": "month_name",
+          "original_name": "month_name",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "January",
+            "January",
+            "January"
+          ],
+          "null_count": 0,
+          "unique_count": 12
+        },
+        {
+          "name": "month_year",
+          "original_name": "month_year",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "Jan 2023",
+            "Jan 2023",
+            "Jan 2023"
+          ],
+          "null_count": 0,
+          "unique_count": 36
+        },
+        {
+          "name": "month_year_sort",
+          "original_name": "month_year_sort",
+          "dtype": "int64",
+          "is_key": true,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "202301",
+            "202301",
+            "202301"
+          ],
+          "null_count": 0,
+          "unique_count": 36
+        },
+        {
+          "name": "day_of_month",
+          "original_name": "day_of_month",
+          "dtype": "datetime",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": true,
+          "is_category": false,
+          "sample_values": [
+            "1",
+            "2",
+            "3"
+          ],
+          "null_count": 0,
+          "unique_count": 31
+        },
+        {
+          "name": "day_of_week",
+          "original_name": "day_of_week",
+          "dtype": "datetime",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": true,
+          "is_category": false,
+          "sample_values": [
+            "7",
+            "1",
+            "2"
+          ],
+          "null_count": 0,
+          "unique_count": 7
+        },
+        {
+          "name": "day_name",
+          "original_name": "day_name",
+          "dtype": "string",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": false,
+          "is_date": false,
+          "is_category": true,
+          "sample_values": [
+            "Sunday",
+            "Monday",
+            "Tuesday"
+          ],
+          "null_count": 0,
+          "unique_count": 7
+        },
+        {
+          "name": "week_number",
+          "original_name": "week_number",
+          "dtype": "double",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [],
+          "null_count": 1096,
+          "unique_count": 0
+        },
+        {
+          "name": "is_weekend",
+          "original_name": "is_weekend",
+          "dtype": "int64",
+          "is_key": false,
+          "is_foreign_key": false,
+          "is_metric": true,
+          "is_date": false,
+          "is_category": false,
+          "sample_values": [
+            "True",
+            "False",
+            "False"
+          ],
+          "null_count": 0,
+          "unique_count": 2
+        }
+      ],
+      "primary_key": "date",
+      "date_column": "date",
+      "csv_filename": "dim_date.csv",
+      "preview_rows": [
+        {
+          "date": "2023-01-01",
+          "full_date": "2023-01-01",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 1,
+          "day_of_week": 7,
+          "day_name": "Sunday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-01-02",
+          "full_date": "2023-01-02",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 2,
+          "day_of_week": 1,
+          "day_name": "Monday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-03",
+          "full_date": "2023-01-03",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 3,
+          "day_of_week": 2,
+          "day_name": "Tuesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-04",
+          "full_date": "2023-01-04",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 4,
+          "day_of_week": 3,
+          "day_name": "Wednesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-05",
+          "full_date": "2023-01-05",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 5,
+          "day_of_week": 4,
+          "day_name": "Thursday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-06",
+          "full_date": "2023-01-06",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 6,
+          "day_of_week": 5,
+          "day_name": "Friday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-07",
+          "full_date": "2023-01-07",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 7,
+          "day_of_week": 6,
+          "day_name": "Saturday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-01-08",
+          "full_date": "2023-01-08",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 8,
+          "day_of_week": 7,
+          "day_name": "Sunday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-01-09",
+          "full_date": "2023-01-09",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 9,
+          "day_of_week": 1,
+          "day_name": "Monday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-10",
+          "full_date": "2023-01-10",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 10,
+          "day_of_week": 2,
+          "day_name": "Tuesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-11",
+          "full_date": "2023-01-11",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 11,
+          "day_of_week": 3,
+          "day_name": "Wednesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-12",
+          "full_date": "2023-01-12",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 12,
+          "day_of_week": 4,
+          "day_name": "Thursday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-13",
+          "full_date": "2023-01-13",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 13,
+          "day_of_week": 5,
+          "day_name": "Friday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-14",
+          "full_date": "2023-01-14",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 14,
+          "day_of_week": 6,
+          "day_name": "Saturday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-01-15",
+          "full_date": "2023-01-15",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 15,
+          "day_of_week": 7,
+          "day_name": "Sunday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-01-16",
+          "full_date": "2023-01-16",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 16,
+          "day_of_week": 1,
+          "day_name": "Monday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-17",
+          "full_date": "2023-01-17",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 17,
+          "day_of_week": 2,
+          "day_name": "Tuesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-18",
+          "full_date": "2023-01-18",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 18,
+          "day_of_week": 3,
+          "day_name": "Wednesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-19",
+          "full_date": "2023-01-19",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 19,
+          "day_of_week": 4,
+          "day_name": "Thursday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-20",
+          "full_date": "2023-01-20",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 20,
+          "day_of_week": 5,
+          "day_name": "Friday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-21",
+          "full_date": "2023-01-21",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 21,
+          "day_of_week": 6,
+          "day_name": "Saturday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-01-22",
+          "full_date": "2023-01-22",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 22,
+          "day_of_week": 7,
+          "day_name": "Sunday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-01-23",
+          "full_date": "2023-01-23",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 23,
+          "day_of_week": 1,
+          "day_name": "Monday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-24",
+          "full_date": "2023-01-24",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 24,
+          "day_of_week": 2,
+          "day_name": "Tuesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-25",
+          "full_date": "2023-01-25",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 25,
+          "day_of_week": 3,
+          "day_name": "Wednesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-26",
+          "full_date": "2023-01-26",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 26,
+          "day_of_week": 4,
+          "day_name": "Thursday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-27",
+          "full_date": "2023-01-27",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 27,
+          "day_of_week": 5,
+          "day_name": "Friday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-28",
+          "full_date": "2023-01-28",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 28,
+          "day_of_week": 6,
+          "day_name": "Saturday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-01-29",
+          "full_date": "2023-01-29",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 29,
+          "day_of_week": 7,
+          "day_name": "Sunday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-01-30",
+          "full_date": "2023-01-30",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 30,
+          "day_of_week": 1,
+          "day_name": "Monday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-01-31",
+          "full_date": "2023-01-31",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 1,
+          "month_name": "January",
+          "month_year": "Jan 2023",
+          "month_year_sort": 202301,
+          "day_of_month": 31,
+          "day_of_week": 2,
+          "day_name": "Tuesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-01",
+          "full_date": "2023-02-01",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 1,
+          "day_of_week": 3,
+          "day_name": "Wednesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-02",
+          "full_date": "2023-02-02",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 2,
+          "day_of_week": 4,
+          "day_name": "Thursday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-03",
+          "full_date": "2023-02-03",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 3,
+          "day_of_week": 5,
+          "day_name": "Friday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-04",
+          "full_date": "2023-02-04",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 4,
+          "day_of_week": 6,
+          "day_name": "Saturday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-02-05",
+          "full_date": "2023-02-05",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 5,
+          "day_of_week": 7,
+          "day_name": "Sunday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-02-06",
+          "full_date": "2023-02-06",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 6,
+          "day_of_week": 1,
+          "day_name": "Monday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-07",
+          "full_date": "2023-02-07",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 7,
+          "day_of_week": 2,
+          "day_name": "Tuesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-08",
+          "full_date": "2023-02-08",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 8,
+          "day_of_week": 3,
+          "day_name": "Wednesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-09",
+          "full_date": "2023-02-09",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 9,
+          "day_of_week": 4,
+          "day_name": "Thursday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-10",
+          "full_date": "2023-02-10",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 10,
+          "day_of_week": 5,
+          "day_name": "Friday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-11",
+          "full_date": "2023-02-11",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 11,
+          "day_of_week": 6,
+          "day_name": "Saturday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-02-12",
+          "full_date": "2023-02-12",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 12,
+          "day_of_week": 7,
+          "day_name": "Sunday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-02-13",
+          "full_date": "2023-02-13",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 13,
+          "day_of_week": 1,
+          "day_name": "Monday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-14",
+          "full_date": "2023-02-14",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 14,
+          "day_of_week": 2,
+          "day_name": "Tuesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-15",
+          "full_date": "2023-02-15",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 15,
+          "day_of_week": 3,
+          "day_name": "Wednesday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-16",
+          "full_date": "2023-02-16",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 16,
+          "day_of_week": 4,
+          "day_name": "Thursday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-17",
+          "full_date": "2023-02-17",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 17,
+          "day_of_week": 5,
+          "day_name": "Friday",
+          "week_number": "",
+          "is_weekend": "False"
+        },
+        {
+          "date": "2023-02-18",
+          "full_date": "2023-02-18",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 18,
+          "day_of_week": 6,
+          "day_name": "Saturday",
+          "week_number": "",
+          "is_weekend": "True"
+        },
+        {
+          "date": "2023-02-19",
+          "full_date": "2023-02-19",
+          "year": 2023,
+          "quarter": "Q1",
+          "quarter_number": 1,
+          "month": 2,
+          "month_name": "February",
+          "month_year": "Feb 2023",
+          "month_year_sort": 202302,
+          "day_of_month": 19,
+          "day_of_week": 7,
+          "day_name": "Sunday",
+          "week_number": "",
+          "is_weekend": "True"
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "from_table": "payments",
+      "from_column": "order_id",
+      "to_table": "orders",
+      "to_column": "order_id",
+      "cardinality": "OneToMany",
+      "cross_filtering": "OneDirection"
+    },
+    {
+      "from_table": "returns",
+      "from_column": "order_id",
+      "to_table": "orders",
+      "to_column": "order_id",
+      "cardinality": "OneToMany",
+      "cross_filtering": "OneDirection"
+    },
+    {
+      "from_table": "orders",
+      "from_column": "customer_id",
+      "to_table": "customers",
+      "to_column": "customer_id",
+      "cardinality": "OneToMany",
+      "cross_filtering": "OneDirection"
+    },
+    {
+      "from_table": "orders",
+      "from_column": "product_id",
+      "to_table": "products",
+      "to_column": "product_id",
+      "cardinality": "OneToMany",
+      "cross_filtering": "OneDirection"
+    },
+    {
+      "from_table": "returns",
+      "from_column": "product_id",
+      "to_table": "products",
+      "to_column": "product_id",
+      "cardinality": "OneToMany",
+      "cross_filtering": "OneDirection"
+    },
+    {
+      "from_table": "inventory",
+      "from_column": "product_id",
+      "to_table": "products",
+      "to_column": "product_id",
+      "cardinality": "OneToMany",
+      "cross_filtering": "OneDirection"
+    },
+    {
+      "from_table": "orders",
+      "from_column": "order_date",
+      "to_table": "dim_date",
+      "to_column": "date",
+      "cardinality": "OneToMany",
+      "cross_filtering": "OneDirection"
+    },
+    {
+      "from_table": "customers",
+      "from_column": "signup_date",
+      "to_table": "dim_date",
+      "to_column": "date",
+      "cardinality": "OneToMany",
+      "cross_filtering": "OneDirection"
+    },
+    {
+      "from_table": "payments",
+      "from_column": "payment_date",
+      "to_table": "dim_date",
+      "to_column": "date",
+      "cardinality": "OneToMany",
+      "cross_filtering": "OneDirection"
+    },
+    {
+      "from_table": "returns",
+      "from_column": "return_date",
+      "to_table": "dim_date",
+      "to_column": "date",
+      "cardinality": "OneToMany",
+      "cross_filtering": "OneDirection"
+    },
+    {
+      "from_table": "inventory",
+      "from_column": "snapshot_date",
+      "to_table": "dim_date",
+      "to_column": "date",
+      "cardinality": "OneToMany",
+      "cross_filtering": "OneDirection"
+    },
+    {
+      "from_table": "marketing",
+      "from_column": "date",
+      "to_table": "dim_date",
+      "to_column": "date",
+      "cardinality": "OneToMany",
+      "cross_filtering": "OneDirection"
+    }
+  ],
+  "measures": [
+    {
+      "name": "Payments Count",
+      "expression": "DISTINCTCOUNT(payments[payment_id])",
+      "category": "01 Volume & Counts",
+      "description": "Distinct count of payment_id in payments",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Amount",
+      "expression": "SUM(payments[amount])",
+      "category": "02 Core Metrics",
+      "description": "Aggregated sum of amount in payments",
+      "format_string": "\\$#,0;(\\$#,0);\\$#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Average Amount",
+      "expression": "AVERAGE(payments[amount])",
+      "category": "02 Core Metrics",
+      "description": "Arithmetic average of amount in payments",
+      "format_string": "\\$#,##0.00",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Amount YTD",
+      "expression": "TOTALYTD([Total Amount], dim_date[date])",
+      "category": "04 Time Intelligence",
+      "description": "Year-to-date calculation for Total Amount",
+      "format_string": "\\$#,0;(\\$#,0);\\$#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Amount Prior Month",
+      "expression": "CALCULATE([Total Amount], PREVIOUSMONTH(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Previous month value for Total Amount",
+      "format_string": "\\$#,0;(\\$#,0);\\$#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Amount MoM %",
+      "expression": "DIVIDE([Total Amount] - [Amount Prior Month], [Amount Prior Month], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Month-over-month growth percentage for Total Amount",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Amount Prior Year",
+      "expression": "CALCULATE([Total Amount], SAMEPERIODLASTYEAR(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Same period last year for Total Amount",
+      "format_string": "\\$#,0;(\\$#,0);\\$#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Amount YoY %",
+      "expression": "DIVIDE([Total Amount] - [Amount Prior Year], [Amount Prior Year], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Year-over-year growth percentage for Total Amount",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Returns Count",
+      "expression": "DISTINCTCOUNT(returns[return_id])",
+      "category": "01 Volume & Counts",
+      "description": "Distinct count of return_id in returns",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Quantity Returned",
+      "expression": "SUM(returns[quantity_returned])",
+      "category": "02 Core Metrics",
+      "description": "Aggregated sum of quantity_returned in returns",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Average Quantity Returned",
+      "expression": "AVERAGE(returns[quantity_returned])",
+      "category": "02 Core Metrics",
+      "description": "Arithmetic average of quantity_returned in returns",
+      "format_string": "#,##0.00",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Quantity Returned YTD",
+      "expression": "TOTALYTD([Total Quantity Returned], dim_date[date])",
+      "category": "04 Time Intelligence",
+      "description": "Year-to-date calculation for Total Quantity Returned",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Quantity Returned Prior Month",
+      "expression": "CALCULATE([Total Quantity Returned], PREVIOUSMONTH(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Previous month value for Total Quantity Returned",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Quantity Returned MoM %",
+      "expression": "DIVIDE([Total Quantity Returned] - [Quantity Returned Prior Month], [Quantity Returned Prior Month], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Month-over-month growth percentage for Total Quantity Returned",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Quantity Returned Prior Year",
+      "expression": "CALCULATE([Total Quantity Returned], SAMEPERIODLASTYEAR(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Same period last year for Total Quantity Returned",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Quantity Returned YoY %",
+      "expression": "DIVIDE([Total Quantity Returned] - [Quantity Returned Prior Year], [Quantity Returned Prior Year], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Year-over-year growth percentage for Total Quantity Returned",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Inventory Rows",
+      "expression": "COUNTROWS(inventory)",
+      "category": "01 Volume & Counts",
+      "description": "Total rows in inventory",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Units Available",
+      "expression": "SUM(inventory[units_available])",
+      "category": "02 Core Metrics",
+      "description": "Aggregated sum of units_available in inventory",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Average Units Available",
+      "expression": "AVERAGE(inventory[units_available])",
+      "category": "02 Core Metrics",
+      "description": "Arithmetic average of units_available in inventory",
+      "format_string": "#,##0.00",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Available YTD",
+      "expression": "TOTALYTD([Total Units Available], dim_date[date])",
+      "category": "04 Time Intelligence",
+      "description": "Year-to-date calculation for Total Units Available",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Available Prior Month",
+      "expression": "CALCULATE([Total Units Available], PREVIOUSMONTH(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Previous month value for Total Units Available",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Available MoM %",
+      "expression": "DIVIDE([Total Units Available] - [Units Available Prior Month], [Units Available Prior Month], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Month-over-month growth percentage for Total Units Available",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Available Prior Year",
+      "expression": "CALCULATE([Total Units Available], SAMEPERIODLASTYEAR(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Same period last year for Total Units Available",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Available YoY %",
+      "expression": "DIVIDE([Total Units Available] - [Units Available Prior Year], [Units Available Prior Year], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Year-over-year growth percentage for Total Units Available",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Units Reserved",
+      "expression": "SUM(inventory[units_reserved])",
+      "category": "02 Core Metrics",
+      "description": "Aggregated sum of units_reserved in inventory",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Average Units Reserved",
+      "expression": "AVERAGE(inventory[units_reserved])",
+      "category": "02 Core Metrics",
+      "description": "Arithmetic average of units_reserved in inventory",
+      "format_string": "#,##0.00",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Reserved YTD",
+      "expression": "TOTALYTD([Total Units Reserved], dim_date[date])",
+      "category": "04 Time Intelligence",
+      "description": "Year-to-date calculation for Total Units Reserved",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Reserved Prior Month",
+      "expression": "CALCULATE([Total Units Reserved], PREVIOUSMONTH(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Previous month value for Total Units Reserved",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Reserved MoM %",
+      "expression": "DIVIDE([Total Units Reserved] - [Units Reserved Prior Month], [Units Reserved Prior Month], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Month-over-month growth percentage for Total Units Reserved",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Reserved Prior Year",
+      "expression": "CALCULATE([Total Units Reserved], SAMEPERIODLASTYEAR(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Same period last year for Total Units Reserved",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Reserved YoY %",
+      "expression": "DIVIDE([Total Units Reserved] - [Units Reserved Prior Year], [Units Reserved Prior Year], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Year-over-year growth percentage for Total Units Reserved",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Units Sold",
+      "expression": "SUM(inventory[units_sold])",
+      "category": "02 Core Metrics",
+      "description": "Aggregated sum of units_sold in inventory",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Average Units Sold",
+      "expression": "AVERAGE(inventory[units_sold])",
+      "category": "02 Core Metrics",
+      "description": "Arithmetic average of units_sold in inventory",
+      "format_string": "#,##0.00",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Sold YTD",
+      "expression": "TOTALYTD([Total Units Sold], dim_date[date])",
+      "category": "04 Time Intelligence",
+      "description": "Year-to-date calculation for Total Units Sold",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Sold Prior Month",
+      "expression": "CALCULATE([Total Units Sold], PREVIOUSMONTH(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Previous month value for Total Units Sold",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Sold MoM %",
+      "expression": "DIVIDE([Total Units Sold] - [Units Sold Prior Month], [Units Sold Prior Month], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Month-over-month growth percentage for Total Units Sold",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Sold Prior Year",
+      "expression": "CALCULATE([Total Units Sold], SAMEPERIODLASTYEAR(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Same period last year for Total Units Sold",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Units Sold YoY %",
+      "expression": "DIVIDE([Total Units Sold] - [Units Sold Prior Year], [Units Sold Prior Year], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Year-over-year growth percentage for Total Units Sold",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Marketing Rows",
+      "expression": "COUNTROWS(marketing)",
+      "category": "01 Volume & Counts",
+      "description": "Total rows in marketing",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Spend",
+      "expression": "SUM(marketing[spend])",
+      "category": "02 Core Metrics",
+      "description": "Aggregated sum of spend in marketing",
+      "format_string": "\\$#,0;(\\$#,0);\\$#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Average Spend",
+      "expression": "AVERAGE(marketing[spend])",
+      "category": "02 Core Metrics",
+      "description": "Arithmetic average of spend in marketing",
+      "format_string": "\\$#,##0.00",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Spend YTD",
+      "expression": "TOTALYTD([Total Spend], dim_date[date])",
+      "category": "04 Time Intelligence",
+      "description": "Year-to-date calculation for Total Spend",
+      "format_string": "\\$#,0;(\\$#,0);\\$#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Spend Prior Month",
+      "expression": "CALCULATE([Total Spend], PREVIOUSMONTH(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Previous month value for Total Spend",
+      "format_string": "\\$#,0;(\\$#,0);\\$#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Spend MoM %",
+      "expression": "DIVIDE([Total Spend] - [Spend Prior Month], [Spend Prior Month], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Month-over-month growth percentage for Total Spend",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Spend Prior Year",
+      "expression": "CALCULATE([Total Spend], SAMEPERIODLASTYEAR(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Same period last year for Total Spend",
+      "format_string": "\\$#,0;(\\$#,0);\\$#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Spend YoY %",
+      "expression": "DIVIDE([Total Spend] - [Spend Prior Year], [Spend Prior Year], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Year-over-year growth percentage for Total Spend",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Impressions",
+      "expression": "SUM(marketing[impressions])",
+      "category": "02 Core Metrics",
+      "description": "Aggregated sum of impressions in marketing",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Average Impressions",
+      "expression": "AVERAGE(marketing[impressions])",
+      "category": "02 Core Metrics",
+      "description": "Arithmetic average of impressions in marketing",
+      "format_string": "#,##0.00",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Impressions YTD",
+      "expression": "TOTALYTD([Total Impressions], dim_date[date])",
+      "category": "04 Time Intelligence",
+      "description": "Year-to-date calculation for Total Impressions",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Impressions Prior Month",
+      "expression": "CALCULATE([Total Impressions], PREVIOUSMONTH(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Previous month value for Total Impressions",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Impressions MoM %",
+      "expression": "DIVIDE([Total Impressions] - [Impressions Prior Month], [Impressions Prior Month], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Month-over-month growth percentage for Total Impressions",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Impressions Prior Year",
+      "expression": "CALCULATE([Total Impressions], SAMEPERIODLASTYEAR(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Same period last year for Total Impressions",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Impressions YoY %",
+      "expression": "DIVIDE([Total Impressions] - [Impressions Prior Year], [Impressions Prior Year], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Year-over-year growth percentage for Total Impressions",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Clicks",
+      "expression": "SUM(marketing[clicks])",
+      "category": "02 Core Metrics",
+      "description": "Aggregated sum of clicks in marketing",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Average Clicks",
+      "expression": "AVERAGE(marketing[clicks])",
+      "category": "02 Core Metrics",
+      "description": "Arithmetic average of clicks in marketing",
+      "format_string": "#,##0.00",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Clicks YTD",
+      "expression": "TOTALYTD([Total Clicks], dim_date[date])",
+      "category": "04 Time Intelligence",
+      "description": "Year-to-date calculation for Total Clicks",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Clicks Prior Month",
+      "expression": "CALCULATE([Total Clicks], PREVIOUSMONTH(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Previous month value for Total Clicks",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Clicks MoM %",
+      "expression": "DIVIDE([Total Clicks] - [Clicks Prior Month], [Clicks Prior Month], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Month-over-month growth percentage for Total Clicks",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Clicks Prior Year",
+      "expression": "CALCULATE([Total Clicks], SAMEPERIODLASTYEAR(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Same period last year for Total Clicks",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Clicks YoY %",
+      "expression": "DIVIDE([Total Clicks] - [Clicks Prior Year], [Clicks Prior Year], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Year-over-year growth percentage for Total Clicks",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Orders Attributed",
+      "expression": "SUM(marketing[orders_attributed])",
+      "category": "02 Core Metrics",
+      "description": "Aggregated sum of orders_attributed in marketing",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Average Orders Attributed",
+      "expression": "AVERAGE(marketing[orders_attributed])",
+      "category": "02 Core Metrics",
+      "description": "Arithmetic average of orders_attributed in marketing",
+      "format_string": "#,##0.00",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Orders Attributed YTD",
+      "expression": "TOTALYTD([Total Orders Attributed], dim_date[date])",
+      "category": "04 Time Intelligence",
+      "description": "Year-to-date calculation for Total Orders Attributed",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Orders Attributed Prior Month",
+      "expression": "CALCULATE([Total Orders Attributed], PREVIOUSMONTH(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Previous month value for Total Orders Attributed",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Orders Attributed MoM %",
+      "expression": "DIVIDE([Total Orders Attributed] - [Orders Attributed Prior Month], [Orders Attributed Prior Month], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Month-over-month growth percentage for Total Orders Attributed",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Orders Attributed Prior Year",
+      "expression": "CALCULATE([Total Orders Attributed], SAMEPERIODLASTYEAR(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Same period last year for Total Orders Attributed",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Orders Attributed YoY %",
+      "expression": "DIVIDE([Total Orders Attributed] - [Orders Attributed Prior Year], [Orders Attributed Prior Year], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Year-over-year growth percentage for Total Orders Attributed",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Revenue Attributed",
+      "expression": "SUM(marketing[revenue_attributed])",
+      "category": "02 Core Metrics",
+      "description": "Aggregated sum of revenue_attributed in marketing",
+      "format_string": "\\$#,0;(\\$#,0);\\$#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Average Revenue Attributed",
+      "expression": "AVERAGE(marketing[revenue_attributed])",
+      "category": "02 Core Metrics",
+      "description": "Arithmetic average of revenue_attributed in marketing",
+      "format_string": "\\$#,##0.00",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Revenue Attributed YTD",
+      "expression": "TOTALYTD([Total Revenue Attributed], dim_date[date])",
+      "category": "04 Time Intelligence",
+      "description": "Year-to-date calculation for Total Revenue Attributed",
+      "format_string": "\\$#,0;(\\$#,0);\\$#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Revenue Attributed Prior Month",
+      "expression": "CALCULATE([Total Revenue Attributed], PREVIOUSMONTH(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Previous month value for Total Revenue Attributed",
+      "format_string": "\\$#,0;(\\$#,0);\\$#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Revenue Attributed MoM %",
+      "expression": "DIVIDE([Total Revenue Attributed] - [Revenue Attributed Prior Month], [Revenue Attributed Prior Month], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Month-over-month growth percentage for Total Revenue Attributed",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Revenue Attributed Prior Year",
+      "expression": "CALCULATE([Total Revenue Attributed], SAMEPERIODLASTYEAR(dim_date[date]))",
+      "category": "04 Time Intelligence",
+      "description": "Same period last year for Total Revenue Attributed",
+      "format_string": "\\$#,0;(\\$#,0);\\$#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Revenue Attributed YoY %",
+      "expression": "DIVIDE([Total Revenue Attributed] - [Revenue Attributed Prior Year], [Revenue Attributed Prior Year], 0)",
+      "category": "04 Time Intelligence",
+      "description": "Year-over-year growth percentage for Total Revenue Attributed",
+      "format_string": "0.0%",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Orderss",
+      "expression": "DISTINCTCOUNT(orders[order_id])",
+      "category": "05 Entity Intelligence",
+      "description": "Total unique count of orders",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Customerss",
+      "expression": "DISTINCTCOUNT(customers[customer_id])",
+      "category": "05 Entity Intelligence",
+      "description": "Total unique count of customers",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    },
+    {
+      "name": "Total Productss",
+      "expression": "DISTINCTCOUNT(products[product_id])",
+      "category": "05 Entity Intelligence",
+      "description": "Total unique count of products",
+      "format_string": "#,0",
+      "table_name": "_Measures"
+    }
+  ],
+  "dashboard": {
+    "kpis": {
+      "totalRevenue": 8474027.5,
+      "totalCost": 6227820.0,
+      "grossProfit": 2246207.5,
+      "grossMarginPct": 26.5,
+      "totalOrders": 500,
+      "totalUnits": 1229,
+      "avgOrderValue": 16948.06,
+      "totalDiscounts": 36.83,
+      "currency": "$"
+    },
+    "timeSeries": [
+      {
+        "period": "2024-01",
+        "revenue": 2076833.44,
+        "cost": 2196190.0,
+        "profit": -119356.56,
+        "marginPct": -5.7,
+        "units": 67
+      },
+      {
+        "period": "2024-02",
+        "revenue": 572488.32,
+        "cost": 407850.0,
+        "profit": 164638.32,
+        "marginPct": 28.8,
+        "units": 33
+      },
+      {
+        "period": "2024-03",
+        "revenue": 137582.83,
+        "cost": 63080.0,
+        "profit": 74502.83,
+        "marginPct": 54.2,
+        "units": 39
+      },
+      {
+        "period": "2024-04",
+        "revenue": 508634.52,
+        "cost": 370130.0,
+        "profit": 138504.52,
+        "marginPct": 27.2,
+        "units": 80
+      },
+      {
+        "period": "2024-05",
+        "revenue": 165917.3,
+        "cost": 109620.0,
+        "profit": 56297.3,
+        "marginPct": 33.9,
+        "units": 39
+      },
+      {
+        "period": "2024-06",
+        "revenue": 403373.7,
+        "cost": 268800.0,
+        "profit": 134573.7,
+        "marginPct": 33.4,
+        "units": 32
+      },
+      {
+        "period": "2024-07",
+        "revenue": 275052.77,
+        "cost": 147000.0,
+        "profit": 128052.77,
+        "marginPct": 46.6,
+        "units": 72
+      },
+      {
+        "period": "2024-08",
+        "revenue": 119474.83,
+        "cost": 86250.0,
+        "profit": 33224.83,
+        "marginPct": 27.8,
+        "units": 26
+      },
+      {
+        "period": "2024-09",
+        "revenue": 255999.1,
+        "cost": 145250.0,
+        "profit": 110749.1,
+        "marginPct": 43.3,
+        "units": 59
+      },
+      {
+        "period": "2024-10",
+        "revenue": 704193.05,
+        "cost": 387540.0,
+        "profit": 316653.05,
+        "marginPct": 45.0,
+        "units": 117
+      },
+      {
+        "period": "2024-11",
+        "revenue": 486466.56,
+        "cost": 363870.0,
+        "profit": 122596.56,
+        "marginPct": 25.2,
+        "units": 76
+      },
+      {
+        "period": "2024-12",
+        "revenue": 368206.53,
+        "cost": 199910.0,
+        "profit": 168296.53,
+        "marginPct": 45.7,
+        "units": 90
+      },
+      {
+        "period": "2025-01",
+        "revenue": 142771.03,
+        "cost": 95950.0,
+        "profit": 46821.03,
+        "marginPct": 32.8,
+        "units": 35
+      },
+      {
+        "period": "2025-02",
+        "revenue": 228435.27,
+        "cost": 196840.0,
+        "profit": 31595.27,
+        "marginPct": 13.8,
+        "units": 36
+      },
+      {
+        "period": "2025-03",
+        "revenue": 201960.08,
+        "cost": 135670.0,
+        "profit": 66290.08,
+        "marginPct": 32.8,
+        "units": 40
+      },
+      {
+        "period": "2025-04",
+        "revenue": 183782.78,
+        "cost": 101450.0,
+        "profit": 82332.78,
+        "marginPct": 44.8,
+        "units": 35
+      },
+      {
+        "period": "2025-05",
+        "revenue": 485440.96,
+        "cost": 234510.0,
+        "profit": 250930.96,
+        "marginPct": 51.7,
+        "units": 121
+      },
+      {
+        "period": "2025-06",
+        "revenue": 155428.82,
+        "cost": 95180.0,
+        "profit": 60248.82,
+        "marginPct": 38.8,
+        "units": 47
+      },
+      {
+        "period": "2025-07",
+        "revenue": 424298.55,
+        "cost": 295310.0,
+        "profit": 128988.55,
+        "marginPct": 30.4,
+        "units": 62
+      },
+      {
+        "period": "2025-08",
+        "revenue": 373061.64,
+        "cost": 249490.0,
+        "profit": 123571.64,
+        "marginPct": 33.1,
+        "units": 74
+      },
+      {
+        "period": "2025-09",
+        "revenue": 204625.42,
+        "cost": 77930.0,
+        "profit": 126695.42,
+        "marginPct": 61.9,
+        "units": 49
+      }
+    ],
+    "byCategory": [
+      {
+        "category": "Electronics",
+        "revenue": 5819955.67
+      },
+      {
+        "category": "Apparel",
+        "revenue": 1430090.54
+      },
+      {
+        "category": "Home & Kitchen",
+        "revenue": 858621.35
+      },
+      {
+        "category": "Fitness",
+        "revenue": 189669.93
+      },
+      {
+        "category": "Beauty",
+        "revenue": 175690.01
+      }
+    ],
+    "byChannel": [
+      {
+        "channel": "Online Direct",
+        "revenue": 3936233.27
+      },
+      {
+        "channel": "Amazon Marketplace",
+        "revenue": 1999325.51
+      },
+      {
+        "channel": "Retail Store",
+        "revenue": 1350104.35
+      },
+      {
+        "channel": "Mobile App",
+        "revenue": 806487.08
+      },
+      {
+        "channel": "Wholesale",
+        "revenue": 381877.28
+      }
+    ],
+    "topProducts": [
+      {
+        "product": "Flagship Smartphone X12",
+        "revenue": 2721973.95
+      },
+      {
+        "product": "4K Ultra-Wide Monitor 34",
+        "revenue": 1120337.06
+      },
+      {
+        "product": "UltraBook Pro 15",
+        "revenue": 886236.31
+      },
+      {
+        "product": "Noise-Cancelling Headphones",
+        "revenue": 499886.6
+      },
+      {
+        "product": "Cold Press Slow Juicer",
+        "revenue": 381321.38
+      },
+      {
+        "product": "Cushioned Running Shoes",
+        "revenue": 269081.43
+      },
+      {
+        "product": "Tailored Linen Blazer",
+        "revenue": 257647.75
+      },
+      {
+        "product": "Merino Wool Crewneck Sweater",
+        "revenue": 256031.99
+      },
+      {
+        "product": "Waterproof All-Weather Jacket",
+        "revenue": 193328.85
+      },
+      {
+        "product": "Smart Air Fryer XL",
+        "revenue": 192267.15
+      }
+    ],
+    "bySegment": [
+      {
+        "segment": "Consumer",
+        "revenue": 4655854.24
+      },
+      {
+        "segment": "SMB",
+        "revenue": 1756409.41
+      },
+      {
+        "segment": "Mid-Market",
+        "revenue": 1707133.16
+      },
+      {
+        "segment": "Enterprise",
+        "revenue": 201417.52
+      },
+      {
+        "segment": "VIP",
+        "revenue": 153213.18
+      }
+    ],
+    "marketing": [
+      {
+        "channel": "Affiliate",
+        "spend": 428794.5,
+        "revenue": 537596435.35,
+        "roas": 1253.74,
+        "impressions": 32789841,
+        "clicks": 1765301
+      },
+      {
+        "channel": "Email",
+        "spend": 47848.25,
+        "revenue": 886595350.14,
+        "roas": 18529.32,
+        "impressions": 17863026,
+        "clicks": 2679188
+      },
+      {
+        "channel": "Influencer",
+        "spend": 768765.82,
+        "revenue": 488246766.16,
+        "roas": 635.1,
+        "impressions": 118517776,
+        "clicks": 3587254
+      },
+      {
+        "channel": "Paid Search",
+        "spend": 767539.29,
+        "revenue": 843812157.13,
+        "roas": 1099.37,
+        "impressions": 40290602,
+        "clicks": 2306241
+      },
+      {
+        "channel": "Social",
+        "spend": 921885.34,
+        "revenue": 1071379679.98,
+        "roas": 1162.16,
+        "impressions": 108608033,
+        "clicks": 4421813
+      }
+    ],
+    "returns": {
+      "totalReturns": 34,
+      "returnRate": 2.77,
+      "reasons": [
+        {
+          "reason": "WRONG_SIZE_FIT",
+          "count": 11
+        },
+        {
+          "reason": "DEFECTIVE_ITEM",
+          "count": 8
+        },
+        {
+          "reason": "DAMAGED_IN_SHIPPING",
+          "count": 3
+        },
+        {
+          "reason": "LATE_DELIVERY",
+          "count": 2
+        },
+        {
+          "reason": "CHANGED_MIND",
+          "count": 1
+        }
+      ]
+    },
+    "filterOptions": {
+      "categories": [
+        "Electronics",
+        "Fitness",
+        "Home & Kitchen",
+        "Beauty",
+        "Apparel"
+      ],
+      "channels": [
+        "Amazon Marketplace",
+        "Retail Store",
+        "Online Direct",
+        "Mobile App",
+        "Wholesale"
+      ],
+      "minDate": "2023-01-04",
+      "maxDate": "2025-12-29"
+    }
+  },
+  "paths": {
+    "outputDir": "C:\\Partition\\SERIOUS PROJECTS\\RevenueOS\\exports\\default_model",
+    "csvDir": "C:\\Partition\\SERIOUS PROJECTS\\RevenueOS\\exports\\default_model\\csv",
+    "powerbiDir": "C:\\Partition\\SERIOUS PROJECTS\\RevenueOS\\exports\\default_model\\powerbi",
+    "pbitPath": "C:\\Partition\\SERIOUS PROJECTS\\RevenueOS\\exports\\default_model\\powerbi\\revenueos_sample.pbit",
+    "pbipPath": "C:\\Partition\\SERIOUS PROJECTS\\RevenueOS\\exports\\default_model\\powerbi\\revenueos_sample.pbip",
+    "daxPath": "C:\\Partition\\SERIOUS PROJECTS\\RevenueOS\\exports\\default_model\\powerbi\\measures.dax",
+    "pqPath": "C:\\Partition\\SERIOUS PROJECTS\\RevenueOS\\exports\\default_model\\powerbi\\power_query_m.pq",
+    "guidePath": "C:\\Partition\\SERIOUS PROJECTS\\RevenueOS\\exports\\default_model\\POWERBI_DEPLOYMENT_GUIDE.md"
+  },
+  "license": {
+    "name": "RevenueOS Source-Available Commercial & Royalty License (Version 1.0)",
+    "author": "Sarvesh Sharma",
+    "summary": "Free for non-commercial evaluation. Commercial exploitation, SaaS hosting, or resale strictly prohibited without written agreement and royalty payments."
+  }
+}

@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Test Suite (Python ${{ matrix.python-version }})
+    name: Backend Test Suite (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -33,8 +33,43 @@ jobs:
 
       - name: Run Test Suite
         run: |
-          python -m pytest tests/ -v --cov=. --cov-report=term-missing
+          python -m pytest tests/ -v --cov=backend/engine --cov-report=term-missing
 
       - name: Test Sample Data Generator
         run: |
           python data/generate_sample_data.py --rows 500 --customers 50 --out-dir data/sample
+
+      - name: Test Core Engine Pipeline Execution
+        run: |
+          python backend/engine/core.py data/raw/excel/revenueos_sample.xlsx --output-dir exports/ci_test --no-visuals
+
+  frontend-check:
+    name: Frontend Syntax & Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validate JavaScript Syntax
+        run: |
+          node --check frontend/main.js
+          node --check frontend/app.js
+          node --check frontend/preload.js
+
+      - name: Install Frontend Dependencies
+        run: npm ci || npm install
+
+      - name: Verify Portable Model Manifest
+        run: |
+          node -e "
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('frontend/model_data_sample.json', 'utf-8'));
+            if (!data.status || data.status !== 'SUCCESS') process.exit(1);
+            console.log('Sample model validated successfully:', data.projectName);
+          "

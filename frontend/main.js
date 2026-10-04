@@ -88,13 +88,72 @@ ipcMain.handle("dialog:select-folder", async () => {
   return result.filePaths[0];
 });
 
+// Security: Directory allowlist for shell navigation
+const projectRoot = path.resolve(__dirname, "..");
+const allowedDirectories = new Set([projectRoot]);
+
+function isSafePath(targetPath) {
+  if (!targetPath || typeof targetPath !== "string") return false;
+  try {
+    const resolved = path.resolve(targetPath);
+    for (const allowed of allowedDirectories) {
+      if (resolved.startsWith(allowed)) {
+        return fs.existsSync(resolved);
+      }
+    }
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+// Helper to normalize manifest paths portably across environments
+function normalizeManifestPaths(manifest) {
+  if (!manifest) return manifest;
+  try {
+    if (manifest.outputDirectory && !path.isAbsolute(manifest.outputDirectory)) {
+      manifest.outputDirectory = path.resolve(projectRoot, manifest.outputDirectory);
+    }
+    if (manifest.sourceExcel && !path.isAbsolute(manifest.sourceExcel)) {
+      manifest.sourceExcel = path.resolve(projectRoot, manifest.sourceExcel);
+    }
+    if (manifest.paths) {
+      for (const [key, val] of Object.entries(manifest.paths)) {
+        if (typeof val === "string") {
+          manifest.paths[key] = path.isAbsolute(val) ? val : path.resolve(projectRoot, val);
+        }
+      }
+      if (manifest.paths.outputDir) {
+        allowedDirectories.add(path.resolve(manifest.paths.outputDir));
+      }
+    }
+    if (Array.isArray(manifest.charts)) {
+      manifest.charts.forEach((chart) => {
+        if (chart.path && !path.isAbsolute(chart.path)) {
+          chart.path = path.resolve(projectRoot, chart.path);
+        }
+      });
+    }
+  } catch (err) {
+    console.warn("Failed to normalize manifest paths:", err);
+  }
+  return manifest;
+}
+
 // 3. Run Pipeline Engine (Python Process)
 ipcMain.handle("pipeline:run", async (event, params) => {
   const { excelPath, outputDir, projectName, currency } = params;
 
   return new Promise((resolve, reject) => {
     const pythonExe = process.platform === "win32" ? "python" : "python3";
-    const scriptPath = path.resolve(__dirname, "..", "backend", "engine", "master.py");
+    let scriptPath = path.resolve(__dirname, "..", "backend", "engine", "core.py");
+    if (!fs.existsSync(scriptPath)) {
+      scriptPath = path.resolve(__dirname, "..", "backend", "engine", "master.py");
+    }
+
+    if (outputDir) {
+      allowedDirectories.add(path.resolve(outputDir));
+    }
 
     const args = [scriptPath, excelPath];
     if (outputDir) args.push("--output-dir", outputDir);
@@ -130,6 +189,7 @@ ipcMain.handle("pipeline:run", async (event, params) => {
         } else if (trimmed.startsWith("PIPELINE_COMPLETE:")) {
           try {
             finalManifest = JSON.parse(trimmed.substring(18));
+            normalizeManifestPaths(finalManifest);
           } catch (e) {}
         } else {
           mainWindow?.webContents.send("pipeline:log", trimmed);
@@ -179,21 +239,23 @@ ipcMain.handle("app:get-sample-path", () => {
   return null;
 });
 
-// 5. Shell: Open Directory
+// 5. Shell: Open Directory (Security Hardened)
 ipcMain.handle("shell:open-folder", async (event, folderPath) => {
-  if (folderPath && fs.existsSync(folderPath)) {
-    await shell.openPath(folderPath);
+  if (folderPath && isSafePath(folderPath)) {
+    await shell.openPath(path.resolve(folderPath));
     return true;
   }
+  console.warn(`[SECURITY] Blocked shell:open-folder for untrusted path: ${folderPath}`);
   return false;
 });
 
-// 6. Shell: Launch / Open File (e.g., .pbit in Power BI Desktop)
+// 6. Shell: Launch / Open File (Security Hardened)
 ipcMain.handle("shell:launch-file", async (event, filePath) => {
-  if (filePath && fs.existsSync(filePath)) {
-    await shell.openPath(filePath);
+  if (filePath && isSafePath(filePath)) {
+    await shell.openPath(path.resolve(filePath));
     return true;
   }
+  console.warn(`[SECURITY] Blocked shell:launch-file for untrusted path: ${filePath}`);
   return false;
 });
 
@@ -206,15 +268,22 @@ ipcMain.handle("clipboard:write", (event, text) => {
   return false;
 });
 
-// 8. Load Precompiled Initial Model
+// 8. Load Precompiled Initial Model (Portable)
 ipcMain.handle("app:load-initial-model", () => {
-  const modelPath = path.resolve(__dirname, "model_data.json");
-  if (fs.existsSync(modelPath)) {
-    try {
-      const data = JSON.parse(fs.readFileSync(modelPath, "utf-8"));
-      return data;
-    } catch (e) {
-      console.error("Failed to parse initial model:", e);
+  const candidates = [
+    path.resolve(__dirname, "model_data.json"),
+    path.resolve(__dirname, "model_data_sample.json"),
+  ];
+
+  for (const modelPath of candidates) {
+    if (fs.existsSync(modelPath)) {
+      try {
+        const raw = fs.readFileSync(modelPath, "utf-8");
+        const data = JSON.parse(raw);
+        return normalizeManifestPaths(data);
+      } catch (e) {
+        console.error("Failed to parse initial model from", modelPath, e);
+      }
     }
   }
   return null;

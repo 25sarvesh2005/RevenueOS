@@ -156,6 +156,8 @@ const app = {
     document.getElementById("btnStarSchemaViewer")?.addEventListener("click", () => this.switchView("model"));
     document.getElementById("btnLaunchPowerBI")?.addEventListener("click", () => this.launchNativePowerBI());
     document.getElementById("btnExportCSVMarts")?.addEventListener("click", () => this.exportCSVMarts());
+    document.getElementById("btnMatplotlibPack")?.addEventListener("click", () => this.openMatplotlibModal());
+    document.getElementById("btnOpenChartsFolder")?.addEventListener("click", () => this.openChartsFolder());
     document.getElementById("btnCopyAllDAX")?.addEventListener("click", () => this.copyAllDAX());
 
     // L. Theme Switcher
@@ -1320,6 +1322,66 @@ const app = {
     if (window.api?.copyToClipboard) {
       await window.api.copyToClipboard(text);
       this.showToast("All DAX measures copied to clipboard!");
+    }
+  },
+
+  openMatplotlibModal() {
+    const modal = document.getElementById("matplotlibModal");
+    const grid = document.getElementById("matplotlibGalleryGrid");
+    if (!modal || !grid) return;
+
+    const charts = this.currentManifest?.charts || [];
+    grid.innerHTML = "";
+
+    if (charts.length === 0) {
+      grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--pbi-text-muted); padding: 40px 0; font-size: 13px;">No Matplotlib charts compiled yet. Import or run an Excel workbook to automatically generate 300 DPI publication charts.</div>`;
+    } else {
+      charts.forEach((c) => {
+        const card = document.createElement("div");
+        card.style.background = "var(--pbi-surface-alt)";
+        card.style.border = "1px solid var(--pbi-border)";
+        card.style.borderRadius = "4px";
+        card.style.padding = "10px";
+        card.style.display = "flex";
+        card.style.flexDirection = "column";
+        card.style.gap = "8px";
+        card.style.cursor = "pointer";
+        card.style.transition = "transform 0.15s ease, border-color 0.15s ease";
+        card.onmouseover = () => {
+          card.style.borderColor = "var(--pbi-accent-blue)";
+          card.style.transform = "translateY(-2px)";
+        };
+        card.onmouseout = () => {
+          card.style.borderColor = "var(--pbi-border)";
+          card.style.transform = "none";
+        };
+
+        const imgUri = c.path.replace(/\\/g, "/");
+        card.innerHTML = `
+          <div style="font-weight: 600; font-size: 12px; color: var(--pbi-text-bright);">${c.title}</div>
+          <div style="overflow: hidden; border-radius: 4px; background: #121212; height: 180px; display: flex; align-items: center; justify-content: center;">
+            <img src="file:///${imgUri}" alt="${c.title}" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+          </div>
+          <div style="font-size: 10px; color: var(--pbi-text-muted);">${c.filename} • Click to open high-res</div>
+        `;
+        card.addEventListener("click", () => {
+          if (window.api?.launchFile) {
+            window.api.launchFile(c.path);
+          }
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    modal.style.display = "flex";
+  },
+
+  async openChartsFolder() {
+    const chartsDir = this.currentManifest?.paths?.chartsDir;
+    if (chartsDir && window.api?.openFolder) {
+      await window.api.openFolder(chartsDir);
+    } else {
+      this.showToast("Charts folder ready in output directory.");
     }
   },
 

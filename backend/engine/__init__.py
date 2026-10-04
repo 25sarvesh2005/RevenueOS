@@ -1,20 +1,34 @@
 """
 RevenueOS Engine Package
 ========================
-Provides unified master engine, Kimball star schema decomposition,
+Provides unified canonical engine (CoreEngine), Kimball star schema decomposition,
 DAX measure synthesis, TMSL/PBIP generation, and pipeline engines.
 """
 
-from backend.engine.master import BackendEngine, clean_identifier, format_title
+from backend.engine.core import (
+    CoreEngine,
+    BackendEngine,
+    ExcelToPowerBIEngine,
+    ColumnMeta,
+    TableMeta,
+    RelationshipMeta,
+    DaxMeasureMeta,
+    clean_identifier,
+    format_title,
+)
 from backend.engine.pipeline_engine import PipelineEngine, PipelineRunResult, PhaseResult
-from backend.engine.excel_to_powerbi import ExcelToPowerBIEngine
 
 __all__ = [
+    "CoreEngine",
     "BackendEngine",
+    "ExcelToPowerBIEngine",
     "PipelineEngine",
     "PipelineRunResult",
     "PhaseResult",
-    "ExcelToPowerBIEngine",
+    "ColumnMeta",
+    "TableMeta",
+    "RelationshipMeta",
+    "DaxMeasureMeta",
     "clean_identifier",
-    "format_title"
+    "format_title",
 ]
