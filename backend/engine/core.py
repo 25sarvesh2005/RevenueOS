@@ -109,6 +109,7 @@ class CoreEngine:
         currency_symbol: str = "$",
         emit_manifest: bool = True,
         generate_visuals: bool = True,
+        log_callback: Optional[Callable[[str, Optional[int], Optional[str]], None]] = None,
     ):
         self.excel_path = Path(excel_path).resolve()
         if not self.excel_path.exists():
@@ -129,6 +130,7 @@ class CoreEngine:
         self.currency_symbol = currency_symbol
         self.emit_manifest = emit_manifest
         self.generate_visuals = generate_visuals
+        self.log_callback = log_callback
 
         # Internal state
         self.raw_frames: Dict[str, pd.DataFrame] = {}
@@ -146,6 +148,12 @@ class CoreEngine:
         timestamp = datetime.now().strftime("%H:%M:%S")
         entry = f"[{timestamp}] {message}"
         self.logs.append(entry)
+
+        if self.log_callback:
+            try:
+                self.log_callback(message, progress, stage)
+            except Exception:
+                pass
 
         if self.emit_manifest:
             payload = {"message": message}

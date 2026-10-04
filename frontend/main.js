@@ -302,3 +302,78 @@ ipcMain.handle("dialog:save-csv", async (event, { defaultName, content }) => {
   }
   return null;
 });
+
+// 10. DAX Semantic Engine Evaluation
+ipcMain.handle("dax:evaluate", async (event, { expression, jobId }) => {
+  return new Promise((resolve) => {
+    const pythonExe = process.platform === "win32" ? "python" : "python3";
+    const pyScript = `
+import sys, json
+from pathlib import Path
+from backend.api.dax_evaluator import DaxEvaluator
+
+try:
+    expr = sys.argv[1]
+    job_id = sys.argv[2] if len(sys.argv) > 2 and sys.argv[2] != "null" else None
+    
+    data_dir = None
+    if job_id:
+        candidate = Path("exports") / job_id
+        if candidate.exists():
+            data_dir = candidate
+    if not data_dir:
+        for p in [Path("exports/default_model"), Path("data/raw/csv"), Path("data/processed")]:
+            if p.exists() and any(p.glob("**/*.csv")):
+                data_dir = p
+                break
+                
+    evaluator = DaxEvaluator(data_dir=data_dir)
+    res = evaluator.evaluate(expr)
+    print(json.dumps(res))
+except Exception as e:
+    print(json.dumps({
+        "expression": sys.argv[1] if len(sys.argv) > 1 else "",
+        "status": "ERROR",
+        "evaluated_value": None,
+        "formatted_value": None,
+        "data_type": "error",
+        "execution_time_ms": 0,
+        "error": str(e)
+    }))
+`;
+    const proc = spawn(pythonExe, ["-c", pyScript, expression, jobId || "null"], {
+      cwd: path.resolve(__dirname, ".."),
+      env: { ...process.env, PYTHONUNBUFFERED: "1" },
+    });
+    let stdoutData = "";
+    proc.stdout.on("data", (d) => { stdoutData += d.toString(); });
+    proc.on("close", (code) => {
+      try {
+        const parsed = JSON.parse(stdoutData.trim());
+        resolve(parsed);
+      } catch (err) {
+        resolve({
+          expression,
+          status: "ERROR",
+          evaluated_value: null,
+          formatted_value: null,
+          data_type: "error",
+          execution_time_ms: 0,
+          error: "Failed to evaluate DAX expression in Python engine: " + stdoutData,
+        });
+      }
+    });
+    proc.on("error", (err) => {
+      resolve({
+        expression,
+        status: "ERROR",
+        evaluated_value: null,
+        formatted_value: null,
+        data_type: "error",
+        execution_time_ms: 0,
+        error: err.message,
+      });
+    });
+  });
+});
+

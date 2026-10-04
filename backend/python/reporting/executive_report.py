@@ -244,6 +244,191 @@ def generate_executive_briefing(data: Dict[str, pd.DataFrame], currency: str = "
     return "\n".join(md)
 
 
+def generate_manifest_executive_report(manifest: Dict[str, Any], currency: str = "$") -> Dict[str, str]:
+    """
+    Generate standalone Executive Performance Briefing (Markdown & HTML)
+    directly from manifest and analytical marts without requiring a PostgreSQL connection.
+    """
+    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    dash = manifest.get("dashboard", {})
+    kpis = dash.get("kpis", {})
+    rev = kpis.get("totalRevenue", 0.0)
+    cogs = kpis.get("totalCost", 0.0)
+    gp = kpis.get("grossProfit", 0.0)
+    margin = kpis.get("grossMarginPct", 0.0)
+    orders = kpis.get("totalOrders", 0)
+    units = kpis.get("totalUnits", 0)
+    returns = dash.get("returns", {})
+
+    proj_name = manifest.get("projectName", "RevenueOS Intelligence Report")
+    tables = manifest.get("tables", [])
+    measures = manifest.get("measures", [])
+    charts = manifest.get("charts", [])
+
+    # 1. Build Markdown
+    md = [
+        f"# 📊 {proj_name} – Executive Intelligence Briefing",
+        f"**Generated**: `{now_utc}` | **Engine**: `RevenueOS Core 1.0.0` | **License**: `Commercial Source-Available (Royalty)`",
+        "",
+        "---",
+        "",
+        "## 1. Executive KPI Scorecard",
+        "",
+        f"| Metric | Value | Benchmark / Variance | Status |",
+        f"|:---|:---:|:---:|:---:|",
+        f"| **Gross Revenue** | **{currency}{rev:,.2f}** | Primary Top-Line Volume | ✅ Active |",
+        f"| **Cost of Goods Sold (COGS)** | **{currency}{cogs:,.2f}** | Direct Product Incurrence | 📊 Tracked |",
+        f"| **Gross Profit** | **{currency}{gp:,.2f}** | Contribution to Overhead | ✅ Positive |",
+        f"| **Gross Margin %** | **{margin:.1f}%** | Target Benchmark: 25.0% | {'✅ Exceeding' if margin >= 25 else '⚠️ Under Benchmark'} |",
+        f"| **Total Processed Orders** | **{orders:,}** | Filtered Analytical Universe | 📦 Ingested |",
+        f"| **Total Units Fulfilled** | **{units:,}** | Avg Units/Order: {(units/orders if orders else 0):.2f} | 🚚 Fulfilled |",
+        f"| **Return Rate** | **{returns.get('returnRate', 0.0):.2f}%** | Total: {returns.get('totalReturns', 0)} items | {'✅ Normal' if returns.get('returnRate', 0) < 5 else '⚠️ High'} |",
+        "",
+        "---",
+        "",
+        "## 2. Kimball Star Schema Dimensional Marts",
+        "",
+        "| Table Name | Model Role | Columns | Row Count | Storage Mart |",
+        "|:---|:---:|:---:|:---:|:---|",
+    ]
+
+    for tbl in tables:
+        t_name = tbl.get("name", "")
+        role = tbl.get("table_type", "dimension").upper()
+        cols_cnt = len(tbl.get("columns", []))
+        r_cnt = tbl.get("row_count", 0)
+        csv_file = tbl.get("csv_filename", f"{t_name}.csv")
+        md.append(f"| `{t_name}` | **{role}** | {cols_cnt} cols | {r_cnt:,} rows | `{csv_file}` |")
+
+    md.extend([
+        "",
+        "---",
+        "",
+        "## 3. Synthesized Semantic DAX Measures",
+        "",
+        "| Measure Name | Inferred Category | DAX Formula Expression |",
+        "|:---|:---:|:---|",
+    ])
+
+    for m in measures[:10]:
+        m_name = m.get("name", "")
+        cat = m.get("category", "General")
+        expr = m.get("expression", "").replace("\n", " ")
+        md.append(f"| `[{m_name}]` | {cat} | `{expr}` |")
+
+    md.extend([
+        "",
+        "---",
+        "",
+        "## 4. Proprietary Commercial License Notice",
+        "> **STRICT LEGAL NOTICE**: This briefing, associated data marts, and Power BI artifacts were compiled",
+        "> by RevenueOS Studio under a commercial proprietary royalty license. No third party may exploit,",
+        "> commercialize, or derive profit without express written authorization and mandatory royalty remittances.",
+    ])
+
+    markdown_content = "\n".join(md)
+
+    # 2. Build HTML
+    html_content = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{proj_name} – Executive Briefing</title>
+  <style>
+    body {{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #121212;
+      color: #E0E0E0;
+      line-height: 1.6;
+      margin: 0;
+      padding: 40px;
+    }}
+    .container {{
+      max-width: 1000px;
+      margin: 0 auto;
+      background: #1E1E1E;
+      border: 1px solid #333333;
+      border-radius: 8px;
+      padding: 36px 48px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }}
+    h1 {{ color: #FFFFFF; font-size: 26px; border-bottom: 2px solid #118DFF; padding-bottom: 12px; margin-top: 0; }}
+    h2 {{ color: #F2C80F; font-size: 18px; margin-top: 32px; border-bottom: 1px solid #2C2C2C; padding-bottom: 6px; }}
+    .meta-bar {{ color: #888888; font-size: 12px; margin-bottom: 24px; }}
+    .kpi-grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }}
+    .kpi-card {{ background: #252526; border: 1px solid #383838; border-radius: 6px; padding: 16px; }}
+    .kpi-title {{ font-size: 11px; text-transform: uppercase; color: #888888; font-weight: 600; }}
+    .kpi-val {{ font-size: 24px; font-weight: 700; color: #FFFFFF; margin: 8px 0; }}
+    .kpi-sub {{ font-size: 11px; color: #2ECC71; }}
+    table {{ width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }}
+    th, td {{ border: 1px solid #333333; padding: 10px 14px; text-align: left; }}
+    th {{ background: #2A2A2A; color: #FFFFFF; font-weight: 600; }}
+    tr:nth-child(even) {{ background: #1A1A1A; }}
+    code {{ font-family: "Fira Code", monospace; background: #2D2D2D; padding: 2px 6px; border-radius: 3px; font-size: 12px; color: #118DFF; }}
+    .footer-license {{ margin-top: 40px; padding: 16px; background: #251B14; border: 1px solid #6E3816; border-radius: 6px; font-size: 11px; color: #E09E6D; }}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 {proj_name}</h1>
+    <div class="meta-bar">Generated: <strong>{now_utc}</strong> &nbsp;|&nbsp; Engine: <strong>RevenueOS Core 1.0.0</strong> &nbsp;|&nbsp; License: <strong>Proprietary Royalty</strong></div>
+
+    <h2>1. Executive KPI Summary</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">Gross Revenue</div>
+        <div class="kpi-val">{currency}{rev:,.2f}</div>
+        <div class="kpi-sub">Total Inflow</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Gross Profit</div>
+        <div class="kpi-val">{currency}{gp:,.2f}</div>
+        <div class="kpi-sub">Margin: {margin:.1f}%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Total Orders</div>
+        <div class="kpi-val">{orders:,}</div>
+        <div class="kpi-sub">{units:,} Units Fulfilled</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-title">Return Rate</div>
+        <div class="kpi-val">{returns.get('returnRate', 0.0):.2f}%</div>
+        <div class="kpi-sub">{returns.get('totalReturns', 0)} Items Returned</div>
+      </div>
+    </div>
+
+    <h2>2. Star Schema Dimensional Marts</h2>
+    <table>
+      <thead>
+        <tr><th>Table</th><th>Role</th><th>Columns</th><th>Rows</th><th>Export File</th></tr>
+      </thead>
+      <tbody>
+        {"".join(f"<tr><td><code>{tbl.get('name')}</code></td><td><strong>{tbl.get('table_type', 'dim').upper()}</strong></td><td>{len(tbl.get('columns', []))} cols</td><td>{tbl.get('row_count', 0):,}</td><td><code>{tbl.get('csv_filename')}</code></td></tr>" for tbl in tables)}
+      </tbody>
+    </table>
+
+    <h2>3. Synthesized Semantic DAX Measures (Top)</h2>
+    <table>
+      <thead>
+        <tr><th>Measure</th><th>Category</th><th>Expression</th></tr>
+      </thead>
+      <tbody>
+        {"".join(f"<tr><td><code>[{m.get('name')}]</code></td><td>{m.get('category')}</td><td><code>{m.get('expression', '').replace(chr(10), ' ')}</code></td></tr>" for m in measures[:8])}
+      </tbody>
+    </table>
+
+    <div class="footer-license">
+      <strong>COMMERCIAL LEGAL NOTICE</strong>: This document and all analytical computations are strictly governed by the RevenueOS Commercial Royalty License.
+    </div>
+  </div>
+</body>
+</html>
+"""
+    return {"markdown": markdown_content, "html": html_content}
+
+
+
 def main():
     parser = argparse.ArgumentParser(description="RevenueOS Executive Briefing Generator")
     parser.add_argument("--output", type=str, default="docs/executive_briefing.md", help="Output path for markdown report")

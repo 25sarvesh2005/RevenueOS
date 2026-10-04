@@ -49,6 +49,7 @@ data/raw/**/*.xlsm
 data/raw/**/*.xls
 data/sample/**/*.csv
 data/processed/**/*
+data/staging/
 !data/raw/**/.gitkeep
 !data/sample/.gitkeep
 !data/processed/.gitkeep

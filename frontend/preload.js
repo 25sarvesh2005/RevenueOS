@@ -35,4 +35,7 @@ contextBridge.exposeInMainWorld("api", {
   // Preloaded Data & Storage
   loadInitialModel: () => ipcRenderer.invoke("app:load-initial-model"),
   saveCSV: (params) => ipcRenderer.invoke("dialog:save-csv", params),
+
+  // DAX Semantic Engine Evaluation
+  evaluateDax: (expression, jobId) => ipcRenderer.invoke("dax:evaluate", { expression, jobId }),
 });

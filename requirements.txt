@@ -34,6 +34,9 @@ pytest-cov>=4.1.0
 # Optional: Orchestration
 # apache-airflow>=2.7.0
 
-# Optional: API layer
-# fastapi>=0.104.0
-# uvicorn>=0.24.0
+# API layer
+fastapi>=0.104.0
+uvicorn>=0.24.0
+python-multipart>=0.0.6
+httpx>=0.25.0
+
