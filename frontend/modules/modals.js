@@ -142,7 +142,11 @@ export async function exportCSVMarts(state) {
     await window.api.openFolder(csvDir);
     showToast("Opened CSV Marts directory", "info");
   } else {
-    showToast("CSV data marts ready in output directory.", "info");
+    const jobId = state?.currentJobId || "default";
+    const tables = state.currentManifest?.tables || [];
+    const primaryTable = tables[0]?.name || "orders";
+    window.open(`http://127.0.0.1:8000/api/download/${jobId}/csv/${primaryTable}`, "_blank");
+    showToast(`Downloading ${primaryTable}.csv data mart...`, "info");
   }
 }
 
