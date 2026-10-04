@@ -61,6 +61,20 @@ const app = {
   // 2. Event Listeners & Binding
   // -------------------------------------------------------------------------
   setupEventListeners() {
+    // 0. Pipeline Real-time Progress & Log Streams
+    if (window.api?.onPipelineProgress) {
+      window.api.onPipelineProgress((data) => {
+        if (data.progress !== undefined) {
+          this.updateProgress(data.progress, data.stage || "Processing...");
+        }
+      });
+    }
+    if (window.api?.onPipelineLog) {
+      window.api.onPipelineLog((msg) => {
+        this.appendLog(msg);
+      });
+    }
+
     // A. Ribbon Tabs
     document.querySelectorAll(".ribbon-tab").forEach((tab) => {
       tab.addEventListener("click", () => {

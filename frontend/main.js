@@ -118,10 +118,14 @@ ipcMain.handle("pipeline:run", async (event, params) => {
         const trimmed = line.trim();
         if (!trimmed) continue;
 
-        if (trimmed.startsWith("PIPELINE_PROGRESS:")) {
+        if (trimmed.startsWith("PIPELINE_PROGRESS:") || trimmed.startsWith("EVENT_JSON:")) {
           try {
-            const progressData = JSON.parse(trimmed.substring(18));
+            const prefixLen = trimmed.startsWith("PIPELINE_PROGRESS:") ? 18 : 11;
+            const progressData = JSON.parse(trimmed.substring(prefixLen));
             mainWindow?.webContents.send("pipeline:progress", progressData);
+            if (progressData.message) {
+              mainWindow?.webContents.send("pipeline:log", progressData.message);
+            }
           } catch (e) {}
         } else if (trimmed.startsWith("PIPELINE_COMPLETE:")) {
           try {
