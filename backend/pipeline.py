@@ -28,8 +28,12 @@ import argparse
 import sys
 from pathlib import Path
 
-from config import logger
-from engine.pipeline_engine import PipelineEngine
+try:
+    from backend.config import logger
+    from backend.engine.pipeline_engine import PipelineEngine
+except ImportError:
+    from config import logger
+    from engine.pipeline_engine import PipelineEngine
 
 
 def main() -> int:

@@ -7,7 +7,8 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from engine.excel_to_powerbi import ExcelToPowerBIEngine, clean_identifier, format_title
+import importlib
+from backend.engine.core import CoreEngine as ExcelToPowerBIEngine, clean_identifier, format_title
 
 
 class TestExcelToPowerBIEngine:

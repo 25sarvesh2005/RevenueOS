@@ -61,10 +61,12 @@ app.on("window-all-closed", () => {
 // 1. File Selection Dialog (Excel)
 ipcMain.handle("dialog:select-excel", async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
-    title: "Select Source Excel Workbook",
+    title: "Select Business Data Workbook (Excel or CSV)",
     properties: ["openFile"],
     filters: [
+      { name: "Business Data Files", extensions: ["xlsx", "xls", "xlsm", "csv"] },
       { name: "Excel Workbooks", extensions: ["xlsx", "xls", "xlsm"] },
+      { name: "CSV Files", extensions: ["csv"] },
       { name: "All Files", extensions: ["*"] },
     ],
   });

@@ -170,14 +170,28 @@ class CoreEngine:
             print(f"EVENT_JSON:{json.dumps(payload)}", flush=True)
 
     def load_and_profile_sheets(self) -> None:
-        """Step 1: Read all sheets and profile columns, keys, and metrics."""
-        self._log(f"Reading workbook: {self.excel_path.name}", progress=10, stage="Loading Excel")
-        excel_file = pd.ExcelFile(self.excel_path)
-        sheet_names = excel_file.sheet_names
-        self._log(f"Found {len(sheet_names)} sheet(s): {', '.join(sheet_names)}", progress=15)
+        """Step 1: Read all sheets/tables and profile columns, keys, and metrics."""
+        is_csv = self.excel_path.suffix.lower() in [".csv", ".tsv", ".txt"]
+        raw_dfs: Dict[str, pd.DataFrame] = {}
 
-        for sheet in sheet_names:
-            df = excel_file.parse(sheet)
+        if is_csv:
+            sep = "\t" if self.excel_path.suffix.lower() == ".tsv" else ","
+            self._log(f"Reading tabular file: {self.excel_path.name}", progress=10, stage="Loading Data")
+            sheet_name = clean_identifier(self.excel_path.stem)
+            try:
+                raw_dfs[sheet_name] = pd.read_csv(self.excel_path, sep=sep, low_memory=False)
+            except Exception:
+                raw_dfs[sheet_name] = pd.read_csv(self.excel_path, sep=None, engine="python")
+            self._log(f"Parsed table '{sheet_name}' from CSV", progress=15)
+        else:
+            self._log(f"Reading workbook: {self.excel_path.name}", progress=10, stage="Loading Excel")
+            excel_file = pd.ExcelFile(self.excel_path)
+            sheet_names = excel_file.sheet_names
+            self._log(f"Found {len(sheet_names)} sheet(s): {', '.join(sheet_names)}", progress=15)
+            for sheet in sheet_names:
+                raw_dfs[sheet] = excel_file.parse(sheet)
+
+        for sheet, df in raw_dfs.items():
             if df.empty or len(df.columns) == 0:
                 continue
 
@@ -1851,7 +1865,8 @@ def main():
     parser = argparse.ArgumentParser(
         description="RevenueOS Canonical Master Pipeline Engine"
     )
-    parser.add_argument("excel_path", help="Path to source Excel workbook (.xlsx/.xls/.xlsm)")
+    parser.add_argument("excel_path", nargs="?", default=None, help="Path to source Excel or CSV file (.xlsx/.xls/.xlsm/.csv)")
+    parser.add_argument("--excel", "-e", dest="excel_flag", default=None, help="Explicit flag for source Excel or CSV path")
     parser.add_argument("--output-dir", default=None, help="Directory to save generated artifacts")
     parser.add_argument("--project-name", default=None, help="Display name for the project")
     parser.add_argument("--currency", default="$", help="Currency symbol for DAX formatting (default: $)")
@@ -1859,9 +1874,13 @@ def main():
 
     args = parser.parse_args()
 
+    resolved_path = args.excel_flag or args.excel_path
+    if not resolved_path:
+        parser.error("Must provide a path to an Excel or CSV file (either positional or via --excel).")
+
     try:
         engine = CoreEngine(
-            excel_path=args.excel_path,
+            excel_path=resolved_path,
             output_dir=args.output_dir,
             project_name=args.project_name,
             currency_symbol=args.currency,

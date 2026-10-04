@@ -89,7 +89,7 @@ SCHEMA_SILVER = os.getenv("SCHEMA_SILVER", "silver")
 SCHEMA_GOLD   = os.getenv("SCHEMA_GOLD",   "gold")
 
 # Source data paths
-ROOT_DIR      = Path(__file__).parent
+ROOT_DIR      = Path(__file__).resolve().parent.parent
 DATA_DIR      = ROOT_DIR / "data"
 RAW_DIR       = DATA_DIR / "raw"
 PROCESSED_DIR = DATA_DIR / "processed"

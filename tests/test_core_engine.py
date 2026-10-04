@@ -101,3 +101,31 @@ class TestCoreEngine:
         assert (pbi_dir / "enterprise_model.pbit").exists()
         assert (pbi_dir / "enterprise_model.pbip").exists()
         assert (pbi_dir / "measures.dax").exists()
+
+    def test_canonical_core_engine_csv_ingestion(self, tmp_path):
+        csv_file = tmp_path / "simple_sales.csv"
+        df = pd.DataFrame({
+            "order_id": ["O-1", "O-2", "O-3"],
+            "customer_id": ["C-1", "C-2", "C-1"],
+            "revenue": [500.0, 750.0, 250.0],
+            "cost": [250.0, 400.0, 100.0],
+            "order_date": ["2025-01-01", "2025-01-02", "2025-01-03"],
+        })
+        df.to_csv(csv_file, index=False)
+
+        out_dir = tmp_path / "csv_out"
+        engine = CoreEngine(
+            excel_path=csv_file,
+            output_dir=out_dir,
+            project_name="Direct CSV Ingestion",
+            emit_manifest=False,
+            generate_visuals=False,
+        )
+        manifest_path = engine.run()
+        assert manifest_path.exists()
+
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        assert manifest["status"] == "SUCCESS"
+        assert manifest["projectName"] == "Direct CSV Ingestion"
+        assert manifest["summary"]["totalRows"] >= 3
+        assert len(manifest["tables"]) >= 1
