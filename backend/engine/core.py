@@ -208,11 +208,109 @@ class CoreEngine:
             df = df.rename(columns=clean_cols)
             df = df.dropna(how="all").dropna(axis=1, how="all")
             table_name = clean_identifier(sheet)
+            df = self._sanitize_dataframe(df, table_name=table_name)
             self.raw_frames[table_name] = df
             self._log(f"Loaded '{table_name}': {len(df)} rows, {len(df.columns)} columns")
 
         if not self.raw_frames:
             raise ValueError("The provided Excel file contains no valid tabular data.")
+
+    def _sanitize_dataframe(self, df: pd.DataFrame, table_name: str = "") -> pd.DataFrame:
+        """Coerce dirty real-world representations (currency strings, accounting negatives,
+        Excel serial dates, percentages) into strict native numeric/datetime types."""
+        df = df.copy()
+
+        for col in df.columns:
+            series = df[col]
+            col_lower = str(col).lower()
+
+            # 1. Date coercion for numeric columns (Excel serial dates: e.g. 45123)
+            if pd.api.types.is_numeric_dtype(series):
+                if any(k in col_lower for k in ["date", "day", "period", "timestamp"]) and not any(k in col_lower for k in ["id", "num", "code"]):
+                    non_null = series.dropna()
+                    if len(non_null) > 0 and (non_null >= 30000).all() and (non_null <= 65000).all():
+                        try:
+                            df[col] = pd.to_datetime(series, unit="D", origin="1899-12-30", errors="coerce")
+                            self._log(f"  [Cleaned] Coerced Excel serial dates in '{table_name}.{col}'")
+                            continue
+                        except Exception:
+                            pass
+
+            # 2. String/Object column cleaning (Currency, Accounting Parens, Percentages)
+            if pd.api.types.is_object_dtype(series) or pd.api.types.is_string_dtype(series):
+                non_null_str = series.dropna().astype(str).str.strip()
+                if len(non_null_str) == 0:
+                    continue
+
+                sample_vals = non_null_str.head(50)
+
+                # Check if it could be a date column
+                if any(k in col_lower for k in ["date", "time", "created", "timestamp", "day", "month"]):
+                    try:
+                        parsed_dates = pd.to_datetime(sample_vals, errors="coerce", format="mixed")
+                        if parsed_dates.notna().sum() >= len(sample_vals) * 0.7:
+                            df[col] = pd.to_datetime(series, errors="coerce", format="mixed")
+                            self._log(f"  [Cleaned] Parsed mixed dates in '{table_name}.{col}'")
+                            continue
+                    except Exception:
+                        pass
+
+                # Check if it looks like a financial / numeric string
+                has_currency = sample_vals.str.contains(r"[\$€£¥₹\(\)%]", regex=True).any()
+                has_comma_numbers = sample_vals.str.contains(r"^\s*[\$€£¥₹]?\s*\(?\s*[\d,]+(?:\.\d+)?\s*\)?%?\s*$", regex=True).any()
+
+                if has_currency or has_comma_numbers or any(k in col_lower for k in ["revenue", "sales", "price", "cost", "amount", "discount", "total", "margin", "profit", "spend", "rate"]):
+                    converted_sample = []
+                    for val in sample_vals:
+                        if not val or val.lower() in ("nan", "none", "null", "-", "n/a"):
+                            continue
+                        s = val.strip()
+                        is_neg = False
+                        if s.startswith("(") and s.endswith(")"):
+                            is_neg = True
+                            s = s[1:-1].strip()
+                        s = re.sub(r"[\$€£¥₹\s]", "", s).replace(",", "")
+                        is_pct = False
+                        if s.endswith("%"):
+                            is_pct = True
+                            s = s[:-1].strip()
+                        try:
+                            f = float(s)
+                            if is_pct:
+                                f = f / 100.0
+                            if is_neg:
+                                f = -f
+                            converted_sample.append(f)
+                        except ValueError:
+                            pass
+
+                    # If >70% of non-null samples successfully convert to numeric:
+                    if len(converted_sample) >= max(1, int(len(sample_vals) * 0.7)):
+                        def _clean_num(val):
+                            if pd.isna(val):
+                                return np.nan
+                            s = str(val).strip()
+                            if not s or s.lower() in ("nan", "none", "null", "-", "n/a", "na"):
+                                return np.nan
+                            is_neg = False
+                            if s.startswith("(") and s.endswith(")"):
+                                is_neg = True
+                                s = s[1:-1].strip()
+                            s = re.sub(r"[\$€£¥₹\s]", "", s).replace(",", "")
+                            is_pct = False
+                            if s.endswith("%"):
+                                is_pct = True
+                                s = s[:-1].strip()
+                            try:
+                                f = float(s)
+                                return -f if is_neg else f
+                            except ValueError:
+                                return np.nan
+
+                        df[col] = series.apply(_clean_num)
+                        self._log(f"  [Cleaned] Coerced financial strings to numbers in '{table_name}.{col}'")
+
+        return df
 
     def _make_safe_previews(self, df: pd.DataFrame, n: int = 50) -> List[Dict[str, Any]]:
         """Extract JSON-safe preview records for Electron Data View."""

@@ -130,7 +130,9 @@ export async function launchNativePowerBI(state) {
     await window.api.launchFile(pbitPath);
     showToast("Launching Power BI Desktop Template (.pbit)...", "success");
   } else {
-    showToast("Power BI template (.pbit) compiled in output directory.", "info");
+    const jobId = state?.currentJobId || "default";
+    window.open(`http://127.0.0.1:8000/api/download/${jobId}/pbit`, "_blank");
+    showToast("Downloading Power BI Desktop Template (.pbit)...", "info");
   }
 }
 

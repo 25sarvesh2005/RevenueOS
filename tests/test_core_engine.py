@@ -129,3 +129,41 @@ class TestCoreEngine:
         assert manifest["projectName"] == "Direct CSV Ingestion"
         assert manifest["summary"]["totalRows"] >= 3
         assert len(manifest["tables"]) >= 1
+
+    def test_dirty_financial_strings_and_dates_auto_coerced(self, tmp_path):
+        """Verifies currency strings ($1,200.50), accounting parens ((300.00)),
+        percentages (15%), and mixed dates are automatically coerced to clean metrics and dates."""
+        csv_file = tmp_path / "dirty_data.csv"
+        df = pd.DataFrame({
+            "order_id": ["ORD-1", "ORD-2", "ORD-3", "ORD-4"],
+            "sales_amount": ["$1,250.50", "€2,500.00", "(300.00)", "$4,100.00"],
+            "discount_rate": ["10%", "15.5%", "0%", "25%"],
+            "order_date": ["2024-01-10", "02/15/2024", "2024-03-20", "2024-04-25"],
+        })
+        df.to_csv(csv_file, index=False)
+
+        out_dir = tmp_path / "dirty_out"
+        engine = CoreEngine(
+            excel_path=csv_file,
+            output_dir=out_dir,
+            project_name="Dirty Data Defense Test",
+            emit_manifest=False,
+            generate_visuals=False,
+        )
+        manifest_path = engine.run()
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+
+        assert manifest["status"] == "SUCCESS"
+        tbl = manifest["tables"][0]
+        col_types = {c["name"]: c["dtype"] for c in tbl["columns"]}
+
+        # sales_amount must be double/float, not string
+        assert col_types["sales_amount"] == "double"
+        # discount_rate must be double/float
+        assert col_types["discount_rate"] == "double"
+        # order_date must be datetime
+        assert col_types["order_date"] == "datetime"
+
+        # Check that metrics were generated
+        metrics = [c["name"] for c in tbl["columns"] if c.get("is_metric")]
+        assert "sales_amount" in metrics
