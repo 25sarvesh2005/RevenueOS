@@ -270,22 +270,7 @@ ipcMain.handle("clipboard:write", (event, text) => {
 
 // 8. Load Precompiled Initial Model (Portable)
 ipcMain.handle("app:load-initial-model", () => {
-  const candidates = [
-    path.resolve(__dirname, "model_data.json"),
-    path.resolve(__dirname, "model_data_sample.json"),
-  ];
-
-  for (const modelPath of candidates) {
-    if (fs.existsSync(modelPath)) {
-      try {
-        const raw = fs.readFileSync(modelPath, "utf-8");
-        const data = JSON.parse(raw);
-        return normalizeManifestPaths(data);
-      } catch (e) {
-        console.error("Failed to parse initial model from", modelPath, e);
-      }
-    }
-  }
+  // Fresh studio session starts in clean ingest mode
   return null;
 });
 

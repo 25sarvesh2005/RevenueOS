@@ -19,8 +19,13 @@ class TestPdfReporting:
     @pytest.fixture
     def sample_manifest(self):
         sample_path = Path("frontend/model_data_sample.json")
-        assert sample_path.exists()
-        return json.loads(sample_path.read_text(encoding="utf-8"))
+        if sample_path.exists():
+            return json.loads(sample_path.read_text(encoding="utf-8"))
+        from backend.api.app import _ensure_default_artifacts, DEFAULT_MODEL_DIR
+        _ensure_default_artifacts()
+        manifest_path = DEFAULT_MODEL_DIR / "manifest.json"
+        assert manifest_path.exists(), f"Default manifest not found at {manifest_path}"
+        return json.loads(manifest_path.read_text(encoding="utf-8"))
 
     def test_pdf_report_synthesis_from_sample(self, tmp_path, sample_manifest):
         pdf_out = tmp_path / "test_executive_report.pdf"

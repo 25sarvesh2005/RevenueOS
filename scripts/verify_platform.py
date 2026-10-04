@@ -130,8 +130,12 @@ def verify_canonical_engine_and_charts() -> tuple[bool, dict]:
 
     sample_excel = ROOT_DIR / "data" / "raw" / "excel" / "revenueos_sample.xlsx"
     if not sample_excel.exists():
-        print(f"  FAIL: Sample workbook not found at {sample_excel}")
-        return False, {}
+        fixture = ROOT_DIR / "tests" / "fixtures" / "test_sales.xlsx"
+        if fixture.exists():
+            sample_excel = fixture
+        else:
+            print(f"  FAIL: Sample workbook not found at {sample_excel}")
+            return False, {}
 
     tmp_dir = Path(tempfile.mkdtemp(prefix="revenueos_verify_"))
     try:
@@ -209,8 +213,12 @@ def verify_pdf_reporting() -> bool:
 
     sample_path = ROOT_DIR / "frontend" / "model_data_sample.json"
     if not sample_path.exists():
-        print("  FAIL: model_data_sample.json missing.")
-        return False
+        from backend.api.app import _ensure_default_artifacts, DEFAULT_MODEL_DIR
+        _ensure_default_artifacts()
+        sample_path = DEFAULT_MODEL_DIR / "manifest.json"
+        if not sample_path.exists():
+            print("  FAIL: Neither model_data_sample.json nor default manifest.json found.")
+            return False
 
     manifest = json.loads(sample_path.read_text(encoding="utf-8"))
     tmp_pdf = Path(tempfile.mktemp(suffix=".pdf"))

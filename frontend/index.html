@@ -38,7 +38,7 @@
         </button>
       </div>
       <div class="document-title" id="documentTitle">
-        RevenueOS_Sample.xlsx - Power BI Desktop Studio
+        RevenueOS Studio – Power BI Desktop Replica Engine
       </div>
     </div>
     <div class="titlebar-right">
@@ -349,6 +349,35 @@
 
             <!-- PAGE 1: EXECUTIVE OVERVIEW -->
             <div class="canvas-page active" id="pageExecutive">
+              <!-- Empty State Ingest Zone (Shown when no dataset is loaded) -->
+              <div class="empty-state-dropzone" id="canvasEmptyState" onclick="app.selectAndRunExcel()">
+                <div class="dropzone-card">
+                  <div class="dropzone-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="12" y1="18" x2="12" y2="12"></line>
+                      <polyline points="9 15 12 12 15 15"></polyline>
+                    </svg>
+                  </div>
+                  <h3>Ready to Ingest Business Data</h3>
+                  <p>Drag and drop ANY Excel workbook (.xlsx, .xls, .xlsm) or CSV file here, or click to browse.</p>
+                  <div class="dropzone-actions">
+                    <button class="pbi-btn primary" type="button" onclick="event.stopPropagation(); app.selectAndRunExcel();">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                      Select Excel / CSV File
+                    </button>
+                  </div>
+                  <div class="dropzone-features">
+                    <span>✨ Auto Kimball Star Schema</span>
+                    <span>📐 Automated DAX Synthesis</span>
+                    <span>📊 Native Power BI & Chart Packs</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Visuals Container (Shown once dataset is loaded) -->
+              <div id="canvasMainContent" style="display: none;">
               <!-- KPI Summary Cards Row -->
               <div class="kpi-cards-grid">
                 <div class="kpi-card" id="cardRevenue">
@@ -471,6 +500,7 @@
                     <canvas id="chartTopProducts"></canvas>
                   </div>
                 </div>
+              </div>
               </div>
             </div>
 
@@ -997,6 +1027,7 @@
     </div>
   </div>
 
+  <input type="file" id="universalFileInput" accept=".xlsx,.xls,.xlsm,.csv" style="display:none;">
   <script type="module" src="app.js"></script>
 </body>
 </html>

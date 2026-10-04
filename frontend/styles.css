@@ -1647,3 +1647,72 @@ body {
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Drag and Drop Ingest Zone */
+.empty-state-dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 440px;
+  margin: 20px 0;
+  border: 2px dashed var(--pbi-border-light);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.empty-state-dropzone:hover,
+body.drag-active .empty-state-dropzone {
+  border-color: var(--pbi-accent-blue);
+  background: rgba(17, 141, 255, 0.06);
+  transform: scale(1.005);
+}
+
+.dropzone-card {
+  text-align: center;
+  max-width: 540px;
+  padding: 40px 24px;
+}
+
+.dropzone-icon {
+  color: var(--pbi-accent-gold);
+  margin-bottom: 16px;
+  animation: floatIcon 3s ease-in-out infinite;
+}
+
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.dropzone-card h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--pbi-text-bright);
+  margin: 0 0 10px 0;
+}
+
+.dropzone-card p {
+  font-size: 13px;
+  color: var(--pbi-text-muted);
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.dropzone-features {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--pbi-text-muted);
+}
+
+.dropzone-features span {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--pbi-border);
+}
+

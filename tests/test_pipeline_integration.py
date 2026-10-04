@@ -20,6 +20,9 @@ class TestPipelineIntegration:
         root = Path(__file__).resolve().parent.parent
         p = root / "data" / "raw" / "excel" / "revenueos_sample.xlsx"
         if not p.exists():
+            fixture = root / "tests" / "fixtures" / "test_sales.xlsx"
+            if fixture.exists():
+                return fixture
             pytest.skip(f"Baseline sample workbook not found at {p}")
         return p
 

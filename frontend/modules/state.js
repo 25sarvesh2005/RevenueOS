@@ -49,8 +49,8 @@ export const state = {
     let topProducts = JSON.parse(JSON.stringify(d.topProducts || []));
     let bySegment = JSON.parse(JSON.stringify(d.bySegment || []));
     let marketing = JSON.parse(JSON.stringify(d.marketing || []));
-    let returns = JSON.parse(JSON.stringify(d.returns || { totalReturns: 34, returnRate: 2.77, reasons: [] }));
-    let kpis = JSON.parse(JSON.stringify(d.kpis || { totalRevenue: 8474027.5, totalCost: 6227820.0, grossProfit: 2246207.5, grossMarginPct: 26.5, totalOrders: 500, totalUnits: 1229 }));
+    let returns = JSON.parse(JSON.stringify(d.returns || { totalReturns: 0, returnRate: 0, reasons: [] }));
+    let kpis = JSON.parse(JSON.stringify(d.kpis || { totalRevenue: 0, totalCost: 0, grossProfit: 0, grossMarginPct: 0, totalOrders: 0, totalUnits: 0, currency: "$" }));
 
     // Apply Category Cross-Filter
     if (this.activeCategoryFilter !== "ALL") {

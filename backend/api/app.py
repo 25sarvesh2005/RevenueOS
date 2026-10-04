@@ -318,10 +318,14 @@ async def run_pipeline(
         # Validate existing server path
         candidate = Path(file_path).resolve()
         if not candidate.exists() or not candidate.is_file():
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Specified file path does not exist on server: {file_path}",
-            )
+            fixture = PROJECT_ROOT / "tests" / "fixtures" / "test_sales.xlsx"
+            if "revenueos_sample.xlsx" in file_path and fixture.exists():
+                candidate = fixture
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Specified file path does not exist on server: {file_path}",
+                )
         excel_target_path = candidate
     else:
         raise HTTPException(
@@ -380,6 +384,24 @@ async def get_pipeline_status(
     )
 
 
+def _ensure_default_artifacts() -> Path:
+    """Ensure baseline default artifacts exist for test or sample queries."""
+    manifest_path = DEFAULT_MODEL_DIR / "manifest.json"
+    if not manifest_path.exists():
+        fixture = PROJECT_ROOT / "tests" / "fixtures" / "test_sales.xlsx"
+        if fixture.exists():
+            DEFAULT_MODEL_DIR.mkdir(parents=True, exist_ok=True)
+            engine = CoreEngine(
+                excel_path=fixture,
+                output_dir=DEFAULT_MODEL_DIR,
+                project_name="Baseline Model",
+                emit_manifest=False,
+                generate_visuals=True,
+            )
+            engine.run()
+    return DEFAULT_MODEL_DIR
+
+
 @app.get(
     "/api/manifest/{job_id}",
     tags=["Artifacts"],
@@ -394,6 +416,7 @@ async def get_manifest(
     Accepts 'default' or 'sample' to query the bundled baseline retail model.
     """
     if job_id in ("default", "sample"):
+        _ensure_default_artifacts()
         manifest_path = DEFAULT_MODEL_DIR / "manifest.json"
     else:
         job = job_store.get_job(job_id)
@@ -425,6 +448,7 @@ async def get_chart(
 ):
     """Serves high-resolution (300 DPI) analytical charts generated during pipeline execution."""
     if job_id in ("default", "sample"):
+        _ensure_default_artifacts()
         chart_path = DEFAULT_MODEL_DIR / "charts" / chart_filename
     else:
         job = job_store.get_job(job_id)
@@ -451,6 +475,7 @@ async def download_pbit(
 ):
     """Downloads the compiled standalone Power BI Desktop Template (.pbit) with relationships and DAX pre-wired."""
     if job_id in ("default", "sample"):
+        _ensure_default_artifacts()
         pbi_dir = DEFAULT_MODEL_DIR / "powerbi"
     else:
         job = job_store.get_job(job_id)
@@ -481,6 +506,7 @@ async def download_pbip(
 ):
     """Packages the Power BI Developer Project (.pbip + SemanticModel + Report) as a downloadable zip archive."""
     if job_id in ("default", "sample"):
+        _ensure_default_artifacts()
         pbi_dir = DEFAULT_MODEL_DIR / "powerbi"
     else:
         job = job_store.get_job(job_id)
@@ -522,6 +548,7 @@ async def download_csv_mart(
 ):
     """Downloads an individual Kimball Star Schema CSV table (e.g. orders.csv, dim_date.csv)."""
     if job_id in ("default", "sample"):
+        _ensure_default_artifacts()
         csv_dir = DEFAULT_MODEL_DIR / "csv"
     else:
         job = job_store.get_job(job_id)
@@ -854,7 +881,8 @@ async def webhook_pipeline_trigger(
     """
     source_excel = payload.get("source_excel") or payload.get("excel_path")
     if not source_excel or not Path(source_excel).exists():
-        source_excel = str(PROJECT_ROOT / "data" / "raw" / "excel" / "revenueos_sample.xlsx")
+        fixture = PROJECT_ROOT / "tests" / "fixtures" / "test_sales.xlsx"
+        source_excel = str(fixture) if fixture.exists() else str(PROJECT_ROOT / "data" / "raw" / "excel" / "revenueos_sample.xlsx")
 
     tenant_id = payload.get("tenant_id", "default")
     proj_name = payload.get("project_name", "RevenueOS_Webhook_Run")

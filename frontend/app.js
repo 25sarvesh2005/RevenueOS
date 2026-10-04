@@ -78,6 +78,18 @@ import {
 } from "./modules/ribbon.js";
 
 function refreshAllViews() {
+  const emptyState = document.getElementById("canvasEmptyState");
+  const mainContent = document.getElementById("canvasMainContent");
+  if (emptyState && mainContent) {
+    if (!state.currentManifest) {
+      emptyState.style.display = "flex";
+      mainContent.style.display = "none";
+    } else {
+      emptyState.style.display = "none";
+      mainContent.style.display = "block";
+    }
+  }
+
   populateDAXMeasures(state);
   renderFieldsTree(state, (name) => updateDAXFormula(name, state));
   renderCharts(state);
@@ -327,30 +339,52 @@ function setupEventListeners() {
     console.error("[RevenueOS Studio Unhandled Promise]", event.reason);
     showToast(`Async exception: ${event.reason?.message || event.reason}`, "error", 5000);
   });
+  // T. Drag and drop file ingestion
+  window.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    document.body.classList.add("drag-active");
+  });
+  window.addEventListener("dragleave", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    document.body.classList.remove("drag-active");
+  });
+  window.addEventListener("drop", async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    document.body.classList.remove("drag-active");
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      if (file.name.match(/\.(xlsx|xls|xlsm|csv)$/i)) {
+        if (window.api?.runPipeline && file.path) {
+          const projName = file.name.replace(/\.[^.]+$/, "");
+          await app.runPipelineForPath(file.path, projName);
+        } else {
+          const { runPipelineWithFile } = await import("./modules/pipeline.js");
+          await runPipelineWithFile(file, state, () => refreshAllViews());
+        }
+      } else {
+        showToast("Please drop an Excel workbook (.xlsx, .xls, .xlsm) or CSV file.", "warning");
+      }
+    }
+  });
 }
 
 async function init() {
   setupEventListeners();
 
-  // Load initial dataset from model_data.json or model_data_sample.json
+  // Check if an existing model was specifically returned by user session
   try {
     if (window.api?.loadInitialModel) {
       const preloaded = await window.api.loadInitialModel();
-      if (preloaded) state.setManifest(preloaded);
-    }
-    if (!state.currentManifest) {
-      const resp = await fetch("model_data.json");
-      if (resp.ok) {
-        state.setManifest(await resp.json());
-      } else {
-        const sampleResp = await fetch("model_data_sample.json");
-        if (sampleResp.ok) {
-          state.setManifest(await sampleResp.json());
-        }
+      if (preloaded) {
+        state.setManifest(preloaded);
       }
     }
   } catch (e) {
-    console.warn("Could not load initial model_data.json:", e);
+    console.debug("No preloaded model available:", e);
   }
 
   refreshAllViews();
