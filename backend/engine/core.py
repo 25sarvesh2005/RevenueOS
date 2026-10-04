@@ -36,6 +36,7 @@ def clean_identifier(name: str) -> str:
     s = str(name).strip()
     s = re.sub(r"[^\w\s-]", "", s)
     s = re.sub(r"[\s-]+", "_", s)
+    s = re.sub(r"_+", "_", s)
     s = s.lower().strip("_")
     return s or "unnamed"
 
@@ -65,10 +66,11 @@ class ColumnMeta:
 class TableMeta:
     name: str
     original_sheet: str
-    table_type: str  # 'fact', 'dimension', 'calendar'
+    table_type: str  # 'fact', 'dimension', 'calendar', 'bridge'
     row_count: int
     columns: List[ColumnMeta]
     primary_key: Optional[str] = None
+    composite_keys: List[str] = field(default_factory=list)
     date_column: Optional[str] = None
     csv_filename: str = ""
     preview_rows: List[Dict[str, Any]] = field(default_factory=list)
@@ -301,10 +303,22 @@ class CoreEngine:
                     except Exception:
                         pass
 
+            # Infer composite candidate keys if no single primary key
+            composite_keys = []
+            if pk is None and len(df) > 1:
+                key_cands = [c.name for c in cols_meta if c.is_key or any(k in c.name.lower() for k in ["id", "key", "code", "line", "seq", "num"])]
+                if len(key_cands) >= 2:
+                    import itertools
+                    for combo in itertools.combinations(key_cands, 2):
+                        if df.drop_duplicates(subset=list(combo)).shape[0] == len(df):
+                            composite_keys = list(combo)
+                            break
+
             temp_data[tbl_name] = {
                 "df": df,
                 "cols_meta": cols_meta,
                 "pk": pk,
+                "composite_keys": composite_keys,
                 "date_col": date_col,
                 "has_metric": any(c.is_metric for c in cols_meta)
             }
@@ -346,6 +360,7 @@ class CoreEngine:
                 row_count=len(df),
                 columns=info["cols_meta"],
                 primary_key=info["pk"],
+                composite_keys=info.get("composite_keys", []),
                 date_column=info["date_col"],
                 csv_filename=f"{tbl_name}.csv",
                 preview_rows=previews
@@ -455,11 +470,26 @@ class CoreEngine:
 
     def _detect_relationships(self) -> None:
         """Match unique Primary Keys across tables to Foreign Keys in referencing tables."""
+        KEY_ALIASES = {
+            "customer": ["customer_id", "client_id", "user_id", "account_id", "cust_id"],
+            "product": ["product_id", "item_id", "sku", "sku_id", "article_id", "prod_id"],
+            "order": ["order_id", "transaction_id", "invoice_id", "sale_id"],
+            "store": ["store_id", "branch_id", "location_id", "shop_id"],
+            "employee": ["employee_id", "rep_id", "agent_id", "salesperson_id"],
+        }
+
         for target in self.tables:
             if not target.primary_key or target.name == "dim_date":
                 continue
             pk = target.primary_key
             pk_clean = pk.lower()
+
+            # Find if pk belongs to an alias cluster
+            alias_cluster = set()
+            for cluster_keys in KEY_ALIASES.values():
+                if pk_clean in cluster_keys:
+                    alias_cluster = set(cluster_keys)
+                    break
 
             for source in self.tables:
                 if source.name == target.name or source.name == "dim_date":
@@ -468,7 +498,7 @@ class CoreEngine:
                 matched_col = None
                 for col_meta in source.columns:
                     c_clean = col_meta.name.lower()
-                    if c_clean == pk_clean or c_clean == f"{target.name}_{pk_clean}":
+                    if c_clean == pk_clean or c_clean == f"{target.name}_{pk_clean}" or (alias_cluster and c_clean in alias_cluster):
                         matched_col = col_meta.name
                         col_meta.is_foreign_key = True
                         break
@@ -489,6 +519,22 @@ class CoreEngine:
                         )
                         self.relationships.append(rel)
                         self._log(f"  [Link] {target.name}.{pk} (1) ────< (*) {source.name}.{matched_col}")
+
+        # Many-to-Many bridge table identification
+        for tbl in self.tables:
+            if tbl.name == "dim_date" or tbl.table_type == "dimension":
+                continue
+            dim_links = [
+                r for r in self.relationships
+                if r.from_table == tbl.name and any(t.name == r.to_table and t.table_type == "dimension" for t in self.tables)
+            ]
+            metric_cols = [c for c in tbl.columns if c.is_metric]
+            if len(dim_links) >= 2 and len(metric_cols) <= 2:
+                tbl.table_type = "bridge"
+                for r in dim_links:
+                    r.cardinality = "ManyToMany"
+                    r.cross_filtering = "BothDirections"
+                self._log(f"  [Bridge Table Identified] {tbl.name} tagged as bridge with bidirectional filtering")
 
         # Date dimension relationships
         dim_date = next((t for t in self.tables if t.name == "dim_date"), None)
@@ -787,7 +833,7 @@ in
                 "fromColumn": r.from_column,
                 "toTable": r.to_table,
                 "toColumn": r.to_column,
-                "crossFilteringBehavior": "oneDirection",
+                "crossFilteringBehavior": "bothDirections" if r.cross_filtering == "BothDirections" else "oneDirection",
                 "securityFilteringBehavior": "oneDirection"
             })
 
@@ -1517,6 +1563,204 @@ This automated pipeline and its generated assets are governed by the:
                 })
             except Exception as e:
                 self._log(f"Warning: Could not generate Chart 6: {e}")
+
+        # -------------------------------------------------------------
+        # Chart 7: Gross-to-Net Revenue Waterfall (Bridge Analysis)
+        # -------------------------------------------------------------
+        try:
+            fig, ax = plt.subplots(figsize=(10.5, 5.5), dpi=300)
+            apply_dark_style(fig, ax)
+
+            kpis = dashboard.get("kpis", {})
+            total_rev = float(kpis.get("totalRevenue", 0.0))
+            total_cost = float(kpis.get("totalCost", 0.0))
+            total_disc = float(kpis.get("totalDiscounts", 0.0))
+            gross_profit = float(kpis.get("grossProfit", 0.0))
+            returns_data = dashboard.get("returns", {})
+            return_cnt = float(returns_data.get("totalReturns", 0))
+            tot_orders = float(kpis.get("totalOrders", 1))
+            avg_val = (total_rev / tot_orders) if tot_orders > 0 else 0.0
+            return_val = round(return_cnt * avg_val * 0.8, 2) if return_cnt > 0 else 0.0
+
+            gross_sales = total_rev + total_disc + return_val
+
+            waterfall_steps = [
+                ("Gross Sales", gross_sales, 0, ACCENT_BLUE, False),
+                ("Discounts", -total_disc, gross_sales - total_disc, ACCENT_ORANGE, True),
+                ("Returns", -return_val, gross_sales - total_disc - return_val, ACCENT_YELLOW, True),
+                ("Net Revenue", total_rev, 0, ACCENT_TEAL, False),
+                ("COGS", -total_cost, total_rev - total_cost, ACCENT_PURPLE, True),
+                ("Gross Profit", gross_profit, 0, ACCENT_GREEN, False),
+            ]
+
+            x_indices = np.arange(len(waterfall_steps))
+            step_names = [s[0] for s in waterfall_steps]
+
+            for i, (name, val, bottom, color, is_delta) in enumerate(waterfall_steps):
+                height = abs(val)
+                bar_bottom = bottom if is_delta else 0
+                ax.bar(i, height, bottom=bar_bottom, color=color, width=0.55, edgecolor=BORDER_DARK, linewidth=1.2, zorder=3)
+
+                if i < len(waterfall_steps) - 1:
+                    line_y = bar_bottom if (is_delta and val < 0) else (bar_bottom + height)
+                    ax.plot([i + 0.275, i + 0.725], [line_y, line_y], color=TEXT_MUTED, linestyle=":", linewidth=1.2, zorder=2)
+
+                label_y = bar_bottom + (height / 2) if is_delta else (height + (gross_sales * 0.02 if gross_sales > 0 else 1.0))
+                sign = "-" if val < 0 else ""
+                lbl = f"{sign}{self.currency_symbol}{abs(val)*1e-3:.1f}K" if abs(val) < 1e6 else f"{sign}{self.currency_symbol}{abs(val)*1e-6:.2f}M"
+                ax.text(i, label_y, lbl, ha="center", va="center" if is_delta else "bottom",
+                        color=TEXT_LIGHT, fontsize=8.5, weight="bold", zorder=4)
+
+            ax.set_xticks(x_indices)
+            ax.set_xticklabels(step_names, rotation=20, ha="right", fontsize=9)
+            ax.set_ylabel(f"Amount ({self.currency_symbol})", color=TEXT_LIGHT, fontsize=10, weight="bold")
+            ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: f"{self.currency_symbol}{x*1e-3:.0f}K" if x < 1e6 else f"{self.currency_symbol}{x*1e-6:.1f}M"))
+            if gross_sales > 0:
+                ax.set_ylim(0, gross_sales * 1.18)
+
+            plt.title(f"{self.project_name} – Gross-to-Net Revenue & Margin Waterfall", color=TEXT_LIGHT, fontsize=13, weight="bold", pad=15)
+            fig.tight_layout()
+
+            c7_path = self.charts_dir / "07_gross_to_net_waterfall.png"
+            fig.savefig(c7_path, facecolor=fig.get_facecolor(), edgecolor="none")
+            plt.close(fig)
+            charts_meta.append({
+                "id": "chart_gross_to_net_waterfall",
+                "title": "Gross-to-Net Revenue Waterfall",
+                "filename": c7_path.name,
+                "path": str(c7_path)
+            })
+        except Exception as e:
+            self._log(f"Warning: Could not generate Chart 7: {e}")
+
+        # -------------------------------------------------------------
+        # Chart 8: Price Elasticity & Volume Distribution (Scatter)
+        # -------------------------------------------------------------
+        primary_fact = next((t for t in self.tables if t.name in ["orders", "fact_orders", "sales", "transactions"]), None)
+        if not primary_fact:
+            primary_fact = next((t for t in self.tables if t.table_type == "fact"), None)
+
+        if primary_fact and primary_fact.name in self.processed_frames:
+            try:
+                df_fact = self.processed_frames[primary_fact.name].copy()
+                prod_table = next((t for t in self.tables if "product" in t.name.lower()), None)
+                if prod_table and prod_table.name in self.processed_frames and "product_id" in df_fact.columns:
+                    pdf = self.processed_frames[prod_table.name]
+                    pname = next((c for c in pdf.columns if "name" in c.lower() or "title" in c.lower()), None)
+                    if pname and "product_id" in pdf.columns and pname not in df_fact.columns:
+                        df_fact = df_fact.merge(pdf[["product_id", pname]].rename(columns={pname: "product_name"}), on="product_id", how="left")
+
+                p_col = next((c for c in df_fact.columns if any(k in c.lower() for k in ["unit_price", "price", "selling_price", "rate"])), None)
+                q_col = next((c for c in df_fact.columns if any(k in c.lower() for k in ["quantity", "qty", "units"])), None)
+                r_col = next((c for c in df_fact.columns if any(k in c.lower() for k in ["revenue", "sales", "amount", "total"])), None)
+                name_col = next((c for c in df_fact.columns if any(k in c.lower() for k in ["product_name", "item_name", "sku", "product"])), None)
+
+                if p_col and q_col:
+                    fig, ax = plt.subplots(figsize=(10, 5.5), dpi=300)
+                    apply_dark_style(fig, ax)
+
+                    if name_col:
+                        agg_map = {p_col: "mean", q_col: "sum"}
+                        if r_col:
+                            agg_map[r_col] = "sum"
+                        grouped = df_fact.groupby(name_col).agg(agg_map).reset_index()
+                    else:
+                        grouped = df_fact.sample(n=min(len(df_fact), 100), random_state=42)
+
+                    prices = pd.to_numeric(grouped[p_col], errors="coerce").fillna(0.0).values
+                    qtys = pd.to_numeric(grouped[q_col], errors="coerce").fillna(0.0).values
+                    rev_vals = pd.to_numeric(grouped[r_col], errors="coerce").fillna(prices * qtys).values if r_col else prices * qtys
+                    max_rev = max(rev_vals.max(), 1.0)
+                    sizes = (rev_vals / max_rev * 350 + 50)
+
+                    scatter = ax.scatter(
+                        prices, qtys, s=sizes, c=rev_vals,
+                        cmap="plasma", alpha=0.82, edgecolors=BORDER_DARK, linewidth=1.2, zorder=3
+                    )
+                    cbar = plt.colorbar(scatter, ax=ax, pad=0.02)
+                    cbar.set_label(f"Volume Revenue ({self.currency_symbol})", color=TEXT_LIGHT, fontsize=9)
+                    cbar.ax.tick_params(colors=TEXT_MUTED, labelsize=8)
+
+                    ax.set_xlabel(f"Unit Selling Price ({self.currency_symbol})", color=TEXT_LIGHT, fontsize=10, weight="bold")
+                    ax.set_ylabel("Total Units Sold", color=TEXT_LIGHT, fontsize=10, weight="bold")
+                    ax.xaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: f"{self.currency_symbol}{x:,.0f}"))
+                    ax.yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: f"{x:,.0f}"))
+
+                    if name_col and r_col:
+                        top_pts = grouped.sort_values(r_col, ascending=False).head(3)
+                        for _, r in top_pts.iterrows():
+                            px = float(r[p_col]) if pd.notna(r[p_col]) else 0.0
+                            qy = float(r[q_col]) if pd.notna(r[q_col]) else 0.0
+                            ax.annotate(
+                                str(r[name_col])[:20],
+                                (px, qy),
+                                textcoords="offset points", xytext=(8, 8),
+                                color=TEXT_LIGHT, fontsize=8, weight="bold",
+                                bbox=dict(boxstyle="round,pad=0.2", facecolor=BG_DARK, edgecolor=BORDER_DARK, alpha=0.85)
+                            )
+
+                    plt.title(f"{self.project_name} – Price Elasticity & Demand Distribution", color=TEXT_LIGHT, fontsize=13, weight="bold", pad=15)
+                    fig.tight_layout()
+
+                    c8_path = self.charts_dir / "08_price_elasticity_scatter.png"
+                    fig.savefig(c8_path, facecolor=fig.get_facecolor(), edgecolor="none")
+                    plt.close(fig)
+                    charts_meta.append({
+                        "id": "chart_price_elasticity",
+                        "title": "Price Elasticity & Demand Scatter",
+                        "filename": c8_path.name,
+                        "path": str(c8_path)
+                    })
+            except Exception as e:
+                self._log(f"Warning: Could not generate Chart 8: {e}")
+
+        # -------------------------------------------------------------
+        # Chart 9: Cross-Metric Correlation Heatmap
+        # -------------------------------------------------------------
+        if primary_fact and primary_fact.name in self.processed_frames:
+            try:
+                df_fact = self.processed_frames[primary_fact.name]
+                num_cols = [c for c in df_fact.columns if pd.api.types.is_numeric_dtype(df_fact[c]) and df_fact[c].nunique() > 2]
+                filtered_cols = [c for c in num_cols if any(k in c.lower() for k in ["rev", "sales", "qty", "quant", "price", "cost", "disc", "margin", "profit", "amount"])]
+                if len(filtered_cols) < 3:
+                    filtered_cols = num_cols[:6]
+
+                if len(filtered_cols) >= 2:
+                    fig, ax = plt.subplots(figsize=(8.5, 6.5), dpi=300)
+                    apply_dark_style(fig, ax)
+
+                    corr = df_fact[filtered_cols].corr()
+                    clean_labels = [format_title(c) for c in filtered_cols]
+
+                    cax = ax.matshow(corr, cmap="coolwarm", vmin=-1.0, vmax=1.0)
+                    cbar = plt.colorbar(cax, ax=ax, fraction=0.046, pad=0.04)
+                    cbar.set_label("Pearson Correlation (r)", color=TEXT_LIGHT, fontsize=9)
+                    cbar.ax.tick_params(colors=TEXT_MUTED, labelsize=8)
+
+                    ax.set_xticks(np.arange(len(clean_labels)))
+                    ax.set_yticks(np.arange(len(clean_labels)))
+                    ax.set_xticklabels(clean_labels, rotation=35, ha="left", color=TEXT_LIGHT, fontsize=8.5)
+                    ax.set_yticklabels(clean_labels, color=TEXT_LIGHT, fontsize=8.5)
+
+                    for (i, j), val in np.ndenumerate(corr.values):
+                        if not np.isnan(val):
+                            txt_color = "#18181B" if abs(val) > 0.55 else TEXT_LIGHT
+                            ax.text(j, i, f"{val:+.2f}", ha="center", va="center", color=txt_color, fontsize=9, weight="bold")
+
+                    plt.title(f"{self.project_name} – Cross-Metric Correlation Matrix", color=TEXT_LIGHT, fontsize=12, weight="bold", pad=25)
+                    fig.tight_layout()
+
+                    c9_path = self.charts_dir / "09_metric_correlation_matrix.png"
+                    fig.savefig(c9_path, facecolor=fig.get_facecolor(), edgecolor="none")
+                    plt.close(fig)
+                    charts_meta.append({
+                        "id": "chart_correlation_matrix",
+                        "title": "Cross-Metric Correlation Heatmap",
+                        "filename": c9_path.name,
+                        "path": str(c9_path)
+                    })
+            except Exception as e:
+                self._log(f"Warning: Could not generate Chart 9: {e}")
 
         self.charts = charts_meta
         self._log(f"Generated {len(charts_meta)} Matplotlib analytical charts in {self.charts_dir.name}/")

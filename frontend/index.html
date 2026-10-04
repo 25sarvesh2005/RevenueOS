@@ -149,6 +149,29 @@
         </div>
         <div class="group-label">Share & Export</div>
       </div>
+
+      <!-- Decision Intelligence & Copilot Group -->
+      <div class="ribbon-group">
+        <div class="group-controls">
+          <button class="ribbon-action" id="btnInvestigateCopilot" title="AI Investigation Copilot">
+            <div class="action-icon" style="color: var(--pbi-accent-gold);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <span>AI Copilot</span>
+          </button>
+          <div class="subaction-column">
+            <button class="ribbon-subaction" id="btnExecutiveBriefing">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              <span>Executive Briefing</span>
+            </button>
+            <button class="ribbon-subaction" id="btnAddAnnotation">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>Add Annotation</span>
+            </button>
+          </div>
+        </div>
+        <div class="group-label">Decision Intelligence</div>
+      </div>
     </div>
 
     <!-- Tab Content: Modeling -->
@@ -346,13 +369,13 @@
                   <div class="kpi-subtitle">Net sales minus COGS</div>
                 </div>
 
-                <div class="kpi-card" id="cardMargin">
+                <div class="kpi-card" id="cardMargin" style="cursor: pointer;" title="⚡ Click to trigger AI Investigation Copilot" onclick="app.openCopilotModal('Gross Margin Trajectory', 'Margin Compression & Discount Variance')">
                   <div class="kpi-header">
                     <span class="kpi-title">Gross Margin %</span>
-                    <span class="kpi-badge neutral">Benchmark 25%</span>
+                    <span class="kpi-badge neutral">Investigate ⚡</span>
                   </div>
                   <div class="kpi-value" id="kpiMarginVal">26.5%</div>
-                  <div class="kpi-subtitle">Target: 30.0%</div>
+                  <div class="kpi-subtitle">Target: 30.0% · Click to diagnose</div>
                 </div>
 
                 <div class="kpi-card" id="cardOrders">
@@ -373,13 +396,13 @@
                   <div class="kpi-subtitle">Fulfillment: 98.4%</div>
                 </div>
 
-                <div class="kpi-card" id="cardDiscounts">
+                <div class="kpi-card" id="cardDiscounts" style="cursor: pointer;" title="⚡ Click to trigger AI Investigation Copilot" onclick="app.openCopilotModal('Product Returns & Reverse Logistics', 'Return Rate Anomaly')">
                   <div class="kpi-header">
                     <span class="kpi-title">Return Rate</span>
-                    <span class="kpi-badge warning">2.77%</span>
+                    <span class="kpi-badge warning">2.77% ⚡</span>
                   </div>
                   <div class="kpi-value" id="kpiReturnsVal">34 Items</div>
-                  <div class="kpi-subtitle">34 returned of 1,229 units</div>
+                  <div class="kpi-subtitle">34 returned of 1,229 units · Click to diagnose</div>
                 </div>
               </div>
 
@@ -851,6 +874,125 @@
       <div class="modal-footer">
         <button class="pbi-btn secondary" id="btnOpenChartsFolder">📁 Open Charts Folder</button>
         <button class="pbi-btn primary" onclick="document.getElementById('matplotlibModal').style.display='none'">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 12. AI Investigation Copilot Modal -->
+  <!-- ===================================================================== -->
+  <div class="modal-overlay" id="copilotModal" style="display: none;">
+    <div class="modal-box" style="max-width: 860px; max-height: 88vh; width: 90%; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--pbi-accent-gold);">⚡</span>
+          <span>RevenueOS AI Investigation Copilot</span>
+          <span class="kpi-badge positive" id="copilotPriorityBadge">HIGH</span>
+          <span class="kpi-badge neutral" id="copilotImpactBadge">Impact: $296,591</span>
+        </div>
+        <button class="modal-close-btn" onclick="document.getElementById('copilotModal').style.display='none'">×</button>
+      </div>
+      <div class="modal-body" style="overflow-y: auto; max-height: calc(88vh - 120px); display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div>
+            <label style="display:block; margin-bottom:4px; font-weight:600; color:var(--pbi-text-bright); font-size:11px;">Target Metric / Entity:</label>
+            <input type="text" id="copilotEntityInput" class="pbi-input" value="Gross Margin Trajectory">
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:4px; font-weight:600; color:var(--pbi-text-bright); font-size:11px;">Detected Analytical Issue:</label>
+            <input type="text" id="copilotIssueInput" class="pbi-input" value="Margin Compression & Discount Variance">
+          </div>
+        </div>
+
+        <div>
+          <label style="display:block; margin-bottom:4px; font-weight:600; color:var(--pbi-text-bright); font-size:11px;">Traceable Executive Diagnostic Briefing:</label>
+          <pre id="copilotOutputText" style="font-family: var(--font-mono); background: #18181B; border: 1px solid var(--pbi-border); border-radius: 4px; padding: 12px; font-size: 11px; color: #E4E4E7; white-space: pre-wrap; max-height: 220px; overflow-y: auto;"></pre>
+        </div>
+
+        <div>
+          <label style="display:block; margin-bottom:4px; font-weight:600; color:var(--pbi-text-bright); font-size:11px;">Immediate Remediation Playbook (Action Checklist):</label>
+          <ul id="copilotActionList" style="list-style: none; padding: 0; margin: 0; background: var(--pbi-surface-alt); border: 1px solid var(--pbi-border); border-radius: 4px; padding: 10px 14px; font-size: 12px;">
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 11px; color: var(--pbi-text-muted);">Evidence verified against star schema marts. Zero hallucination guarantee.</div>
+        <div style="display: flex; gap: 8px;">
+          <button class="pbi-btn secondary" id="btnRunCopilot">⚡ Re-Synthesize</button>
+          <button class="pbi-btn secondary" onclick="app.openExecutiveReportModal()">📄 Executive Report</button>
+          <button class="pbi-btn primary" onclick="document.getElementById('copilotModal').style.display='none'">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 13. Executive Performance Briefing Modal -->
+  <!-- ===================================================================== -->
+  <div class="modal-overlay" id="executiveReportModal" style="display: none;">
+    <div class="modal-box" style="max-width: 1060px; max-height: 90vh; width: 92%; height: 90vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <div class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <span>📊 RevenueOS Executive Performance Briefing</span>
+          <span class="kpi-badge neutral">HTML & Publication Preview</span>
+        </div>
+        <button class="modal-close-btn" onclick="document.getElementById('executiveReportModal').style.display='none'">×</button>
+      </div>
+      <div class="modal-body" style="flex: 1; padding: 0; overflow: hidden; position: relative;">
+        <iframe id="executiveReportIframe" style="width: 100%; height: 100%; border: none; background: #121212;"></iframe>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between;">
+        <div style="display: flex; gap: 8px;">
+          <button class="pbi-btn secondary" onclick="window.open(document.getElementById('executiveReportIframe').src, '_blank')">🌐 Open in Browser</button>
+          <button class="pbi-btn secondary" id="btnExportExecutivePdf">📥 Export PDF</button>
+        </div>
+        <button class="pbi-btn primary" onclick="document.getElementById('executiveReportModal').style.display='none'">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 14. Collaborative Annotation Modal -->
+  <!-- ===================================================================== -->
+  <div class="modal-overlay" id="annotationModal" style="display: none;">
+    <div class="modal-box" style="max-width: 520px; width: 90%;">
+      <div class="modal-header">
+        <div class="modal-title">💬 Add Collaborative Visual Annotation</div>
+        <button class="modal-close-btn" onclick="document.getElementById('annotationModal').style.display='none'">×</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 12px;">
+        <div>
+          <label style="display:block; margin-bottom:4px; font-weight:600; color:var(--pbi-text-bright); font-size:11px;">Target Visual Element:</label>
+          <select id="annotationVisualSelect" class="pbi-select" style="width: 100%;">
+            <option value="visualMonthlyTrend">Monthly Revenue & Cost Trajectory</option>
+            <option value="visualCategoryShare">Revenue by Product Category</option>
+            <option value="visualChannelBar">Sales Channel Contribution</option>
+            <option value="visualTopProducts">Top 10 High-Velocity Products</option>
+          </select>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+          <div>
+            <label style="display:block; margin-bottom:4px; font-weight:600; color:var(--pbi-text-bright); font-size:11px;">Author:</label>
+            <input type="text" id="annotationAuthorInput" class="pbi-input" value="Lead Analyst">
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:4px; font-weight:600; color:var(--pbi-text-bright); font-size:11px;">Category:</label>
+            <select id="annotationCategorySelect" class="pbi-select" style="width: 100%;">
+              <option value="note">General Note</option>
+              <option value="risk">Commercial Risk</option>
+              <option value="opportunity">Growth Opportunity</option>
+              <option value="leakage">Revenue Leakage</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label style="display:block; margin-bottom:4px; font-weight:600; color:var(--pbi-text-bright); font-size:11px;">Observation & Insights:</label>
+          <textarea id="annotationContentInput" class="pbi-input" rows="4" style="resize:vertical;" placeholder="Document root cause, market conditions, or decision context..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="pbi-btn secondary" onclick="document.getElementById('annotationModal').style.display='none'">Cancel</button>
+        <button class="pbi-btn primary" id="btnSaveAnnotation">Save Annotation</button>
       </div>
     </div>
   </div>

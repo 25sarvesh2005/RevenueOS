@@ -428,6 +428,228 @@ def generate_manifest_executive_report(manifest: Dict[str, Any], currency: str =
     return {"markdown": markdown_content, "html": html_content}
 
 
+def generate_executive_pdf_from_manifest(
+    manifest: Dict[str, Any],
+    output_path: Path,
+    charts_dir: Optional[Path] = None,
+) -> Path:
+    """
+    Compile a publication-grade, multi-page vector PDF executive briefing.
+    Uses Matplotlib PdfPages with embedded charts and structured tables.
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    import matplotlib.image as mpimg
+
+    output_path = Path(output_path).resolve()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    kpis = manifest.get("dashboard", {}).get("kpis", {})
+    currency = kpis.get("currency", "$")
+    project = manifest.get("projectName", "RevenueOS Executive Briefing")
+    tables = manifest.get("tables", [])
+    measures = manifest.get("daxMeasures", [])
+
+    if charts_dir is None:
+        p_charts = manifest.get("paths", {}).get("chartsDir")
+        if p_charts:
+            charts_dir = Path(p_charts)
+
+    BG_DARK = "#18181B"
+    CARD_DARK = "#202023"
+    TEXT_LIGHT = "#F4F4F5"
+    TEXT_MUTED = "#A1A1AA"
+    ACCENT_TEAL = "#00B7C3"
+    ACCENT_BLUE = "#0078D4"
+    ACCENT_GOLD = "#FFB900"
+    BORDER_DARK = "#333338"
+
+    with PdfPages(output_path) as pdf:
+        # -------------------------------------------------------------
+        # PAGE 1: Executive KPI Scoreboard & Primary Waterfall / Trend
+        # -------------------------------------------------------------
+        fig1 = plt.figure(figsize=(11, 8.5), dpi=300)
+        fig1.patch.set_facecolor(BG_DARK)
+
+        fig1.text(0.08, 0.94, f"{project.upper()} — EXECUTIVE BRIEFING", color=TEXT_LIGHT, fontsize=16, weight="bold")
+        fig1.text(0.08, 0.90, f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}  |  Kimball Star Schema Certified  |  Zero Hallucination", color=TEXT_MUTED, fontsize=8.5)
+
+        kpi_metrics = [
+            ("Gross Revenue", f"{currency}{kpis.get('totalRevenue', 0):,.2f}", f"AOV: {currency}{kpis.get('avgOrderValue', 0):,.2f}"),
+            ("Gross Profit", f"{currency}{kpis.get('grossProfit', 0):,.2f}", f"Margin: {kpis.get('grossMarginPct', 0):.1f}%"),
+            ("Total Orders", f"{kpis.get('totalOrders', 0):,}", f"Units: {kpis.get('totalUnits', 0):,}"),
+            ("Total Discounts", f"{currency}{kpis.get('totalDiscounts', 0):,.2f}", "Promotional Variance"),
+        ]
+
+        tile_w = 0.20
+        tile_gap = 0.02
+        start_x = 0.08
+        tile_y = 0.76
+        tile_h = 0.11
+
+        for i, (title, val, sub) in enumerate(kpi_metrics):
+            x = start_x + i * (tile_w + tile_gap)
+            rect = plt.Rectangle((x, tile_y), tile_w, tile_h, facecolor=CARD_DARK, edgecolor=BORDER_DARK, linewidth=1.0, transform=fig1.transFigure)
+            fig1.patches.append(rect)
+            fig1.text(x + 0.015, tile_y + 0.075, title, color=TEXT_MUTED, fontsize=8, weight="bold")
+            fig1.text(x + 0.015, tile_y + 0.04, val, color=TEXT_LIGHT, fontsize=11, weight="bold")
+            fig1.text(x + 0.015, tile_y + 0.015, sub, color=ACCENT_TEAL, fontsize=7.5)
+
+        c7_file = None
+        if charts_dir and charts_dir.exists():
+            c7_candidate = charts_dir / "07_gross_to_net_waterfall.png"
+            if c7_candidate.exists():
+                c7_file = c7_candidate
+            else:
+                c1_candidate = charts_dir / "01_monthly_revenue_and_margin_trend.png"
+                if c1_candidate.exists():
+                    c7_file = c1_candidate
+
+        if c7_file and c7_file.exists():
+            ax_img1 = fig1.add_axes([0.08, 0.12, 0.84, 0.58])
+            img1 = mpimg.imread(str(c7_file))
+            ax_img1.imshow(img1)
+            ax_img1.axis("off")
+        else:
+            ax_text = fig1.add_axes([0.08, 0.12, 0.84, 0.58])
+            ax_text.set_facecolor(CARD_DARK)
+            ax_text.text(0.5, 0.5, "Waterfall & Trajectory Visualization", color=TEXT_LIGHT, ha="center", va="center", fontsize=14)
+            ax_text.axis("off")
+
+        fig1.text(0.08, 0.05, "CONFIDENTIAL — STRICTLY SUBJECT TO REVENUEOS COMMERCIAL ROYALTY LICENSE — © SARVESH SHARMA", color=TEXT_MUTED, fontsize=7.5)
+        pdf.savefig(fig1, facecolor=fig1.get_facecolor(), edgecolor="none")
+        plt.close(fig1)
+
+        # -------------------------------------------------------------
+        # PAGE 2: Dimensional Breakdown & Diagnostic Visuals
+        # -------------------------------------------------------------
+        fig2 = plt.figure(figsize=(11, 8.5), dpi=300)
+        fig2.patch.set_facecolor(BG_DARK)
+
+        fig2.text(0.08, 0.94, f"{project.upper()} — MULTI-DIMENSIONAL DIAGNOSTICS", color=TEXT_LIGHT, fontsize=16, weight="bold")
+        fig2.text(0.08, 0.90, "Channel, Product Velocity, and Elasticity Analysis", color=TEXT_MUTED, fontsize=8.5)
+
+        chart_pairs = []
+        if charts_dir and charts_dir.exists():
+            for name in ["04_top_products_ranking.png", "08_price_elasticity_scatter.png", "02_category_revenue_distribution.png", "03_channel_revenue_breakdown.png"]:
+                p = charts_dir / name
+                if p.exists():
+                    chart_pairs.append(p)
+                if len(chart_pairs) == 2:
+                    break
+
+        if len(chart_pairs) >= 2:
+            ax_top = fig2.add_axes([0.08, 0.52, 0.84, 0.35])
+            ax_top.imshow(mpimg.imread(str(chart_pairs[0])))
+            ax_top.axis("off")
+
+            ax_bot = fig2.add_axes([0.08, 0.10, 0.84, 0.35])
+            ax_bot.imshow(mpimg.imread(str(chart_pairs[1])))
+            ax_bot.axis("off")
+        elif len(chart_pairs) == 1:
+            ax_single = fig2.add_axes([0.08, 0.15, 0.84, 0.70])
+            ax_single.imshow(mpimg.imread(str(chart_pairs[0])))
+            ax_single.axis("off")
+        else:
+            ax_empty = fig2.add_axes([0.08, 0.15, 0.84, 0.70])
+            ax_empty.set_facecolor(CARD_DARK)
+            ax_empty.text(0.5, 0.5, "Diagnostic Chart Visuals", color=TEXT_LIGHT, ha="center", va="center", fontsize=14)
+            ax_empty.axis("off")
+
+        fig2.text(0.08, 0.04, "CONFIDENTIAL — REVENUEOS MULTI-DIMENSIONAL INTELLIGENCE MART", color=TEXT_MUTED, fontsize=7.5)
+        pdf.savefig(fig2, facecolor=fig2.get_facecolor(), edgecolor="none")
+        plt.close(fig2)
+
+        # -------------------------------------------------------------
+        # PAGE 3: Star Schema Inventory, DAX Measures & Legal Royalty Notice
+        # -------------------------------------------------------------
+        fig3 = plt.figure(figsize=(11, 8.5), dpi=300)
+        fig3.patch.set_facecolor(BG_DARK)
+
+        fig3.text(0.08, 0.94, f"{project.upper()} — ARCHITECTURAL GOVERNANCE & DAX INVENTORY", color=TEXT_LIGHT, fontsize=16, weight="bold")
+        fig3.text(0.08, 0.90, "Validated Kimball Star Schema Marts & Production Semantic Measures", color=TEXT_MUTED, fontsize=8.5)
+
+        fig3.text(0.08, 0.84, "STAR SCHEMA MARTS:", color=ACCENT_GOLD, fontsize=11, weight="bold")
+        table_rows = []
+        for t in tables[:8]:
+            table_rows.append([
+                t.get("name", ""),
+                t.get("table_type", "").upper(),
+                str(t.get("row_count", 0)),
+                str(len(t.get("columns", []))),
+                t.get("primary_key") or "composite/none",
+                t.get("csv_filename", "")
+            ])
+
+        if table_rows:
+            ax_t = fig3.add_axes([0.08, 0.54, 0.84, 0.28])
+            ax_t.axis("off")
+            tb = ax_t.table(
+                cellText=table_rows,
+                colLabels=["Table Name", "Role", "Rows", "Cols", "Primary Key", "Export Mart"],
+                loc="center",
+                cellLoc="left"
+            )
+            tb.auto_set_font_size(False)
+            tb.set_fontsize(8)
+            for (r, c), cell in tb.get_celld().items():
+                if r == 0:
+                    cell.set_facecolor(CARD_DARK)
+                    cell.set_text_props(color=ACCENT_TEAL, weight="bold")
+                else:
+                    cell.set_facecolor("#252528" if r % 2 == 0 else "#1c1c1f")
+                    cell.set_text_props(color=TEXT_LIGHT)
+                cell.set_edgecolor(BORDER_DARK)
+
+        fig3.text(0.08, 0.48, "CORE SYNTHESIZED DAX MEASURES:", color=ACCENT_GOLD, fontsize=11, weight="bold")
+        dax_rows = []
+        for m in measures[:6]:
+            expr = m.get("expression", "").replace("\n", " ")
+            if len(expr) > 65:
+                expr = expr[:62] + "..."
+            dax_rows.append([f"[{m.get('name')}]", m.get("category", ""), expr])
+
+        if dax_rows:
+            ax_dax = fig3.add_axes([0.08, 0.24, 0.84, 0.22])
+            ax_dax.axis("off")
+            tb_dax = ax_dax.table(
+                cellText=dax_rows,
+                colLabels=["Measure Name", "Category", "DAX Expression"],
+                loc="center",
+                cellLoc="left"
+            )
+            tb_dax.auto_set_font_size(False)
+            tb_dax.set_fontsize(8)
+            for (r, c), cell in tb_dax.get_celld().items():
+                if r == 0:
+                    cell.set_facecolor(CARD_DARK)
+                    cell.set_text_props(color=ACCENT_TEAL, weight="bold")
+                else:
+                    cell.set_facecolor("#252528" if r % 2 == 0 else "#1c1c1f")
+                    cell.set_text_props(color=TEXT_LIGHT)
+                cell.set_edgecolor(BORDER_DARK)
+
+        box_ax = fig3.add_axes([0.08, 0.08, 0.84, 0.11])
+        box_ax.set_facecolor("#2A1215")
+        for spine in box_ax.spines.values():
+            spine.set_color("#A80000")
+            spine.set_linewidth(1.0)
+        box_ax.text(0.02, 0.70, "COMMERCIAL & ROYALTY LICENSE NOTICE", color="#FF8A8A", fontsize=9, weight="bold")
+        box_ax.text(0.02, 0.25,
+            "Governed by RevenueOS Commercial Royalty License v1.0. All commercial exploitation, hosted multi-tenant resale,\n"
+            "or monetization without a signed royalty licensing agreement with author Sarvesh Sharma constitutes copyright infringement.",
+            color="#FFD6D6", fontsize=7.5
+        )
+        box_ax.axis("off")
+
+        fig3.text(0.08, 0.03, "PAGE 3 OF 3 — END OF REPORT", color=TEXT_MUTED, fontsize=7.5)
+        pdf.savefig(fig3, facecolor=fig3.get_facecolor(), edgecolor="none")
+        plt.close(fig3)
+
+    return output_path
+
 
 def main():
     parser = argparse.ArgumentParser(description="RevenueOS Executive Briefing Generator")

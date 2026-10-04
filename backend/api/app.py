@@ -55,7 +55,10 @@ from backend.api.schemas import (
     TenantRunSummary,
 )
 from backend.engine.core import CoreEngine
-from backend.python.reporting.executive_report import generate_manifest_executive_report
+from backend.python.reporting.executive_report import (
+    generate_manifest_executive_report,
+    generate_executive_pdf_from_manifest,
+)
 from backend.python.reporting.investigation_copilot import InvestigationCopilot
 
 # Base project paths
@@ -675,6 +678,39 @@ async def get_executive_report_markdown(
     manifest = _get_job_manifest(job_id)
     report = generate_manifest_executive_report(manifest)
     return PlainTextResponse(content=report["markdown"], status_code=200)
+
+
+@app.get(
+    "/api/reports/{job_id}/executive-pdf",
+    tags=["Reports"],
+    summary="Download Executive PDF Briefing",
+)
+async def get_executive_report_pdf(
+    job_id: str,
+    _auth: Optional[str] = Depends(verify_api_key),
+):
+    """Generates and serves a publication-grade multi-page vector PDF executive briefing."""
+    manifest = _get_job_manifest(job_id)
+    pdf_filename = f"RevenueOS_Executive_Briefing_{job_id}.pdf"
+
+    job = job_store.get_job(job_id) if job_id not in ("default", "sample") else None
+    if job and job.get("output_dir"):
+        target_dir = Path(job["output_dir"])
+    else:
+        target_dir = EXPORTS_DIR / job_id
+    target_dir.mkdir(parents=True, exist_ok=True)
+    pdf_path = target_dir / pdf_filename
+
+    charts_dir = target_dir / "charts"
+    if not charts_dir.exists() and DEFAULT_MODEL_DIR.exists():
+        charts_dir = DEFAULT_MODEL_DIR / "charts"
+
+    generate_executive_pdf_from_manifest(manifest, pdf_path, charts_dir=charts_dir)
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename=pdf_filename,
+    )
 
 
 @app.post(

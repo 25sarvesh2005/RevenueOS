@@ -62,6 +62,12 @@ import {
   exportCSVMarts,
   toggleFocus,
   closeFocusMode,
+  openCopilotModal,
+  runCopilotInvestigation,
+  openExecutiveReportModal,
+  exportExecutiveReportPdf,
+  openAnnotationModal,
+  saveAnnotation,
 } from "./modules/modals.js";
 import {
   setupRibbonTabs,
@@ -139,6 +145,12 @@ export const app = {
   exportCSVMarts: () => exportCSVMarts(state),
   toggleFocus: (id) => toggleFocus(id, state),
   closeFocusMode: () => closeFocusMode(state),
+  openCopilotModal: (entity, issue) => openCopilotModal(entity, issue, state),
+  runCopilotInvestigation: () => runCopilotInvestigation(state),
+  openExecutiveReportModal: () => openExecutiveReportModal(state),
+  exportExecutiveReportPdf: () => exportExecutiveReportPdf(state),
+  openAnnotationModal: () => openAnnotationModal(state),
+  saveAnnotation: () => saveAnnotation(state),
   showToast,
 };
 
@@ -239,6 +251,12 @@ function setupEventListeners() {
   document.getElementById("btnMatplotlibPack")?.addEventListener("click", () => app.openMatplotlibModal());
   document.getElementById("btnOpenChartsFolder")?.addEventListener("click", () => app.openChartsFolder());
   document.getElementById("btnCopyAllDAX")?.addEventListener("click", () => app.copyAllDAX());
+  document.getElementById("btnInvestigateCopilot")?.addEventListener("click", () => app.openCopilotModal());
+  document.getElementById("btnExecutiveBriefing")?.addEventListener("click", () => app.openExecutiveReportModal());
+  document.getElementById("btnExportExecutivePdf")?.addEventListener("click", () => app.exportExecutiveReportPdf());
+  document.getElementById("btnAddAnnotation")?.addEventListener("click", () => app.openAnnotationModal());
+  document.getElementById("btnRunCopilot")?.addEventListener("click", () => app.runCopilotInvestigation());
+  document.getElementById("btnSaveAnnotation")?.addEventListener("click", () => app.saveAnnotation());
 
   // M. Theme Switcher
   document.getElementById("themeSelect")?.addEventListener("change", (e) => {

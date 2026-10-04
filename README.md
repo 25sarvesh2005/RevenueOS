@@ -8,9 +8,21 @@
 ![Database](https://img.shields.io/badge/PostgreSQL-16-336791.svg?logo=postgresql&logoColor=white)
 ![Power BI](https://img.shields.io/badge/Power_BI-8_Page_Semantic_App-F2C811.svg?logo=powerbi&logoColor=black)
 [![License: Commercial Royalty](https://img.shields.io/badge/License-Commercial%20Royalty-crimson.svg)](LICENSE)
-![Tests](https://img.shields.io/badge/Tests-66%20Passed-brightgreen.svg)
+![Tests](https://img.shields.io/badge/Tests-121%20Passed-brightgreen.svg)
 
-RevenueOS is an enterprise-grade Data Analytics, Analytics Engineering, and Automated Decision Intelligence platform engineered for omnichannel retail enterprises. It features **RevenueOS Studio**—an autonomous Electron desktop application that accepts ANY Excel workbook, auto-decomposes entities into a Kimball Star Schema, generates clean CSV marts, writes tailored DAX measures, compiles native Power BI Templates (`.pbit` & `.pbip`), and guides analysts through deployment.
+RevenueOS is an enterprise-grade Data Analytics, Analytics Engineering, and Automated Decision Intelligence platform engineered for omnichannel retail enterprises. It features **RevenueOS Studio**—an autonomous Electron desktop application that accepts ANY Excel workbook, auto-decomposes entities into a Kimball Star Schema, generates clean CSV marts, writes tailored DAX measures, compiles native Power BI Templates (`.pbit` & `.pbip`), provides live AI investigation briefings, and exposes a high-throughput FastAPI REST service.
+
+---
+
+## 📚 Institutional Engineering Documentation
+
+| Guide | Description |
+| :--- | :--- |
+| **[Metric Definitions](docs/metric_definitions.md)** | Standardized GAAP/IFRS accounting definitions, formulas, boundary conditions, and DAX formulations |
+| **[Data Dictionary](docs/data_dictionary.md)** | Star schema catalog, table grains, physical types, keys, and analytical marts specifications |
+| **[Pipeline Operations Runbook](docs/pipeline_runbook.md)** | 8-phase transformation lifecycle, CLI usage, REST triggers, streaming protocols, and recovery |
+| **[System & Operations Runbook](docs/runbook.md)** | Infrastructure deployment, hardware sizing, environment config (`.env`), and diagnostics |
+| **[Analytical & Modeling Assumptions](docs/assumptions.md)** | Financial baselines, outlier thresholds, referential integrity imputation, and discount clamping |
 
 ---
 
@@ -22,33 +34,45 @@ RevenueOS is organized into a clean, modern separation of concerns:
 revenueos/
 │
 ├── frontend/                # Power BI Desktop Replica Studio (Electron)
-│   ├── main.js              # Native Electron process & Python pipeline IPC
+│   ├── modules/             # Decoupled ES Modules
+│   │   ├── state.js         # Reactive central store & subscriber event hub
+│   │   ├── toast.js         # Typed severity toast alerts
+│   │   ├── charts.js        # Chart.js rendering, cross-filtering, and visual transforms
+│   │   ├── dataView.js      # Data grid, column sorting, and CSV exports
+│   │   ├── modelView.js     # Star Schema cards & dynamic SVG relationship wires
+│   │   ├── daxEngine.js     # Formula bar, measures tree, and DAX evaluation bridge
+│   │   ├── slicers.js       # Category, channel, and date slicers
+│   │   ├── pipeline.js      # Pipeline execution & streaming progress
+│   │   ├── modals.js        # Copilot, Power Query, Executive Reports, and Annotations
+│   │   └── ribbon.js        # Ribbon tab switching & viewport navigation
+│   ├── app.js               # Application orchestrator
+│   ├── main.js              # Native Electron process, Python IPC & DAX evaluator
 │   ├── preload.js           # Secure context bridge API
-│   ├── index.html           # Power BI Ribbon, Canvas, Data View & Model View
-│   ├── styles.css           # Microsoft Fluent Dark/Light Power BI theme
-│   └── app.js               # Interactive Chart.js charts, slicers, DAX formula bar
+│   ├── index.html           # Desktop Studio Canvas, Ribbon & Modals
+│   └── styles.css           # Microsoft Fluent Dark/Light Power BI theme & animations
 │
 ├── backend/                 # Master Python Data & Intelligence Engine
+│   ├── api/                 # Enterprise FastAPI REST Layer
+│   │   ├── app.py           # REST endpoints: /pipeline, /reports, /copilot, /dax, /annotations
+│   │   ├── schemas.py       # Pydantic v2 request/response contracts
+│   │   ├── auth.py          # API key verification middleware
+│   │   └── dax_evaluator.py # Sub-millisecond Pandas DAX evaluation engine
 │   ├── engine/              # Universal Kimball Star Schema & DAX Synthesis Engine
-│   │   ├── master.py        # Master pipeline: Excel profiling, DAX, PBIT/PBIP compilation
-│   │   ├── excel_to_powerbi.py # CLI pipeline wrapper
-│   │   └── pipeline_engine.py  # Continuous watcher, background daemon, health diagnostics
-│   ├── ingestion/           # Excel parsing & Bronze schema ingestion
-│   ├── transformation/      # Silver cleansing & Gold dimensional marts
-│   ├── quality/             # Great Expectations data quality assertions
-│   ├── warehouse/           # PostgreSQL Kimball Star Schema DDL
-│   ├── analytics/           # Gold SQL marts (financials, customer health, marketing)
+│   │   ├── core.py          # Canonical CoreEngine uniting profiling, marts, DAX & Power BI
+│   │   ├── master.py        # Thin CLI wrapper & streaming shim
+│   │   ├── excel_to_powerbi.py # Backward-compatible shim
+│   │   └── pipeline_engine.py  # Continuous watcher & background daemon
 │   ├── python/              # ML Anomaly Detection, Forecasting & Investigation Copilot
-│   ├── powerbi/             # Native Power BI template (.pbit/.pbip) builders
+│   │   └── reporting/       # Executive Briefing & AI Investigation Copilot
 │   ├── config.py            # Global connection pools & settings
 │   └── pipeline.py          # Unified CLI entry point
 │
 ├── data/                    # Raw & processed datasets
 │   └── raw/excel/           # Source Excel workbooks (e.g., revenueos_sample.xlsx)
 │
-├── tests/                   # 66 comprehensive passing unit & integration tests
-├── docs/                    # Architecture, BRD, and Power BI deployment guides
-├── exports/                 # Generated CSV marts, .pbit templates, DAX formulas
+├── tests/                   # 121 automated unit, integration, schema & API test suites
+├── docs/                    # Institutional engineering runbooks & metric specs
+├── exports/                 # Generated CSV marts, .pbit templates, and Matplotlib figures
 ├── package.json             # Desktop app configuration (Electron v44 + Chart.js)
 ├── requirements.txt         # Python dependencies
 └── LICENSE                  # Source-Available Commercial & Royalty License

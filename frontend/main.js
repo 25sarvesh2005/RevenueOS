@@ -377,3 +377,78 @@ except Exception as e:
   });
 });
 
+// 11. Export Executive PDF
+ipcMain.handle("report:export-pdf", async (event, { jobId, title }) => {
+  const saveResult = await dialog.showSaveDialog(mainWindow, {
+    title: "Export Executive PDF Report",
+    defaultPath: title || "RevenueOS_Executive_Briefing.pdf",
+    filters: [{ name: "PDF Documents", extensions: ["pdf"] }],
+  });
+
+  if (saveResult.canceled || !saveResult.filePath) {
+    return { success: false, cancelled: true };
+  }
+
+  return new Promise((resolve) => {
+    const pythonExe = process.platform === "win32" ? "python" : "python3";
+    const pyScript = `
+import sys, json
+from pathlib import Path
+from backend.python.reporting.executive_report import generate_executive_pdf_from_manifest
+
+try:
+    job_id = sys.argv[1]
+    out_pdf = Path(sys.argv[2])
+    
+    manifest_path = None
+    charts_dir = None
+    if job_id and job_id not in ("default", "sample", "null"):
+        p = Path("exports") / job_id / "manifest.json"
+        if p.exists():
+            manifest_path = p
+            charts_dir = Path("exports") / job_id / "charts"
+            
+    if not manifest_path:
+        for candidate in [Path("exports/default_model/manifest.json"), Path("frontend/model_data.json"), Path("frontend/model_data_sample.json")]:
+            if candidate.exists():
+                manifest_path = candidate
+                break
+                
+    if not manifest_path or not manifest_path.exists():
+        raise FileNotFoundError("No active manifest found for PDF synthesis.")
+        
+    data = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if not charts_dir or not charts_dir.exists():
+        candidate_charts = manifest_path.parent / "charts"
+        if candidate_charts.exists():
+            charts_dir = candidate_charts
+            
+    generate_executive_pdf_from_manifest(data, out_pdf, charts_dir=charts_dir)
+    print(json.dumps({"success": True, "filePath": str(out_pdf)}))
+except Exception as e:
+    print(json.dumps({"success": False, "error": str(e)}))
+`;
+    const proc = spawn(pythonExe, ["-c", pyScript, jobId || "null", saveResult.filePath], {
+      cwd: path.resolve(__dirname, ".."),
+      env: { ...process.env, PYTHONUNBUFFERED: "1" },
+    });
+
+    let stdoutData = "";
+    proc.stdout.on("data", (d) => { stdoutData += d.toString(); });
+    proc.on("close", (code) => {
+      try {
+        const parsed = JSON.parse(stdoutData.trim());
+        resolve(parsed);
+      } catch (err) {
+        resolve({
+          success: false,
+          error: "Failed to compile PDF in Python engine: " + stdoutData,
+        });
+      }
+    });
+    proc.on("error", (err) => {
+      resolve({ success: false, error: err.message });
+    });
+  });
+});
+

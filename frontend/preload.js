@@ -38,4 +38,7 @@ contextBridge.exposeInMainWorld("api", {
 
   // DAX Semantic Engine Evaluation
   evaluateDax: (expression, jobId) => ipcRenderer.invoke("dax:evaluate", { expression, jobId }),
+
+  // PDF Export
+  exportPdf: (params) => ipcRenderer.invoke("report:export-pdf", params),
 });
