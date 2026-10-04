@@ -83,6 +83,19 @@ def check_javascript_syntax() -> bool:
             print(f"  FAIL: Syntax error in {f}:\n{res.stderr}")
             return False
 
+    # Check root ES module app.js
+    app_js = ROOT_DIR / "frontend" / "app.js"
+    if app_js.exists():
+        res = subprocess.run(
+            [node_exe, "--input-type=module", "--check"],
+            input=app_js.read_text(encoding="utf-8"),
+            capture_output=True,
+            text=True,
+        )
+        if res.returncode != 0:
+            print(f"  FAIL: Syntax error in frontend/app.js:\n{res.stderr}")
+            return False
+
     # Check ES modules in frontend/modules
     modules = list((ROOT_DIR / "frontend" / "modules").glob("*.js"))
     for mod in modules:
@@ -91,7 +104,7 @@ def check_javascript_syntax() -> bool:
             print(f"  FAIL: Syntax error in module {mod.name}:\n{res.stderr}")
             return False
 
-    print(f"  PASS: Main process, preload bridge, and all {len(modules)} frontend ES modules passed syntax check.")
+    print(f"  PASS: Main process, preload bridge, app.js, and all {len(modules)} frontend ES modules passed syntax check.")
     return True
 
 

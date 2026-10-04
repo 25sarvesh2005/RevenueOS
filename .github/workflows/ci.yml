@@ -59,8 +59,11 @@ jobs:
       - name: Validate JavaScript Syntax
         run: |
           node --check frontend/main.js
-          node --check frontend/app.js
           node --check frontend/preload.js
+          node --input-type=module --check < frontend/app.js
+          for file in frontend/modules/*.js; do
+            node --check "$file"
+          done
 
       - name: Install Frontend Dependencies
         run: npm ci || npm install
