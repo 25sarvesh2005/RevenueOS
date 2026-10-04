@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RevenueOS Studio – Power BI Desktop Replica Engine</title>
+  <!-- Google Fonts: Segoe UI equivalent / Inter & Roboto Mono for DAX -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Local Chart.js engine -->
+  <script src="../node_modules/chart.js/dist/chart.umd.js"></script>
+</head>
+<body class="powerbi-dark">
+
+  <!-- ===================================================================== -->
+  <!-- 1. Power BI Title Bar & Quick Access -->
+  <!-- ===================================================================== -->
+  <header class="pbi-titlebar" id="pbiTitleBar">
+    <div class="titlebar-left">
+      <div class="pbi-logo" title="Power BI Studio">
+        <span class="bar bar-1"></span>
+        <span class="bar bar-2"></span>
+        <span class="bar bar-3"></span>
+        <span class="bar bar-4"></span>
+      </div>
+      <div class="quick-access-tools">
+        <button class="qa-btn" id="qaSaveBtn" title="Save Report (Ctrl+S)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4.414a1 1 0 0 0-.293-.707l-2.414-2.414A1 1 0 0 0 11.586 1H2zm2 1h7v3H4V2zm8 12H4V8h8v6z"/></svg>
+        </button>
+        <button class="qa-btn" id="qaUndoBtn" title="Undo (Ctrl+Z)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 3a5 5 0 0 0-5 5v1.5H1.5L4 12.5 6.5 9.5H5V8a3 3 0 1 1 3 3H7v2h1a5 5 0 0 0 0-10z"/></svg>
+        </button>
+        <button class="qa-btn" id="qaRedoBtn" title="Redo (Ctrl+Y)">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 3a5 5 0 0 1 5 5v1.5h1.5L12 12.5 9.5 9.5H11V8a3 3 0 1 0-3 3h1v2H8a5 5 0 0 1 0-10z"/></svg>
+        </button>
+      </div>
+      <div class="document-title" id="documentTitle">
+        RevenueOS_Sample.xlsx - Power BI Desktop Studio
+      </div>
+    </div>
+    <div class="titlebar-right">
+      <div class="license-tag" title="Strict Source-Available Royalty License">
+        <span>PROD REPLICA</span>
+        <span class="author-badge">© Sarvesh Sharma</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- 2. Microsoft Fluent Ribbon Toolbar -->
+  <!-- ===================================================================== -->
+  <nav class="pbi-ribbon" id="pbiRibbon">
+    <div class="ribbon-tabs">
+      <button class="ribbon-tab active" data-tab="home">Home</button>
+      <button class="ribbon-tab" data-tab="insert">Insert</button>
+      <button class="ribbon-tab" data-tab="modeling">Modeling</button>
+      <button class="ribbon-tab" data-tab="view">View</button>
+      <button class="ribbon-tab" data-tab="help">Help & License</button>
+    </div>
+
+    <!-- Tab Content: Home -->
+    <div class="ribbon-content active" id="tabContentHome">
+      <!-- Data Group -->
+      <div class="ribbon-group">
+        <div class="group-controls">
+          <button class="ribbon-action primary" id="btnGetData">
+            <div class="action-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            </div>
+            <span>Get Data</span>
+          </button>
+          <div class="group-stacked">
+            <button class="ribbon-subaction" id="btnLoadSample">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+              <span>Load Sample Excel</span>
+            </button>
+            <button class="ribbon-subaction" id="btnSelectExcel">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+              <span>Browse Workbook...</span>
+            </button>
+          </div>
+        </div>
+        <div class="group-label">Data</div>
+      </div>
+
+      <!-- Queries Group -->
+      <div class="ribbon-group">
+        <div class="group-controls">
+          <button class="ribbon-action" id="btnTransformData">
+            <div class="action-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
+            <span>Power Query M</span>
+          </button>
+          <button class="ribbon-action" id="btnRefreshData">
+            <div class="action-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            </div>
+            <span>Refresh</span>
+          </button>
+        </div>
+        <div class="group-label">Queries</div>
+      </div>
+
+      <!-- Insert Group -->
+      <div class="ribbon-group">
+        <div class="group-controls">
+          <button class="ribbon-action" id="btnNewVisual">
+            <div class="action-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </div>
+            <span>New Visual</span>
+          </button>
+          <button class="ribbon-action" id="btnNewMeasure">
+            <div class="action-icon">
+              <span class="fx-symbol">fx</span>
+            </div>
+            <span>New Measure</span>
+          </button>
+        </div>
+        <div class="group-label">Visuals & Calculations</div>
+      </div>
+
+      <!-- Native Power BI Export Group -->
+      <div class="ribbon-group">
+        <div class="group-controls">
+          <button class="ribbon-action highlight" id="btnLaunchPowerBI">
+            <div class="action-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M4 18h2v-6H4v6zm4 0h2v-10H8v10zm4 0h2V4h-2v14zm4 0h2v-8h-2v8z"/></svg>
+            </div>
+            <span>Launch Native .PBIT</span>
+          </button>
+          <div class="group-stacked">
+            <button class="ribbon-subaction" id="btnExportCSVMarts">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+              <span>Export CSV Marts</span>
+            </button>
+            <button class="ribbon-subaction" id="btnCopyAllDAX">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+              <span>Copy All DAX</span>
+            </button>
+          </div>
+        </div>
+        <div class="group-label">Share & Export</div>
+      </div>
+    </div>
+
+    <!-- Tab Content: Modeling -->
+    <div class="ribbon-content" id="tabContentModeling">
+      <div class="ribbon-group">
+        <div class="group-controls">
+          <button class="ribbon-action" id="btnManageRelationships">
+            <div class="action-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M6 9v12M18 3v12M6 15h12"/></svg>
+            </div>
+            <span>Relationships</span>
+          </button>
+          <button class="ribbon-action" id="btnStarSchemaViewer">
+            <div class="action-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7.2L12 16.8 5.7 21.2 8 14 2 9.4h7.6z"/></svg>
+            </div>
+            <span>Kimball Schema</span>
+          </button>
+        </div>
+        <div class="group-label">Data Modeling</div>
+      </div>
+    </div>
+
+    <!-- Tab Content: View -->
+    <div class="ribbon-content" id="tabContentView">
+      <div class="ribbon-group">
+        <div class="group-controls">
+          <div class="theme-picker-group">
+            <label>Canvas Theme:</label>
+            <select id="themeSelect" class="pbi-select">
+              <option value="powerbi-dark" selected>Power BI Modern Dark</option>
+              <option value="powerbi-fluent">Microsoft Fluent Light</option>
+              <option value="powerbi-contrast">High Contrast Cyber</option>
+            </select>
+          </div>
+          <button class="ribbon-action" id="btnFitToPage">
+            <div class="action-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+            </div>
+            <span>Fit to Page</span>
+          </button>
+        </div>
+        <div class="group-label">Canvas View</div>
+      </div>
+    </div>
+
+    <!-- Tab Content: Help -->
+    <div class="ribbon-content" id="tabContentHelp">
+      <div class="ribbon-group">
+        <div class="group-controls">
+          <button class="ribbon-action" id="btnOpenDocs">
+            <div class="action-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <span>Deployment Guide</span>
+          </button>
+          <button class="ribbon-action" id="btnLicenseModal">
+            <div class="action-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <span>Royalty License</span>
+          </button>
+        </div>
+        <div class="group-label">Documentation & Commercial Rights</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================================================================== -->
+  <!-- 3. Power BI DAX Formula Bar -->
+  <!-- ===================================================================== -->
+  <div class="pbi-dax-bar" id="pbiDaxBar">
+    <div class="dax-icon">
+      <span class="fx-text">fx</span>
+    </div>
+    <div class="dax-measure-selector">
+      <select id="daxMeasureDropdown" class="dax-select" title="Active DAX Measure">
+        <!-- Dynamically populated -->
+        <option value="Total Revenue">[Total Revenue]</option>
+      </select>
+    </div>
+    <div class="dax-equals">=</div>
+    <div class="dax-editor-container">
+      <input type="text" id="daxFormulaInput" class="dax-formula-input" readonly spellcheck="false" value="SUM(orders[quantity]) * AVERAGE(orders[unit_price])">
+    </div>
+    <div class="dax-tools">
+      <button class="dax-btn" id="btnCopyDax" title="Copy DAX Expression">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg>
+        <span>Copy</span>
+      </button>
+      <span class="dax-valid-tag" id="daxValidBadge">✓ DAX Valid</span>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 4. Main Body: Left Rail + Center Stage + Right Panes -->
+  <!-- ===================================================================== -->
+  <div class="pbi-workspace">
+
+    <!-- A. Left View Switcher Rail (Report / Data / Model) -->
+    <aside class="pbi-view-rail">
+      <button class="rail-btn active" id="viewRailReport" title="Report View (Visual Canvas)" data-view="report">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        <span>Report</span>
+      </button>
+      <button class="rail-btn" id="viewRailData" title="Data View (Table Explorer)" data-view="data">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm1 4v4h4V7H5zm6 0v4h4V7h-4zm6 0v4h4V7h-4zm-12 6v4h4v-4H5zm6 0v4h4v-4h-4zm6 0v4h4v-4h-4z"/></svg>
+        <span>Data</span>
+      </button>
+      <button class="rail-btn" id="viewRailModel" title="Model View (Star Schema Diagram)" data-view="model">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a4 4 0 0 0-4 4c0 1.34.66 2.52 1.67 3.25L7.42 13.5A3.99 3.99 0 0 0 4 17a4 4 0 1 0 7.82.9l2.25-4.25a3.97 3.97 0 0 0 1.86.35c.7 0 1.36-.18 1.94-.5l2.25 4.25A4 4 0 1 0 22 17a3.99 3.99 0 0 0-3.42-3.5l-2.25-4.25C17.34 8.52 18 7.34 18 6a4 4 0 0 0-6-3.46A3.98 3.98 0 0 0 12 2z"/></svg>
+        <span>Model</span>
+      </button>
+    </aside>
+
+    <!-- B. Center Stage Area -->
+    <main class="pbi-stage">
+
+      <!-- =============================================================== -->
+      <!-- VIEW 1: REPORT VIEW (Interactive Visual Canvas) -->
+      <!-- =============================================================== -->
+      <section class="stage-view active" id="viewReport">
+
+        <!-- Top Slicer Filter Bar -->
+        <div class="canvas-slicer-bar" id="canvasSlicerBar">
+          <div class="slicer-group">
+            <span class="slicer-label">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+              Date Range:
+            </span>
+            <input type="date" id="slicerStartDate" class="slicer-date-input" value="2024-01-01">
+            <span class="slicer-sep">to</span>
+            <input type="date" id="slicerEndDate" class="slicer-date-input" value="2025-12-31">
+          </div>
+
+          <div class="slicer-group">
+            <span class="slicer-label">Category:</span>
+            <div class="slicer-pills" id="categorySlicerPills">
+              <button class="slicer-pill active" data-category="ALL">All</button>
+              <button class="slicer-pill" data-category="Electronics">Electronics</button>
+              <button class="slicer-pill" data-category="Apparel">Apparel</button>
+              <button class="slicer-pill" data-category="Home & Kitchen">Home & Kitchen</button>
+              <button class="slicer-pill" data-category="Fitness">Fitness</button>
+              <button class="slicer-pill" data-category="Beauty">Beauty</button>
+            </div>
+          </div>
+
+          <div class="slicer-group">
+            <span class="slicer-label">Channel:</span>
+            <select id="channelSlicerSelect" class="slicer-select">
+              <option value="ALL">All Channels</option>
+              <option value="Online Direct">Online Direct</option>
+              <option value="Amazon Marketplace">Amazon Marketplace</option>
+              <option value="Retail Store">Retail Store</option>
+              <option value="Mobile App">Mobile App</option>
+              <option value="Wholesale">Wholesale</option>
+            </select>
+          </div>
+
+          <button class="slicer-reset-btn" id="btnResetSlicers" title="Reset all slicers">
+            ↺ Reset
+          </button>
+        </div>
+
+        <!-- Canvas Background Container -->
+        <div class="report-canvas-viewport">
+          <div class="report-canvas" id="activeReportCanvas">
+
+            <!-- PAGE 1: EXECUTIVE OVERVIEW -->
+            <div class="canvas-page active" id="pageExecutive">
+              <!-- KPI Summary Cards Row -->
+              <div class="kpi-cards-grid">
+                <div class="kpi-card" id="cardRevenue">
+                  <div class="kpi-header">
+                    <span class="kpi-title">Gross Revenue</span>
+                    <span class="kpi-badge positive">+14.2% MoM</span>
+                  </div>
+                  <div class="kpi-value" id="kpiRevenueVal">$8,474,028</div>
+                  <div class="kpi-subtitle">Total sales before deductions</div>
+                </div>
+
+                <div class="kpi-card" id="cardProfit">
+                  <div class="kpi-header">
+                    <span class="kpi-title">Gross Profit</span>
+                    <span class="kpi-badge positive">26.5% Margin</span>
+                  </div>
+                  <div class="kpi-value" id="kpiProfitVal">$2,246,208</div>
+                  <div class="kpi-subtitle">Net sales minus COGS</div>
+                </div>
+
+                <div class="kpi-card" id="cardMargin">
+                  <div class="kpi-header">
+                    <span class="kpi-title">Gross Margin %</span>
+                    <span class="kpi-badge neutral">Benchmark 25%</span>
+                  </div>
+                  <div class="kpi-value" id="kpiMarginVal">26.5%</div>
+                  <div class="kpi-subtitle">Target: 30.0%</div>
+                </div>
+
+                <div class="kpi-card" id="cardOrders">
+                  <div class="kpi-header">
+                    <span class="kpi-title">Total Orders</span>
+                    <span class="kpi-badge positive">500 Valid</span>
+                  </div>
+                  <div class="kpi-value" id="kpiOrdersVal">500</div>
+                  <div class="kpi-subtitle">Avg Order Value: $16,948</div>
+                </div>
+
+                <div class="kpi-card" id="cardUnits">
+                  <div class="kpi-header">
+                    <span class="kpi-title">Total Units Sold</span>
+                    <span class="kpi-badge positive">2.46 Units/Ord</span>
+                  </div>
+                  <div class="kpi-value" id="kpiUnitsVal">1,229</div>
+                  <div class="kpi-subtitle">Fulfillment: 98.4%</div>
+                </div>
+
+                <div class="kpi-card" id="cardDiscounts">
+                  <div class="kpi-header">
+                    <span class="kpi-title">Return Rate</span>
+                    <span class="kpi-badge warning">2.77%</span>
+                  </div>
+                  <div class="kpi-value" id="kpiReturnsVal">34 Items</div>
+                  <div class="kpi-subtitle">34 returned of 1,229 units</div>
+                </div>
+              </div>
+
+              <!-- Main Visuals Grid -->
+              <div class="visuals-grid">
+                <!-- Visual 1: Monthly Financial Trend (Combo) -->
+                <div class="pbi-visual-container span-8" id="visualMonthlyTrend">
+                  <div class="visual-header">
+                    <div class="visual-title">
+                      <span class="visual-type-icon">📈</span>
+                      Monthly Revenue & Cost Trajectory vs Margin %
+                    </div>
+                    <div class="visual-tools">
+                      <button class="vtool-btn" title="Focus Mode" onclick="app.toggleFocus('visualMonthlyTrend')">⛶</button>
+                    </div>
+                  </div>
+                  <div class="visual-body">
+                    <canvas id="chartMonthlyTrend"></canvas>
+                  </div>
+                </div>
+
+                <!-- Visual 2: Category Revenue Breakdown (Donut) -->
+                <div class="pbi-visual-container span-4" id="visualCategoryShare">
+                  <div class="visual-header">
+                    <div class="visual-title">
+                      <span class="visual-type-icon">🍩</span>
+                      Revenue by Product Category
+                    </div>
+                    <div class="visual-tools">
+                      <button class="vtool-btn" title="Focus Mode" onclick="app.toggleFocus('visualCategoryShare')">⛶</button>
+                    </div>
+                  </div>
+                  <div class="visual-body">
+                    <canvas id="chartCategoryShare"></canvas>
+                  </div>
+                </div>
+
+                <!-- Visual 3: Channel Contribution (Bar) -->
+                <div class="pbi-visual-container span-5" id="visualChannelBar">
+                  <div class="visual-header">
+                    <div class="visual-title">
+                      <span class="visual-type-icon">📊</span>
+                      Revenue by Sales Channel
+                    </div>
+                    <div class="visual-tools">
+                      <button class="vtool-btn" title="Focus Mode" onclick="app.toggleFocus('visualChannelBar')">⛶</button>
+                    </div>
+                  </div>
+                  <div class="visual-body">
+                    <canvas id="chartChannelBar"></canvas>
+                  </div>
+                </div>
+
+                <!-- Visual 4: Top 10 Product Leaderboard (Horizontal Bar) -->
+                <div class="pbi-visual-container span-7" id="visualTopProducts">
+                  <div class="visual-header">
+                    <div class="visual-title">
+                      <span class="visual-type-icon">🏆</span>
+                      Top 10 Revenue-Generating SKUs
+                    </div>
+                    <div class="visual-tools">
+                      <button class="vtool-btn" title="Focus Mode" onclick="app.toggleFocus('visualTopProducts')">⛶</button>
+                    </div>
+                  </div>
+                  <div class="visual-body">
+                    <canvas id="chartTopProducts"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PAGE 2: REVENUE & MARGIN DEEP DIVE -->
+            <div class="canvas-page" id="pageFinancials">
+              <div class="page-title-banner">
+                <h2>Financial & Margin Analysis</h2>
+                <p>DAX-calculated waterfall metrics and cost breakdowns across time periods</p>
+              </div>
+              <div class="visuals-grid">
+                <div class="pbi-visual-container span-6">
+                  <div class="visual-header">
+                    <div class="visual-title">📈 Monthly Margin % Trend</div>
+                  </div>
+                  <div class="visual-body">
+                    <canvas id="chartMarginTrend"></canvas>
+                  </div>
+                </div>
+                <div class="pbi-visual-container span-6">
+                  <div class="visual-header">
+                    <div class="visual-title">👥 Customer Segment Revenue Distribution</div>
+                  </div>
+                  <div class="visual-body">
+                    <canvas id="chartSegmentRevenue"></canvas>
+                  </div>
+                </div>
+                <div class="pbi-visual-container span-12">
+                  <div class="visual-header">
+                    <div class="visual-title">📋 Financial Statement Table (DAX Calculated)</div>
+                  </div>
+                  <div class="visual-body table-scrollable" id="financialSummaryTable">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PAGE 3: MARKETING INTELLIGENCE -->
+            <div class="canvas-page" id="pageMarketing">
+              <div class="page-title-banner">
+                <h2>Marketing Efficiency & Attribution</h2>
+                <p>Cross-channel return on ad spend (ROAS), attribution, and customer acquisition metrics</p>
+              </div>
+              <div class="visuals-grid">
+                <div class="pbi-visual-container span-6">
+                  <div class="visual-header">
+                    <div class="visual-title">🎯 Return on Ad Spend (ROAS) by Channel</div>
+                  </div>
+                  <div class="visual-body">
+                    <canvas id="chartMarketingROAS"></canvas>
+                  </div>
+                </div>
+                <div class="pbi-visual-container span-6">
+                  <div class="visual-header">
+                    <div class="visual-title">💰 Ad Spend vs Attributed Revenue</div>
+                  </div>
+                  <div class="visual-body">
+                    <canvas id="chartMarketingSpend"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PAGE 4: OPERATIONS & RETURNS -->
+            <div class="canvas-page" id="pageOperations">
+              <div class="page-title-banner">
+                <h2>Operations & Return Rate Analysis</h2>
+                <p>Fulfillment risk, return reasons breakdown, and inventory telemetry</p>
+              </div>
+              <div class="visuals-grid">
+                <div class="pbi-visual-container span-6">
+                  <div class="visual-header">
+                    <div class="visual-title">📦 Return Reasons Distribution</div>
+                  </div>
+                  <div class="visual-body">
+                    <canvas id="chartReturnReasons"></canvas>
+                  </div>
+                </div>
+                <div class="pbi-visual-container span-6">
+                  <div class="visual-header">
+                    <div class="visual-title">🔍 Operations Audit & Integrity</div>
+                  </div>
+                  <div class="visual-body" style="padding: 18px; color: var(--pbi-text);">
+                    <div class="audit-stat"><span>Verified Primary Keys:</span> <strong style="color: var(--pbi-accent-green);">100% Unique</strong></div>
+                    <div class="audit-stat"><span>Referential Integrity:</span> <strong style="color: var(--pbi-accent-green);">0 Orphan Keys</strong></div>
+                    <div class="audit-stat"><span>Star Schema Decomposition:</span> <strong style="color: var(--pbi-accent-gold);">Kimball Dimensional</strong></div>
+                    <div class="audit-stat"><span>Compiled PBIT Status:</span> <strong style="color: var(--pbi-accent-green);">Native Power BI Ready</strong></div>
+                    <div class="audit-stat"><span>DAX Measures Synthesized:</span> <strong>66 Tailored Measures</strong></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- =============================================================== -->
+      <!-- VIEW 2: DATA VIEW (Tabular Data Grid Explorer) -->
+      <!-- =============================================================== -->
+      <section class="stage-view" id="viewData">
+        <div class="data-view-container">
+          <!-- Left Table Selector for Data View -->
+          <aside class="data-view-tables">
+            <div class="dv-tables-header">Tables in Model</div>
+            <ul class="dv-table-list" id="dvTableList">
+              <li class="dv-table-item active" data-table="orders">
+                <span class="tbl-icon">📄</span>
+                <span class="tbl-name">orders</span>
+                <span class="tbl-badge">FACT</span>
+              </li>
+              <li class="dv-table-item" data-table="products">
+                <span class="tbl-icon">📦</span>
+                <span class="tbl-name">products</span>
+                <span class="tbl-badge">DIM</span>
+              </li>
+              <li class="dv-table-item" data-table="customers">
+                <span class="tbl-icon">👥</span>
+                <span class="tbl-name">customers</span>
+                <span class="tbl-badge">DIM</span>
+              </li>
+              <li class="dv-table-item" data-table="dim_date">
+                <span class="tbl-icon">📅</span>
+                <span class="tbl-name">dim_date</span>
+                <span class="tbl-badge">DIM</span>
+              </li>
+              <li class="dv-table-item" data-table="marketing">
+                <span class="tbl-icon">📣</span>
+                <span class="tbl-name">marketing</span>
+                <span class="tbl-badge">FACT</span>
+              </li>
+              <li class="dv-table-item" data-table="returns">
+                <span class="tbl-icon">🔄</span>
+                <span class="tbl-name">returns</span>
+                <span class="tbl-badge">FACT</span>
+              </li>
+            </ul>
+          </aside>
+
+          <!-- Right Grid Explorer -->
+          <div class="data-view-grid-area">
+            <div class="data-grid-toolbar">
+              <div class="dg-info" id="dgTableInfo">
+                Showing <strong>orders</strong>: 500 rows, 10 columns
+              </div>
+              <div class="dg-search">
+                <input type="text" id="dgSearchInput" placeholder="Filter rows in table..." class="pbi-input">
+              </div>
+              <div class="dg-actions">
+                <button class="pbi-btn secondary" id="btnExportCurrentTableCSV">Export Table CSV</button>
+              </div>
+            </div>
+            <div class="data-grid-scroll" id="dataGridScrollContainer">
+              <table class="pbi-data-table" id="pbiDataTable">
+                <thead id="dataGridHead"></thead>
+                <tbody id="dataGridBody"></tbody>
+              </table>
+            </div>
+            <div class="data-grid-footer">
+              <span id="dataGridRowCount">Loaded 50 preview records</span>
+              <span class="dg-license-note">Enterprise Grade In-Memory Storage</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =============================================================== -->
+      <!-- VIEW 3: MODEL VIEW (Interactive Star Schema Diagram) -->
+      <!-- =============================================================== -->
+      <section class="stage-view" id="viewModel">
+        <div class="model-view-container">
+          <div class="model-view-header">
+            <div class="model-title">
+              <h3>Kimball Star Schema Topology</h3>
+              <p>Fact and Dimension relationships inferred from Excel structure</p>
+            </div>
+            <div class="model-stats" id="modelStatsBadge">
+              1 Fact Table · 4 Dimensions · 5 Active 1:* Relationships
+            </div>
+          </div>
+
+          <div class="model-canvas" id="modelCanvas">
+            <!-- Table Cards Container -->
+            <div class="model-diagram-grid" id="modelDiagramGrid">
+              <!-- Dynamically rendered schema cards -->
+            </div>
+            <!-- SVG Relationships Overlay -->
+            <svg class="model-svg-overlay" id="modelSvgOverlay"></svg>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- C. Right Side Panes (Visualizations & Data / Fields) -->
+    <aside class="pbi-right-panes">
+
+      <!-- Visualizations Pane -->
+      <div class="pbi-pane" id="paneVisualizations">
+        <div class="pane-header">
+          <span class="pane-title">Visualizations</span>
+          <button class="pane-toggle-btn" title="Collapse Pane">❯</button>
+        </div>
+        <div class="visuals-gallery" title="Select visual type to format">
+          <button class="vis-icon-btn active" title="Stacked Bar Chart">📊</button>
+          <button class="vis-icon-btn" title="Stacked Column Chart">📶</button>
+          <button class="vis-icon-btn" title="Clustered Bar Chart">📈</button>
+          <button class="vis-icon-btn" title="Line Chart">📉</button>
+          <button class="vis-icon-btn" title="Area Chart">🏔️</button>
+          <button class="vis-icon-btn" title="Donut Chart">🍩</button>
+          <button class="vis-icon-btn" title="Pie Chart">🥧</button>
+          <button class="vis-icon-btn" title="Scatter Plot">፨</button>
+          <button class="vis-icon-btn" title="Card (Single Value)">🏷️</button>
+          <button class="vis-icon-btn" title="Multi-row Card">📋</button>
+          <button class="vis-icon-btn" title="KPI Visual">🎯</button>
+          <button class="vis-icon-btn" title="Slicer">🎚️</button>
+          <button class="vis-icon-btn" title="Matrix">⊞</button>
+          <button class="vis-icon-btn" title="Table">▦</button>
+          <button class="vis-icon-btn" title="Waterfall">🌊</button>
+          <button class="vis-icon-btn" title="Gauge">🧭</button>
+        </div>
+
+        <div class="field-wells">
+          <div class="well-group">
+            <span class="well-label">X-Axis (Category / Date)</span>
+            <div class="well-dropzone" id="wellXAxis">orders[order_date]</div>
+          </div>
+          <div class="well-group">
+            <span class="well-label">Y-Axis (Metrics)</span>
+            <div class="well-dropzone" id="wellYAxis">_Measures[Total Revenue]</div>
+          </div>
+          <div class="well-group">
+            <span class="well-label">Legend / Segment</span>
+            <div class="well-dropzone" id="wellLegend">products[category]</div>
+          </div>
+          <div class="well-group">
+            <span class="well-label">Tooltips</span>
+            <div class="well-dropzone" id="wellTooltips">_Measures[Gross Margin %]</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Data / Fields Pane -->
+      <div class="pbi-pane" id="paneFields">
+        <div class="pane-header">
+          <span class="pane-title">Data</span>
+          <span class="pane-badge" id="fieldsCountBadge">66 fields</span>
+        </div>
+        <div class="fields-search-box">
+          <input type="text" id="fieldsSearchInput" placeholder="Search fields & measures..." class="pbi-input">
+        </div>
+        <div class="fields-tree" id="fieldsTree">
+          <!-- Accordion tree items populated by app.js -->
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 5. Bottom Status Bar & Page Switcher -->
+  <!-- ===================================================================== -->
+  <footer class="pbi-statusbar" id="pbiStatusBar">
+    <div class="status-left">
+      <!-- Report Page Tabs -->
+      <div class="page-tabs" id="pageTabsContainer">
+        <button class="page-tab active" data-page="pageExecutive">Page 1: Executive Overview</button>
+        <button class="page-tab" data-page="pageFinancials">Page 2: Financials & Margins</button>
+        <button class="page-tab" data-page="pageMarketing">Page 3: Marketing Intelligence</button>
+        <button class="page-tab" data-page="pageOperations">Page 4: Operations & Risk</button>
+        <button class="page-tab add-tab" id="btnAddPage" title="Add New Blank Report Page">+</button>
+      </div>
+    </div>
+
+    <div class="status-right">
+      <div class="status-indicator">
+        <span class="status-dot green"></span>
+        <span id="statusText">Model Ready · 7 Tables · 66 Measures</span>
+      </div>
+      <div class="zoom-controls">
+        <button class="zoom-btn" id="zoomOutBtn" title="Zoom Out">−</button>
+        <span class="zoom-level" id="zoomLevelVal">100%</span>
+        <button class="zoom-btn" id="zoomInBtn" title="Zoom In">+</button>
+      </div>
+      <div class="commercial-footer-tag" title="License: RevenueOS Source-Available Commercial & Royalty License v1.0">
+        <span>© Sarvesh Sharma (Royalty License)</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- 6. Pipeline Progress Modal Terminal (Real-Time Ingestion) -->
+  <!-- ===================================================================== -->
+  <div class="modal-overlay" id="pipelineModal" style="display: none;">
+    <div class="modal-box pipeline-modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span class="spinner-icon">🔄</span>
+          <span>RevenueOS Power BI Automated Pipeline</span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="progress-bar-wrapper">
+          <div class="progress-bar-fill" id="pipelineProgressFill" style="width: 0%;"></div>
+        </div>
+        <div class="progress-meta">
+          <span id="pipelineStageText">Initializing Universal Engine...</span>
+          <span id="pipelinePercentText">0%</span>
+        </div>
+        <div class="pipeline-log-terminal" id="pipelineLogTerminal">
+          <!-- Streaming log lines -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="pbi-btn secondary" id="btnCancelPipeline">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 7. License & Commercial Rights Modal -->
+  <!-- ===================================================================== -->
+  <div class="modal-overlay" id="licenseModal" style="display: none;">
+    <div class="modal-box license-modal-box">
+      <div class="modal-header">
+        <h3>RevenueOS Commercial & Royalty License (Version 1.0)</h3>
+        <button class="modal-close-btn" onclick="document.getElementById('licenseModal').style.display='none'">×</button>
+      </div>
+      <div class="modal-body license-text">
+        <p><strong>Copyright (c) 2026 Sarvesh Sharma. All rights reserved.</strong></p>
+        <p>This software, its Kimball Star Schema decomposition engine, TMSL/Power BI generator, DAX synthesis algorithms, and desktop replica studio are protected intellectual property.</p>
+        <h4>Commercial Restriction & Mandatory Royalties:</h4>
+        <p>No person, company, or entity may use this software, directly or indirectly, for commercial profit, monetized service, enterprise deployment, or SaaS offering without explicit written authorization and an executed royalty agreement with the author (Sarvesh Sharma).</p>
+        <p>Non-commercial academic evaluation, testing, and portfolio reviews are permitted.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="pbi-btn primary" onclick="document.getElementById('licenseModal').style.display='none'">I Understand & Agree</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

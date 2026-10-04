@@ -28,9 +28,8 @@ import argparse
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / "backend"))
 from config import logger
-from backend.engine.pipeline_engine import PipelineEngine
+from engine.pipeline_engine import PipelineEngine
 
 
 def main() -> int:

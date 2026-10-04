@@ -2223,6 +2223,33 @@ RevenueOS incorporates an enterprise automation engine (`engine/pipeline_engine.
 
 ---
 
+# 61.1. RevenueOS Studio — Autonomous Electron Desktop Application
+
+To empower business analysts, CFOs, and data teams with a zero-friction graphical experience, RevenueOS provides a native **Electron desktop application** (`electron/`):
+
+### Universal Excel Ingestion & Dynamic Modeling (`engine/excel_to_powerbi.py`)
+- **Arbitrary Workbook Processing**: Ingests single-sheet or multi-sheet Excel files (`.xlsx`, `.xls`, `.xlsm`) without hardcoded schema constraints or static business assumptions.
+- **Automated Dimensional Decomposition**:
+  - Dynamically classifies tables into Facts and Dimensions using primary-key uniqueness, foreign-key referencing, and entity semantics.
+  - Automatically decomposes denormalized single-sheet files into clean Star Schema dimensions (`dim_customer`, `dim_product`, `dim_date`) and streamlined transactional facts (`fact_sales`).
+- **Comprehensive DAX Measures Synthesis**:
+  - Automatically synthesizes tailored DAX measures across Volume, Core Metrics, Margins & Profitability, Time Intelligence (YTD, Prior Month, MoM %, Prior Year, YoY %), and Entity counts.
+- **Power BI Asset Generation**:
+  - Generates clean, RFC-compliant UTF-8 CSV marts (`output/csv/*.csv`).
+  - Writes copy-paste Power Query M scripts (`output/powerbi/power_query_m.pq`).
+  - Compiles native single-click Power BI Templates (`output/powerbi/<project>.pbit`) and modern developer projects (`output/powerbi/<project>.pbip`).
+  - Produces an interactive step-by-step deployment guide (`output/POWERBI_DEPLOYMENT_GUIDE.md`).
+
+### Desktop Application UI Architecture
+- **Interactive Star Schema Visualizer**: Visual node-and-link canvas rendering Fact tables and Dimension tables with active join keys and `1 : *` cardinality indicators.
+- **Step-by-Step Power BI Deployment Guide**: Visual checklist providing both single-click `.pbit` template launching and manual CSV import walkthroughs.
+- **DAX Measures Library**: Searchable, category-filtered DAX library with one-click clipboard copying.
+- **Data Preview Grid**: Interactive tabular inspector showing generated CSV marts with row counts and schema metadata.
+- **Power Query M Studio**: Code viewer with copy actions for rapid Advanced Editor loading.
+
+
+---
+
 # 62. Commercial Source-Available Licensing & Royalty Governance
 
 RevenueOS is governed by the **RevenueOS Source-Available Commercial & Royalty License (Version 1.0)**.

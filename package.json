@@ -1,0 +1,33 @@
+{
+  "name": "revenueos-studio",
+  "version": "1.0.0",
+  "description": "RevenueOS Studio – Automated Excel-to-Power BI Decision Engine Desktop Application",
+  "main": "frontend/main.js",
+  "scripts": {
+    "start": "electron frontend/main.js",
+    "app": "electron frontend/main.js",
+    "test": "pytest tests/ -v"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/25sarvesh2005/RevenueOS.git"
+  },
+  "keywords": [
+    "powerbi",
+    "analytics",
+    "data-pipeline",
+    "excel-to-powerbi",
+    "dax",
+    "star-schema",
+    "electron"
+  ],
+  "author": "Sarvesh Sharma",
+  "license": "SEE LICENSE IN LICENSE",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^44.5.1"
+  },
+  "dependencies": {
+    "chart.js": "^4.5.1"
+  }
+}
