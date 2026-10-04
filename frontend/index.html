@@ -228,14 +228,21 @@
     </div>
     <div class="dax-equals">=</div>
     <div class="dax-editor-container">
-      <input type="text" id="daxFormulaInput" class="dax-formula-input" readonly spellcheck="false" value="SUM(orders[quantity]) * AVERAGE(orders[unit_price])">
+      <input type="text" id="daxFormulaInput" class="dax-formula-input" spellcheck="false" placeholder="Enter DAX expression... e.g. SUM(orders[quantity]) * AVERAGE(orders[unit_price])" value="SUM(orders[quantity]) * AVERAGE(orders[unit_price])">
     </div>
     <div class="dax-tools">
+      <button class="dax-btn primary" id="btnEvaluateDax" title="Run and test DAX expression">
+        <span>▶ Run DAX</span>
+      </button>
+      <button class="dax-btn" id="btnSaveDax" title="Save changes to this measure">
+        <span>💾 Save</span>
+      </button>
       <button class="dax-btn" id="btnCopyDax" title="Copy DAX Expression">
         <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/></svg>
         <span>Copy</span>
       </button>
-      <span class="dax-valid-tag" id="daxValidBadge">✓ DAX Valid</span>
+      <span class="dax-valid-tag" id="daxValidBadge">✓ Ready</span>
+      <span class="dax-result-tag" id="daxResultBadge" style="display:none;"></span>
     </div>
   </div>
 
@@ -640,23 +647,17 @@
           <span class="pane-title">Visualizations</span>
           <button class="pane-toggle-btn" title="Collapse Pane">❯</button>
         </div>
-        <div class="visuals-gallery" title="Select visual type to format">
-          <button class="vis-icon-btn active" title="Stacked Bar Chart">📊</button>
-          <button class="vis-icon-btn" title="Stacked Column Chart">📶</button>
-          <button class="vis-icon-btn" title="Clustered Bar Chart">📈</button>
-          <button class="vis-icon-btn" title="Line Chart">📉</button>
-          <button class="vis-icon-btn" title="Area Chart">🏔️</button>
-          <button class="vis-icon-btn" title="Donut Chart">🍩</button>
-          <button class="vis-icon-btn" title="Pie Chart">🥧</button>
-          <button class="vis-icon-btn" title="Scatter Plot">፨</button>
-          <button class="vis-icon-btn" title="Card (Single Value)">🏷️</button>
-          <button class="vis-icon-btn" title="Multi-row Card">📋</button>
-          <button class="vis-icon-btn" title="KPI Visual">🎯</button>
-          <button class="vis-icon-btn" title="Slicer">🎚️</button>
-          <button class="vis-icon-btn" title="Matrix">⊞</button>
-          <button class="vis-icon-btn" title="Table">▦</button>
-          <button class="vis-icon-btn" title="Waterfall">🌊</button>
-          <button class="vis-icon-btn" title="Gauge">🧭</button>
+        <div class="visuals-gallery" title="Select visual type to transform active chart">
+          <button class="vis-icon-btn active" data-chart-type="bar" title="Clustered Column / Bar Chart">📊</button>
+          <button class="vis-icon-btn" data-chart-type="horizontalBar" title="Horizontal Bar Chart">📶</button>
+          <button class="vis-icon-btn" data-chart-type="line" title="Line Chart">📈</button>
+          <button class="vis-icon-btn" data-chart-type="area" title="Area Chart">🏔️</button>
+          <button class="vis-icon-btn" data-chart-type="doughnut" title="Donut Chart">🍩</button>
+          <button class="vis-icon-btn" data-chart-type="pie" title="Pie Chart">🥧</button>
+          <button class="vis-icon-btn" data-chart-type="polarArea" title="Polar Area Chart">🧭</button>
+          <button class="vis-icon-btn" data-chart-type="radar" title="Radar Chart">🕸️</button>
+          <button class="vis-icon-btn" data-chart-type="card" title="Single Metric Card">🏷️</button>
+          <button class="vis-icon-btn" data-chart-type="table" title="Data Table Matrix">▦</button>
         </div>
 
         <div class="field-wells">
@@ -758,23 +759,68 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- 7. License & Commercial Rights Modal -->
+  <!-- 8. Power Query M Formula Modal -->
   <!-- ===================================================================== -->
-  <div class="modal-overlay" id="licenseModal" style="display: none;">
-    <div class="modal-box license-modal-box">
+  <div class="modal-overlay" id="powerQueryModal" style="display: none;">
+    <div class="modal-box pq-modal-box">
       <div class="modal-header">
-        <h3>RevenueOS Commercial & Royalty License (Version 1.0)</h3>
-        <button class="modal-close-btn" onclick="document.getElementById('licenseModal').style.display='none'">×</button>
+        <div class="modal-title">
+          <span>⚡ Power Query Advanced Editor (M Language)</span>
+        </div>
+        <button class="modal-close-btn" onclick="document.getElementById('powerQueryModal').style.display='none'">×</button>
       </div>
-      <div class="modal-body license-text">
-        <p><strong>Copyright (c) 2026 Sarvesh Sharma. All rights reserved.</strong></p>
-        <p>This software, its Kimball Star Schema decomposition engine, TMSL/Power BI generator, DAX synthesis algorithms, and desktop replica studio are protected intellectual property.</p>
-        <h4>Commercial Restriction & Mandatory Royalties:</h4>
-        <p>No person, company, or entity may use this software, directly or indirectly, for commercial profit, monetized service, enterprise deployment, or SaaS offering without explicit written authorization and an executed royalty agreement with the author (Sarvesh Sharma).</p>
-        <p>Non-commercial academic evaluation, testing, and portfolio reviews are permitted.</p>
+      <div class="modal-body">
+        <p style="margin-bottom: 8px; color: var(--pbi-text-muted); font-size: 11px;">
+          Generated Power Query M script used by Power BI Desktop to load and transform the data marts.
+        </p>
+        <pre class="pq-code-block" id="pqCodeBlock"></pre>
       </div>
       <div class="modal-footer">
-        <button class="pbi-btn primary" onclick="document.getElementById('licenseModal').style.display='none'">I Understand & Agree</button>
+        <button class="pbi-btn secondary" id="btnCopyPqCode">Copy M Code</button>
+        <button class="pbi-btn primary" onclick="document.getElementById('powerQueryModal').style.display='none'">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 9. New DAX Measure Modal -->
+  <!-- ===================================================================== -->
+  <div class="modal-overlay" id="newMeasureModal" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>fx Create New DAX Measure</span>
+        </div>
+        <button class="modal-close-btn" onclick="document.getElementById('newMeasureModal').style.display='none'">×</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 12px;">
+        <div>
+          <label style="display:block; margin-bottom:4px; font-weight:600; color:var(--pbi-text-bright);">Measure Name:</label>
+          <input type="text" id="newMeasureNameInput" class="pbi-input" placeholder="e.g. Sales Growth %">
+        </div>
+        <div>
+          <label style="display:block; margin-bottom:4px; font-weight:600; color:var(--pbi-text-bright);">DAX Expression:</label>
+          <textarea id="newMeasureExprInput" class="pbi-input" rows="4" style="font-family:var(--font-mono); resize:vertical;" placeholder="e.g. DIVIDE([Total Revenue] - [Revenue Prior Month], [Revenue Prior Month], 0)"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="pbi-btn secondary" onclick="document.getElementById('newMeasureModal').style.display='none'">Cancel</button>
+        <button class="pbi-btn primary" id="btnConfirmCreateMeasure">Create Measure</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 10. Focus Mode Modal -->
+  <!-- ===================================================================== -->
+  <div class="modal-overlay" id="focusModeModal" style="display: none;">
+    <div class="modal-box focus-modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="focusModalTitle">Visual Focus Mode</div>
+        <button class="modal-close-btn" onclick="app.closeFocusMode()">×</button>
+      </div>
+      <div class="modal-body focus-body">
+        <canvas id="chartFocusCanvas"></canvas>
       </div>
     </div>
   </div>

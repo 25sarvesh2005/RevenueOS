@@ -1527,3 +1527,103 @@ body {
   margin: 14px 0 6px;
   font-size: 12px;
 }
+
+/* Selected Visual Container & Focus */
+.pbi-visual-container.selected-visual {
+  border: 2px solid var(--pbi-accent-blue) !important;
+  box-shadow: 0 0 14px rgba(17, 141, 255, 0.35) !important;
+  position: relative;
+}
+
+.pbi-visual-container.selected-visual::after {
+  content: "ACTIVE VISUAL";
+  position: absolute;
+  top: 4px;
+  right: 36px;
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--pbi-accent-blue);
+  background: rgba(17, 141, 255, 0.15);
+  padding: 1px 5px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+/* DAX Result Tag */
+.dax-result-tag {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: #FFFFFF;
+  background: var(--pbi-accent-green);
+  padding: 3px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Power Query M Modal */
+.pq-modal-box {
+  width: 780px;
+  max-width: 90vw;
+}
+
+.pq-code-block {
+  background-color: #0D1117;
+  border: 1px solid #30363D;
+  border-radius: 4px;
+  padding: 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #79C0FF;
+  line-height: 1.6;
+  max-height: 380px;
+  overflow: auto;
+  user-select: text;
+}
+
+/* Focus Mode Modal */
+.focus-modal-box {
+  width: 90vw;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.focus-body {
+  flex: 1;
+  padding: 20px;
+  position: relative;
+}
+
+.focus-body canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Active Filter Banner */
+.active-filter-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(242, 200, 15, 0.15);
+  border: 1px solid rgba(242, 200, 15, 0.4);
+  color: var(--pbi-accent-gold);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 8px;
+  cursor: pointer;
+}
+
+.active-filter-indicator:hover {
+  background: rgba(231, 76, 60, 0.2);
+  border-color: var(--pbi-accent-red);
+  color: var(--pbi-accent-red);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-2px); }
+  to { opacity: 1; transform: translateY(0); }
+}

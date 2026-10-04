@@ -31,6 +31,10 @@ function createWindow() {
 
   mainWindow.loadFile(path.join(__dirname, "index.html"));
 
+  mainWindow.webContents.on("console-message", (event, level, message, line, sourceId) => {
+    console.log(`[RENDERER_LOG level=${level}] ${message} (${sourceId}:${line})`);
+  });
+
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
@@ -196,4 +200,32 @@ ipcMain.handle("clipboard:write", (event, text) => {
     return true;
   }
   return false;
+});
+
+// 8. Load Precompiled Initial Model
+ipcMain.handle("app:load-initial-model", () => {
+  const modelPath = path.resolve(__dirname, "model_data.json");
+  if (fs.existsSync(modelPath)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(modelPath, "utf-8"));
+      return data;
+    } catch (e) {
+      console.error("Failed to parse initial model:", e);
+    }
+  }
+  return null;
+});
+
+// 9. Save CSV Table to Disk Dialog
+ipcMain.handle("dialog:save-csv", async (event, { defaultName, content }) => {
+  const result = await dialog.showSaveDialog(mainWindow, {
+    title: "Export Table CSV",
+    defaultPath: defaultName || "export.csv",
+    filters: [{ name: "CSV Files", extensions: ["csv"] }],
+  });
+  if (!result.canceled && result.filePath) {
+    fs.writeFileSync(result.filePath, content, "utf-8");
+    return result.filePath;
+  }
+  return null;
 });

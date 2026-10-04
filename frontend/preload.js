@@ -31,4 +31,8 @@ contextBridge.exposeInMainWorld("api", {
   openFolder: (folderPath) => ipcRenderer.invoke("shell:open-folder", folderPath),
   launchFile: (filePath) => ipcRenderer.invoke("shell:launch-file", filePath),
   copyToClipboard: (text) => ipcRenderer.invoke("clipboard:write", text),
+
+  // Preloaded Data & Storage
+  loadInitialModel: () => ipcRenderer.invoke("app:load-initial-model"),
+  saveCSV: (params) => ipcRenderer.invoke("dialog:save-csv", params),
 });
