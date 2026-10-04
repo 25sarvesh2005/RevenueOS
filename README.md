@@ -8,7 +8,7 @@
 ![Database](https://img.shields.io/badge/PostgreSQL-16-336791.svg?logo=postgresql&logoColor=white)
 ![Power BI](https://img.shields.io/badge/Power_BI-8_Page_Semantic_App-F2C811.svg?logo=powerbi&logoColor=black)
 [![License: Commercial Royalty](https://img.shields.io/badge/License-Commercial%20Royalty-crimson.svg)](LICENSE)
-![Tests](https://img.shields.io/badge/Tests-121%20Passed-brightgreen.svg)
+![Tests](https://img.shields.io/badge/Tests-123%20Passed-brightgreen.svg)
 
 RevenueOS is an enterprise-grade Data Analytics, Analytics Engineering, and Automated Decision Intelligence platform engineered for omnichannel retail enterprises. It features **RevenueOS Studio**—an autonomous Electron desktop application that accepts ANY Excel workbook, auto-decomposes entities into a Kimball Star Schema, generates clean CSV marts, writes tailored DAX measures, compiles native Power BI Templates (`.pbit` & `.pbip`), provides live AI investigation briefings, and exposes a high-throughput FastAPI REST service.
 

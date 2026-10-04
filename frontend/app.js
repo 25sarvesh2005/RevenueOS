@@ -43,6 +43,7 @@ import {
   setChannelFilter,
   resetFilters,
   applySlicerFilters,
+  populateSlicers,
 } from "./modules/slicers.js";
 import {
   refreshData,
@@ -92,6 +93,7 @@ function refreshAllViews() {
 
   populateDAXMeasures(state);
   renderFieldsTree(state, (name) => updateDAXFormula(name, state));
+  populateSlicers(state.currentManifest, state, () => renderCharts(state));
   renderCharts(state);
   renderDataView(state);
   renderModelView(state);

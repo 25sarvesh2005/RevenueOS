@@ -70,3 +70,57 @@ export function updateActiveFilterBanner(state, onReset) {
     indicator.remove();
   }
 }
+
+export function populateSlicers(manifest, state, onFilterChange) {
+  if (!manifest?.dashboard) return;
+  const filterOptions = manifest.dashboard.filterOptions || {};
+
+  // 1. Populate Category Pills
+  const pillsContainer = document.querySelector(".slicer-pills");
+  const categories = filterOptions.categories || (manifest.dashboard.byCategory || []).map((c) => c.category);
+  if (pillsContainer && categories && categories.length > 0) {
+    pillsContainer.innerHTML = "";
+    
+    // Add "All" pill
+    const allPill = document.createElement("button");
+    allPill.className = "slicer-pill" + (state.activeCategoryFilter === "ALL" ? " active" : "");
+    allPill.dataset.category = "ALL";
+    allPill.textContent = "All";
+    allPill.addEventListener("click", () => {
+      document.querySelectorAll(".slicer-pills .slicer-pill").forEach((p) => p.classList.remove("active"));
+      allPill.classList.add("active");
+      setCategoryFilter("ALL", state, onFilterChange);
+    });
+    pillsContainer.appendChild(allPill);
+
+    // Add unique category pills (limit to top 8 to prevent overflow)
+    const uniqueCategories = [...new Set(categories.filter(Boolean))].slice(0, 8);
+    uniqueCategories.forEach((cat) => {
+      const pill = document.createElement("button");
+      pill.className = "slicer-pill" + (state.activeCategoryFilter === cat ? " active" : "");
+      pill.dataset.category = cat;
+      pill.textContent = cat;
+      pill.addEventListener("click", () => {
+        document.querySelectorAll(".slicer-pills .slicer-pill").forEach((p) => p.classList.remove("active"));
+        pill.classList.add("active");
+        setCategoryFilter(cat, state, onFilterChange);
+      });
+      pillsContainer.appendChild(pill);
+    });
+  }
+
+  // 2. Populate Channel Dropdown
+  const channelSelect = document.getElementById("channelSlicerSelect");
+  const channels = filterOptions.channels || (manifest.dashboard.byChannel || []).map((c) => c.channel);
+  if (channelSelect && channels && channels.length > 0) {
+    channelSelect.innerHTML = `<option value="ALL">All Channels</option>`;
+    const uniqueChannels = [...new Set(channels.filter(Boolean))];
+    uniqueChannels.forEach((chan) => {
+      const opt = document.createElement("option");
+      opt.value = chan;
+      opt.textContent = chan;
+      if (state.activeChannelFilter === chan) opt.selected = true;
+      channelSelect.appendChild(opt);
+    });
+  }
+}

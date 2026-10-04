@@ -54,11 +54,13 @@ export const state = {
 
     // Apply Category Cross-Filter
     if (this.activeCategoryFilter !== "ALL") {
+      const origTotal = byCategory.reduce((acc, c) => acc + (c.revenue || 0), 0);
       byCategory = byCategory.filter((c) => c.category === this.activeCategoryFilter);
-      const catRevenue = byCategory.reduce((acc, c) => acc + c.revenue, 0);
+      const catRevenue = byCategory.reduce((acc, c) => acc + (c.revenue || 0), 0);
+      const ratio = origTotal > 0 ? (catRevenue / origTotal) : 1;
       kpis.totalRevenue = catRevenue;
-      kpis.grossProfit = catRevenue * (kpis.grossMarginPct / 100);
-      timeSeries = timeSeries.map((t) => ({ ...t, revenue: t.revenue * 0.68, cost: t.cost * 0.68, profit: t.profit * 0.68 }));
+      kpis.grossProfit = catRevenue * ((kpis.grossMarginPct || 0) / 100);
+      timeSeries = timeSeries.map((t) => ({ ...t, revenue: t.revenue * ratio, cost: t.cost * ratio, profit: t.profit * ratio }));
     }
 
     // Apply Channel Cross-Filter

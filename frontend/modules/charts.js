@@ -304,8 +304,9 @@ export function updateKPICards(kpis, returns) {
   const untEl = document.getElementById("kpiUnitsVal");
   const retEl = document.getElementById("kpiReturnsVal");
 
-  if (revEl && kpis) revEl.textContent = `$${Math.round(kpis.totalRevenue || 0).toLocaleString()}`;
-  if (profEl && kpis) profEl.textContent = `$${Math.round(kpis.grossProfit || 0).toLocaleString()}`;
+  const cur = kpis?.currency || "$";
+  if (revEl && kpis) revEl.textContent = `${cur}${Math.round(kpis.totalRevenue || 0).toLocaleString()}`;
+  if (profEl && kpis) profEl.textContent = `${cur}${Math.round(kpis.grossProfit || 0).toLocaleString()}`;
   if (margEl && kpis) margEl.textContent = `${(kpis.grossMarginPct || 0).toFixed(1)}%`;
   if (ordEl && kpis) ordEl.textContent = Number(kpis.totalOrders || 0).toLocaleString();
   if (untEl && kpis) untEl.textContent = Number(kpis.totalUnits || 0).toLocaleString();
