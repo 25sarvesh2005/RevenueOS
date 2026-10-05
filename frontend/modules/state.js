@@ -6,7 +6,7 @@
  */
 
 export const state = {
-  activeView: "report",
+  activeView: "dashboard",
   activePage: "pageExecutive",
   activeTable: "orders",
   selectedVisualId: "visualMonthlyTrend",

@@ -169,17 +169,24 @@ ipcMain.handle("pipeline:run", async (event, params) => {
 
     currentPipelineProcess = proc;
     let finalManifest = null;
+    let manifestFilePath = null;
     let accumulatedError = "";
+    let stdoutBuffer = "";
 
     proc.stdout.on("data", (data) => {
-      const text = data.toString("utf-8");
-      const lines = text.split("\n");
+      stdoutBuffer += data.toString("utf-8");
+      const lines = stdoutBuffer.split("\n");
+      // Retain the trailing incomplete line chunk in the buffer
+      stdoutBuffer = lines.pop();
 
       for (const line of lines) {
         const trimmed = line.trim();
         if (!trimmed) continue;
 
-        if (trimmed.startsWith("PIPELINE_PROGRESS:") || trimmed.startsWith("EVENT_JSON:")) {
+        if (trimmed.startsWith("PIPELINE_COMPLETE_PATH:")) {
+          manifestFilePath = trimmed.substring(23).trim();
+          console.log("[MAIN] Discovered manifest path from engine:", manifestFilePath);
+        } else if (trimmed.startsWith("PIPELINE_PROGRESS:") || trimmed.startsWith("EVENT_JSON:")) {
           try {
             const prefixLen = trimmed.startsWith("PIPELINE_PROGRESS:") ? 18 : 11;
             const progressData = JSON.parse(trimmed.substring(prefixLen));
@@ -192,7 +199,9 @@ ipcMain.handle("pipeline:run", async (event, params) => {
           try {
             finalManifest = JSON.parse(trimmed.substring(18));
             normalizeManifestPaths(finalManifest);
-          } catch (e) {}
+          } catch (e) {
+            console.warn("[MAIN] Direct stdout JSON parse deferred to disk fallback:", e.message);
+          }
         } else {
           mainWindow?.webContents.send("pipeline:log", trimmed);
         }
@@ -207,12 +216,50 @@ ipcMain.handle("pipeline:run", async (event, params) => {
 
     proc.on("close", (code) => {
       currentPipelineProcess = null;
+
+      // Check leftover buffer in case stream ended without newline
+      if (stdoutBuffer && stdoutBuffer.trim()) {
+        const trimmed = stdoutBuffer.trim();
+        if (trimmed.startsWith("PIPELINE_COMPLETE_PATH:")) {
+          manifestFilePath = trimmed.substring(23).trim();
+        } else if (trimmed.startsWith("PIPELINE_COMPLETE:")) {
+          try {
+            finalManifest = JSON.parse(trimmed.substring(18));
+            normalizeManifestPaths(finalManifest);
+          } catch (e) {}
+        }
+      }
+
+      // Robust fallback 1: Load from emitted manifestFilePath
+      if (!finalManifest && manifestFilePath && fs.existsSync(manifestFilePath)) {
+        try {
+          const raw = fs.readFileSync(manifestFilePath, "utf-8");
+          finalManifest = JSON.parse(raw);
+          normalizeManifestPaths(finalManifest);
+          console.log("[MAIN] Successfully read manifest from manifestFilePath:", manifestFilePath);
+        } catch (e) {
+          console.error("[MAIN] Error reading manifest file:", e);
+        }
+      }
+
+      // Robust fallback 2: Check designated outputDir if provided
+      if (!finalManifest && outputDir) {
+        const outManifest = path.join(path.resolve(outputDir), "manifest.json");
+        if (fs.existsSync(outManifest)) {
+          try {
+            finalManifest = JSON.parse(fs.readFileSync(outManifest, "utf-8"));
+            normalizeManifestPaths(finalManifest);
+            console.log("[MAIN] Successfully read manifest from outputDir:", outManifest);
+          } catch (e) {}
+        }
+      }
+
       if (code === 0 && finalManifest) {
         resolve({ success: true, manifest: finalManifest });
       } else {
         reject(
           new Error(
-            accumulatedError || `Pipeline failed with exit code ${code}`
+            accumulatedError || (!finalManifest ? "Pipeline completed but manifest could not be read." : `Pipeline failed with exit code ${code}`)
           )
         );
       }
@@ -266,6 +313,16 @@ ipcMain.handle("clipboard:write", (event, text) => {
     return true;
   }
   return false;
+});
+
+// 7b. Image Reader for High-Res Visuals
+ipcMain.handle("image:read", async (event, imgPath) => {
+  if (imgPath && isSafePath(imgPath) && fs.existsSync(imgPath)) {
+    const ext = path.extname(imgPath).toLowerCase().replace(".", "") || "png";
+    const data = fs.readFileSync(imgPath).toString("base64");
+    return `data:image/${ext};base64,${data}`;
+  }
+  return null;
 });
 
 // 8. Load Precompiled Initial Model (Portable)

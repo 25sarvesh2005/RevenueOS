@@ -41,4 +41,7 @@ contextBridge.exposeInMainWorld("api", {
 
   // PDF Export
   exportPdf: (params) => ipcRenderer.invoke("report:export-pdf", params),
+
+  // Local Image Reader for High-Res Visuals
+  readImage: (imagePath) => ipcRenderer.invoke("image:read", imagePath),
 });

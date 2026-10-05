@@ -453,3 +453,115 @@ export function transformSelectedVisual(newChartType, state) {
   chartInstance.update();
   showToast(`Converted active visual to ${newChartType.toUpperCase()}`, "info");
 }
+
+export async function renderStatisticalGallery(state) {
+  const container = document.getElementById("statisticalGallerySection");
+  if (!container) return;
+
+  const charts = state.currentManifest?.charts || [];
+  if (charts.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: span 2; text-align: center; padding: 48px 24px; background: var(--bg-card); border: 1px dashed var(--border-card); border-radius: var(--radius-md);">
+        <div style="font-size: 32px; margin-bottom: 12px;">🔬</div>
+        <h3 style="color: var(--text-bright); font-size: 15px; margin-bottom: 6px;">No Statistical Charts Generated Yet</h3>
+        <p style="color: var(--text-muted); font-size: 12px; max-width: 480px; margin: 0 auto 16px;">
+          Import an Excel workbook or load sample data to automatically synthesize the 9 econometric charts (Waterfall, Price Elasticity, Pearson Correlation Matrix, etc.).
+        </p>
+        <button class="btn btn-primary" onclick="app.runSamplePipeline()" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; font-size: 12px;">
+          <span>⚡ Load Sample Data</span>
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = "";
+
+  for (const chart of charts) {
+    const card = document.createElement("div");
+    card.className = "stat-chart-card";
+
+    const header = document.createElement("div");
+    header.className = "stat-chart-header";
+    header.innerHTML = `
+      <div class="stat-chart-title-wrap">
+        <span class="stat-chart-icon">📈</span>
+        <div>
+          <h4 class="stat-chart-title">${chart.title}</h4>
+          <span class="stat-chart-filename">${chart.filename}</span>
+        </div>
+      </div>
+      <button class="action-btn outline small btn-zoom-chart" title="Click to view full resolution" style="padding: 3px 8px; font-size: 10px;">
+        🔍 Zoom
+      </button>
+    `;
+
+    const imgWrap = document.createElement("div");
+    imgWrap.className = "stat-chart-img-wrap";
+
+    const img = document.createElement("img");
+    img.alt = chart.title;
+    img.className = "stat-chart-img";
+    img.loading = "lazy";
+
+    let resolvedSrc = chart.path ? `file:///${chart.path.replace(/\\/g, "/")}` : "";
+    if (window.api?.readImage && chart.path) {
+      try {
+        const dataUrl = await window.api.readImage(chart.path);
+        if (dataUrl) resolvedSrc = dataUrl;
+      } catch (e) {}
+    }
+    img.src = resolvedSrc;
+
+    const openZoom = () => openImageZoomModal(resolvedSrc, chart.title, chart.filename);
+    imgWrap.addEventListener("click", openZoom);
+    header.querySelector(".btn-zoom-chart")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openZoom();
+    });
+
+    imgWrap.appendChild(img);
+    card.appendChild(header);
+    card.appendChild(imgWrap);
+    container.appendChild(card);
+  }
+}
+
+export function openImageZoomModal(src, title, filename) {
+  let overlay = document.getElementById("imageZoomLightbox");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "imageZoomLightbox";
+    overlay.className = "image-zoom-overlay";
+    document.body.appendChild(overlay);
+  }
+
+  overlay.innerHTML = `
+    <div class="image-zoom-content">
+      <div class="image-zoom-header">
+        <div>
+          <h3 style="margin: 0; font-size: 16px; font-weight: 600;">${title}</h3>
+          <span style="font-size: 11px; color: var(--text-muted); font-family: var(--font-code);">${filename || ""}</span>
+        </div>
+        <button id="btnCloseLightbox" style="background: none; border: none; color: var(--text-bright); font-size: 20px; cursor: pointer; padding: 4px 8px;">✕</button>
+      </div>
+      <img src="${src}" alt="${title}" class="image-zoom-img" />
+    </div>
+  `;
+
+  overlay.style.display = "flex";
+
+  const close = () => { overlay.style.display = "none"; };
+  document.getElementById("btnCloseLightbox")?.addEventListener("click", close);
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) close();
+  });
+
+  const onEsc = (e) => {
+    if (e.key === "Escape") {
+      close();
+      window.removeEventListener("keydown", onEsc);
+    }
+  };
+  window.addEventListener("keydown", onEsc);
+}

@@ -26,10 +26,17 @@ Every piece of data across the Executive Dashboard, Data Marts Grid, Star Schema
 
 ### 2.2 What Was Added / Overhauled
 - **Sleek 4-View Architecture**:
-  1. `📊 Executive Dashboard` (`Ctrl+1`): 5 dynamic KPI cards, Chart.js multi-axis trajectory chart, category breakdown donut, channel distribution bar, and Top 10 SKU volume leaderboard.
+  1. `📊 Executive Dashboard` (`Ctrl+1`): 5 dynamic KPI cards, dual-mode sub-toggle (`Interactive Canvas` with Chart.js cross-filtering vs `Statistical Analysis Pack` with 9 publication-grade econometric visuals).
   2. `📑 Data Marts Grid` (`Ctrl+2`): Interactive tabular explorer with table selector pills (`orders`, `customers`, `products`, `dim_date`, `payments`, `returns`), real-time search (`/`), 50-row pagination controls, and single-click CSV export.
   3. `🕸️ Star Schema Model` (`Ctrl+3`): Interactive dimensional canvas rendering Fact & Dimension entity cards with Primary Key (`PK`) and Foreign Key (`FK`) badges, dynamic cardinality tags (`1 : *`), and SVG connector lines.
   4. `⚡ DAX Measures` (`Ctrl+4`): 69 cataloged DAX measures grouped into 9 categories (Core Revenue, Margin & Profitability, Growth & Trends, Customer Analytics, etc.) with 1-click clipboard copying, interactive formula bar, real-time formula evaluation, and a "New Measure" modal.
+- **Bulletproof Manifest Delivery Pipeline**:
+  - Implemented stream line buffering in `frontend/main.js` and `PIPELINE_COMPLETE_PATH` disk emission in `backend/engine/core.py`.
+  - Large dimensional manifests (200KB+) load 100% reliably with zero stdout chunk truncation or syntax failures.
+- **Dual Visual Modes (Interactive Canvas + Statistical Analysis Pack)**:
+  - Added a dashboard sub-mode switcher:
+    - **Interactive Canvas**: Real-time cross-filtering across 4 Chart.js charts (Monthly Trend, Category Donut, Channel Bar, Top Products) reacting to date range and category/channel pills in <10ms.
+    - **Statistical Analysis Pack**: High-resolution gallery of the 9 Python-generated analytical charts (Waterfall, Price Elasticity Scatter, Pearson Correlation Heatmap, etc.) with full-screen lightbox inspection.
 - **Unified Slicer & Quick Date Presets**:
   - Global filter bar with 1-click date presets: `All Time`, `2024`, `2025`, `YTD`.
   - Dynamic Category and Channel filter pills that cross-filter charts and KPI cards synchronously in <10ms.

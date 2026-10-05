@@ -16,16 +16,16 @@ The agent must discover as much of this as possible from the repository before a
 
 | Item | Value |
 |---|---|
-| What the app does (one sentence) | `<fill in>` |
-| Primary users | `<fill in: e.g. analysts, operators, designers, non-technical staff>` |
-| The user's #1 job in the app | `<fill in>` |
-| Platforms | `<Windows / macOS / Linux>` |
-| Renderer stack | `<auto-detect: vanilla / React / Vue / Svelte / other>` |
-| Python side | `<auto-detect: Flask / FastAPI / subprocess / PyInstaller sidecar / other>` |
-| IPC between them | `<auto-detect: HTTP localhost / WebSocket / stdin-stdout / Electron IPC>` |
-| Brand assets / colors / logo | `<fill in or "none, design freely">` |
-| Visual direction preferences | `<fill in or "none, propose one">` |
-| Hard constraints | `<fill in: offline-only, min window size, accessibility requirements, etc.>` |
+| What the app does (one sentence) | Automated Excel-to-Power BI Decision Engine transforming transactional workbooks into verified Kimball Star Schemas, 69 DAX measures, interactive visuals, and compiled `.pbit` templates. |
+| Primary users | Financial Analysts, Revenue Operations (RevOps) Managers, BI Developers, and Executives. |
+| The user's #1 job in the app | Ingest raw transactional workbooks, visually inspect star schema marts & metrics, and export production-ready Power BI models. |
+| Platforms | Windows (tested / primary), macOS, Linux. |
+| Renderer stack | Vanilla HTML5, ES6 Modules, Vanilla CSS Custom Properties Token System, Chart.js. |
+| Python side | Python 3.10+ CoreEngine (`backend/engine/core.py`), FastAPI REST service (`backend/api/app.py`), Pandas, NumPy, OpenPyXL, ReportLab. |
+| IPC between them | Electron IPC (`contextBridge`, `ipcRenderer.invoke`, `ipcMain.handle`, `child_process.spawn` with buffered line streaming and disk fallback) + localhost HTTP fallback. |
+| Brand assets / colors / logo | RevenueOS Matrix Quad-Logo (`#6366F1` Indigo, `#F59E0B` Amber, `#10B981` Emerald, `#06B6D4` Cyan). |
+| Visual direction preferences | High-density analytical studio, Obsidian dark mode default (`#0B0E14`), Executive daylight light mode (`#F8FAFC`), zero fake ribbon chrome. |
+| Hard constraints | 100% offline-capable, strict CSP, minimum window bounds 1100x740, <100ms UI latency, WCAG AA contrast compliance. |
 
 ---
 

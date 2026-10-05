@@ -1046,6 +1046,8 @@ in
         orders_fact = next((t for t in self.tables if t.name in ["orders", "fact_orders", "sales", "transactions"]), None)
         if not orders_fact:
             orders_fact = next((t for t in self.tables if t.table_type == "fact"), None)
+        if not orders_fact and self.tables:
+            orders_fact = max(self.tables, key=lambda t: t.row_count)
 
         if not orders_fact:
             return {}
@@ -1934,6 +1936,7 @@ This automated pipeline and its generated assets are governed by the:
         self._log(f"Manifest written to: {manifest_path.name}", progress=100, stage="Complete")
 
         if self.emit_manifest:
+            print(f"PIPELINE_COMPLETE_PATH:{manifest_path.resolve()}", flush=True)
             print(f"PIPELINE_COMPLETE:{json.dumps(manifest_data)}", flush=True)
 
         return manifest_path

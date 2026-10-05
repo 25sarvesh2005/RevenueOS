@@ -221,10 +221,26 @@
               <div class="kpi-value" id="kpiUnitsVal">0</div>
               <div class="kpi-sub" id="kpiUnitsSub">Fulfillment: 100% Verified</div>
             </div>
+          <!-- Dashboard Sub-Mode Toggle Bar -->
+          <div class="dashboard-mode-bar">
+            <div class="view-mode-toggle" id="dashboardModeToggle">
+              <button class="mode-pill active" id="btnModeInteractive" data-mode="interactive">
+                <span class="mode-icon">📊</span>
+                <span>Interactive Canvas</span>
+              </button>
+              <button class="mode-pill" id="btnModeStatistical" data-mode="statistical">
+                <span class="mode-icon">🔬</span>
+                <span>Statistical Analysis Pack</span>
+                <span class="mode-badge" id="statisticalBadge">9 Charts</span>
+              </button>
+            </div>
+            <div class="dashboard-mode-info" id="dashboardModeInfo">
+              <span>Interactive cross-filtering with Chart.js</span>
+            </div>
           </div>
 
           <!-- 2x2 High-Definition Charts Grid -->
-          <div class="charts-grid">
+          <div class="charts-grid" id="interactiveChartsSection">
             
             <!-- Chart 1: Monthly Financial Trajectory -->
             <div class="chart-card span-2" id="visualMonthlyTrend">
@@ -290,6 +306,11 @@
               </div>
             </div>
 
+          </div>
+
+          <!-- Statistical Analysis Pack Gallery (Python Econometric Visuals) -->
+          <div class="statistical-grid" id="statisticalGallerySection" style="display: none;">
+            <!-- Populated dynamically by renderStatisticalGallery -->
           </div>
 
         </div>

@@ -91,6 +91,7 @@ def check_javascript_syntax() -> bool:
             input=app_js.read_text(encoding="utf-8"),
             capture_output=True,
             text=True,
+            encoding="utf-8",
         )
         if res.returncode != 0:
             print(f"  FAIL: Syntax error in frontend/app.js:\n{res.stderr}")
@@ -99,7 +100,13 @@ def check_javascript_syntax() -> bool:
     # Check ES modules in frontend/modules
     modules = list((ROOT_DIR / "frontend" / "modules").glob("*.js"))
     for mod in modules:
-        res = subprocess.run([node_exe, "--check", str(mod)], capture_output=True, text=True)
+        res = subprocess.run(
+            [node_exe, "--input-type=module", "--check"],
+            input=mod.read_text(encoding="utf-8"),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
         if res.returncode != 0:
             print(f"  FAIL: Syntax error in module {mod.name}:\n{res.stderr}")
             return False
