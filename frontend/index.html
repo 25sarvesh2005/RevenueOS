@@ -13,7 +13,7 @@
   <!-- Chart.js Engine -->
   <script src="../node_modules/chart.js/dist/chart.umd.js"></script>
 </head>
-<body class="revenueos-dark">
+<body class="revenueos-dark" data-theme="dark">
 
   <!-- ===================================================================== -->
   <!-- 1. Unified Studio Header Bar -->
@@ -37,40 +37,52 @@
       </div>
     </div>
 
-    <!-- Center Navigation Tabs (The 4 Primary Views) -->
-    <nav class="header-nav">
-      <button class="nav-tab-btn active" id="tabDashboard" data-view="dashboard">
+    <!-- Center Navigation Tabs (The 4 Primary Views with Keyboard Shortcuts) -->
+    <nav class="header-nav" aria-label="Main Navigation">
+      <button class="nav-tab-btn active" id="tabDashboard" data-view="dashboard" title="Executive Dashboard (Ctrl+1)">
         <span class="nav-icon">📊</span>
-        <span>Executive Dashboard</span>
+        <span>Dashboard</span>
+        <span class="nav-key-badge">1</span>
       </button>
-      <button class="nav-tab-btn" id="tabData" data-view="data">
+      <button class="nav-tab-btn" id="tabData" data-view="data" title="Data Marts Grid (Ctrl+2)">
         <span class="nav-icon">📑</span>
-        <span>Data Marts Grid</span>
+        <span>Data Marts</span>
+        <span class="nav-key-badge">2</span>
       </button>
-      <button class="nav-tab-btn" id="tabModel" data-view="model">
+      <button class="nav-tab-btn" id="tabModel" data-view="model" title="Star Schema Model (Ctrl+3)">
         <span class="nav-icon">🕸️</span>
-        <span>Star Schema Model</span>
+        <span>Star Schema</span>
+        <span class="nav-key-badge">3</span>
       </button>
-      <button class="nav-tab-btn" id="tabDax" data-view="dax">
+      <button class="nav-tab-btn" id="tabDax" data-view="dax" title="DAX Measures (Ctrl+4)">
         <span class="nav-icon">⚡</span>
         <span>DAX Measures</span>
+        <span class="nav-key-badge">4</span>
       </button>
     </nav>
 
     <!-- Header Actions -->
     <div class="header-actions">
-      <button class="action-btn secondary" id="btnLoadSample" title="Load sample e-commerce sales dataset">
+      <!-- Light / Dark Theme Switcher -->
+      <button class="action-btn outline theme-toggle-btn" id="btnThemeToggle" title="Toggle Light / Dark Theme">
+        <span id="themeToggleIcon">🌙</span>
+      </button>
+
+      <button class="action-btn secondary" id="btnLoadSample" title="Load sample sales dataset (Ctrl+Shift+S)">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span>Sample Data</span>
       </button>
-      <button class="action-btn primary" id="btnImportExcel" title="Select Excel (.xlsx, .xls, .xlsm) or CSV file">
+
+      <button class="action-btn primary" id="btnImportExcel" title="Select Excel (.xlsx, .xls, .xlsm) or CSV file (Ctrl+O)">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         <span>Import Excel / CSV</span>
       </button>
-      <button class="action-btn outline" id="btnLaunchPowerBI" title="Generate and launch native Power BI template (.pbit)">
+
+      <button class="action-btn outline" id="btnLaunchPowerBI" title="Generate and launch native Power BI template .pbit (Ctrl+E)">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
         <span>Export .PBIT</span>
       </button>
+
       <button class="action-btn outline" id="btnExportCSVMarts" title="Export clean star schema CSV marts">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         <span>Export CSV</span>
@@ -93,9 +105,16 @@
         <div class="slicer-item">
           <span class="slicer-icon">📅</span>
           <span class="slicer-title">Period:</span>
-          <input type="date" id="slicerStartDate" class="slicer-input date" value="2024-01-01">
+          <input type="date" id="slicerStartDate" class="slicer-input date" value="2024-01-01" aria-label="Start Date">
           <span class="slicer-sep">to</span>
-          <input type="date" id="slicerEndDate" class="slicer-input date" value="2025-12-31">
+          <input type="date" id="slicerEndDate" class="slicer-input date" value="2025-12-31" aria-label="End Date">
+          
+          <!-- Quick Date Range Presets -->
+          <div class="date-presets" id="datePresetChips">
+            <button class="date-preset-pill active" data-preset="ALL">All Time</button>
+            <button class="date-preset-pill" data-preset="2024">2024</button>
+            <button class="date-preset-pill" data-preset="2025">2025</button>
+          </div>
         </div>
 
         <div class="slicer-divider"></div>
@@ -113,7 +132,7 @@
         <div class="slicer-item">
           <span class="slicer-icon">🌐</span>
           <span class="slicer-title">Channel:</span>
-          <select id="channelSlicerSelect" class="slicer-select">
+          <select id="channelSlicerSelect" class="slicer-select" aria-label="Sales Channel">
             <option value="ALL">All Channels</option>
             <option value="Online Direct">Online Direct</option>
             <option value="Amazon Marketplace">Amazon Marketplace</option>
@@ -148,7 +167,7 @@
           <h2>Ready to Ingest Business Data</h2>
           <p>Drop your transactional Excel workbook (.xlsx, .xls, .xlsm) or CSV here to automatically decompose a Kimball Star Schema and synthesize DAX measures.</p>
           <div class="empty-state-buttons">
-            <button class="btn btn-primary" onclick="app.selectAndRunExcel()">Select File...</button>
+            <button class="btn btn-primary" onclick="app.selectAndRunExcel()">Select File (Ctrl+O)</button>
             <button class="btn btn-secondary" onclick="app.runSamplePipeline()">Load Sample Sales Data</button>
           </div>
         </div>
@@ -295,7 +314,7 @@
           <div class="data-view-controls">
             <div class="search-input-wrap">
               <span class="search-icon">🔍</span>
-              <input type="text" id="dgSearchInput" placeholder="Filter rows in active table..." class="search-input">
+              <input type="text" id="dgSearchInput" placeholder="Filter rows in active table... (/ to search)" class="search-input" aria-label="Search rows">
             </div>
             <button class="action-btn outline" id="btnExportCurrentTableCSV">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -317,6 +336,16 @@
             <thead id="dataGridHead"></thead>
             <tbody id="dataGridBody"></tbody>
           </table>
+        </div>
+
+        <!-- Data Table Pagination Footer -->
+        <div class="data-pagination-bar" id="dataPaginationBar">
+          <div class="pagination-info" id="dataPaginationInfo">Showing 1 to 50 of 500 rows</div>
+          <div class="pagination-controls">
+            <button class="page-nav-btn" id="btnPrevPage" title="Previous Page">❮ Previous</button>
+            <span class="page-number-indicator" id="dataCurrentPageIndicator">Page 1 of 10</span>
+            <button class="page-nav-btn" id="btnNextPage" title="Next Page">Next ❯</button>
+          </div>
         </div>
 
       </div>
@@ -362,7 +391,10 @@
             <p class="view-subheading">Synthesized Power BI formulas generated from transaction semantics</p>
           </div>
           <div class="dax-header-actions">
-            <button class="action-btn outline" id="btnCopyAllDax">
+            <button class="action-btn secondary" id="btnOpenNewMeasureModal" title="Create a new custom DAX measure">
+              <span>+ New Measure</span>
+            </button>
+            <button class="action-btn outline" id="btnCopyAllDax" title="Copy all formulas to clipboard">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
               <span>Copy All DAX</span>
             </button>
@@ -374,13 +406,13 @@
         <div class="dax-sandbox-bar" id="pbiDaxBar">
           <div class="dax-fx-badge">fx</div>
           <div class="dax-select-wrap">
-            <select id="daxMeasureDropdown" class="dax-dropdown" title="Select DAX Measure">
+            <select id="daxMeasureDropdown" class="dax-dropdown" title="Select DAX Measure" aria-label="Select Measure">
               <!-- Dynamically populated -->
             </select>
           </div>
           <span class="dax-equals">=</span>
           <div class="dax-input-wrap">
-            <input type="text" id="daxFormulaInput" class="dax-input" placeholder="DAX expression..." spellcheck="false">
+            <input type="text" id="daxFormulaInput" class="dax-input" placeholder="DAX expression... e.g. SUM(orders[quantity]) * AVERAGE(orders[unit_price])" spellcheck="false" aria-label="DAX Expression">
           </div>
           <div class="dax-sandbox-actions">
             <button class="action-btn primary small" id="btnEvaluateDax" title="Run DAX calculation against dataset">
@@ -400,7 +432,7 @@
         <div class="dax-filter-bar">
           <div class="search-input-wrap dax-search">
             <span class="search-icon">🔍</span>
-            <input type="text" id="daxSearchInput" placeholder="Search DAX measures (e.g. Revenue, Margin, YTD, Growth)..." class="search-input">
+            <input type="text" id="daxSearchInput" placeholder="Search DAX measures (e.g. Revenue, Margin, YTD, Growth)... (/ to search)" class="search-input" aria-label="Search DAX">
           </div>
           <div class="dax-cat-filters" id="daxCategoryFilters">
             <!-- Dynamically populated category buttons -->
@@ -420,30 +452,56 @@
   <!-- ===================================================================== -->
   <!-- 3. Real-Time Pipeline Progress Modal -->
   <!-- ===================================================================== -->
-  <div class="modal-backdrop" id="pipelineModal" style="display: none;">
+  <div class="modal-backdrop" id="pipelineModal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="pipelineModalTitle">
     <div class="pipeline-modal-card">
       <div class="modal-header-simple">
         <div class="modal-icon-spinner">⚡</div>
-        <h3 class="modal-title">RevenueOS Data Ingestion Pipeline</h3>
+        <h3 class="modal-title" id="pipelineModalTitle">RevenueOS Ingestion Pipeline</h3>
       </div>
       <div class="modal-body-simple">
-        <div class="progress-track">
+        <div class="progress-track" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
           <div class="progress-fill" id="pipelineProgressFill" style="width: 0%;"></div>
         </div>
         <div class="progress-info-row">
           <span id="pipelineStageText">Initializing Engine...</span>
           <span id="pipelinePercentText">0%</span>
         </div>
-        <div class="pipeline-terminal-box" id="pipelineLogTerminal"></div>
+        <div class="pipeline-terminal-box" id="pipelineLogTerminal" aria-live="polite"></div>
       </div>
       <div class="modal-footer-simple">
-        <button class="btn btn-secondary" id="btnCancelPipeline" onclick="document.getElementById('pipelineModal').style.display='none'">Close</button>
+        <button class="btn btn-secondary" id="btnCancelPipeline" onclick="document.getElementById('pipelineModal').style.display='none'">Close (Esc)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 4. Create New Measure Modal -->
+  <!-- ===================================================================== -->
+  <div class="modal-backdrop" id="newMeasureModal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="newMeasureTitle">
+    <div class="pipeline-modal-card">
+      <div class="modal-header-simple">
+        <div class="modal-icon-spinner">📐</div>
+        <h3 class="modal-title" id="newMeasureTitle">Create New DAX Measure</h3>
+      </div>
+      <div class="modal-body-simple" style="display: flex; flex-direction: column; gap: 14px;">
+        <div>
+          <label style="display:block; margin-bottom:6px; font-weight:600; color:var(--text-bright);">Measure Name</label>
+          <input type="text" id="newMeasureNameInput" class="search-input" style="width:100%;" placeholder="e.g. Total Discounts USD">
+        </div>
+        <div>
+          <label style="display:block; margin-bottom:6px; font-weight:600; color:var(--text-bright);">DAX Expression</label>
+          <textarea id="newMeasureExprInput" class="search-input" style="width:100%; font-family:var(--font-mono); resize:vertical; min-height:80px;" placeholder="e.g. SUM(orders[unit_price]) * AVERAGE(orders[discount])"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer-simple" style="display:flex; justify-content:flex-end; gap:8px;">
+        <button class="btn btn-outline" onclick="document.getElementById('newMeasureModal').style.display='none'">Cancel</button>
+        <button class="btn btn-primary" id="btnConfirmCreateMeasure">Save Measure</button>
       </div>
     </div>
   </div>
 
   <!-- Toast Notification Container -->
-  <div class="toast-container" id="toastContainer"></div>
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
   <!-- Application Bootstrap -->
   <script type="module" src="app.js"></script>

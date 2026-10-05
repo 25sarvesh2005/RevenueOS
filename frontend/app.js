@@ -55,6 +55,30 @@ import {
   exportCSVMarts,
 } from "./modules/modals.js";
 
+// Theme Manager
+export function toggleTheme() {
+  const currentTheme = document.body.dataset.theme || "dark";
+  const newTheme = currentTheme === "dark" ? "light" : "dark";
+  document.body.dataset.theme = newTheme;
+  document.body.className = `revenueos-${newTheme}`;
+  const icon = document.getElementById("themeToggleIcon");
+  if (icon) icon.textContent = newTheme === "dark" ? "🌙" : "☀️";
+  try {
+    localStorage.setItem("revenueos_theme", newTheme);
+  } catch (e) {}
+  renderCharts(state);
+}
+
+export function loadSavedTheme() {
+  try {
+    const saved = localStorage.getItem("revenueos_theme") || "dark";
+    document.body.dataset.theme = saved;
+    document.body.className = `revenueos-${saved}`;
+    const icon = document.getElementById("themeToggleIcon");
+    if (icon) icon.textContent = saved === "dark" ? "🌙" : "☀️";
+  } catch (e) {}
+}
+
 // Switch between the 4 primary views
 export function switchView(viewName) {
   state.activeView = viewName;
@@ -149,6 +173,8 @@ export function refreshAllViews() {
 export const app = {
   state,
   init,
+  toggleTheme,
+  loadSavedTheme,
   refreshAllViews,
   switchView,
   updateSummaryChip,
@@ -258,6 +284,92 @@ function setupEventListeners() {
 
   document.getElementById("btnResetSlicers")?.addEventListener("click", () => app.resetFilters());
 
+  // E. Theme Toggle
+  document.getElementById("btnThemeToggle")?.addEventListener("click", () => {
+    app.toggleTheme();
+  });
+
+  // F. New Measure Modal
+  document.getElementById("btnOpenNewMeasureModal")?.addEventListener("click", () => {
+    const modal = document.getElementById("newMeasureModal");
+    if (modal) modal.style.display = "flex";
+    document.getElementById("newMeasureNameInput")?.focus();
+  });
+
+  document.getElementById("btnConfirmCreateMeasure")?.addEventListener("click", () => {
+    const nameInput = document.getElementById("newMeasureNameInput");
+    const exprInput = document.getElementById("newMeasureExprInput");
+    const name = nameInput?.value?.trim();
+    const expr = exprInput?.value?.trim();
+    if (!name || !expr) {
+      showToast("Please provide both a measure name and DAX expression.", "warning");
+      return;
+    }
+    if (!state.currentManifest) state.currentManifest = { measures: [] };
+    if (!state.currentManifest.measures) state.currentManifest.measures = [];
+
+    state.currentManifest.measures.unshift({
+      name,
+      expression: expr,
+      category: "User Custom",
+      description: "Custom measure added in RevenueOS Studio",
+      table_name: "_Measures",
+    });
+
+    populateDAXMeasures(state);
+    renderDaxCatalog(state);
+    const modal = document.getElementById("newMeasureModal");
+    if (modal) modal.style.display = "none";
+    if (nameInput) nameInput.value = "";
+    if (exprInput) exprInput.value = "";
+    showToast(`Measure [${name}] created!`, "success");
+  });
+
+  // G. Global Keyboard Shortcuts (Ctrl+1..4, Ctrl+O, Ctrl+E, Esc, /)
+  window.addEventListener("keydown", (e) => {
+    const isTyping = ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement?.tagName);
+
+    if (e.key === "Escape") {
+      const pm = document.getElementById("pipelineModal");
+      const nm = document.getElementById("newMeasureModal");
+      if (pm) pm.style.display = "none";
+      if (nm) nm.style.display = "none";
+      return;
+    }
+
+    if (e.ctrlKey || e.metaKey) {
+      if (e.key === "1") {
+        e.preventDefault();
+        app.switchView("dashboard");
+      } else if (e.key === "2") {
+        e.preventDefault();
+        app.switchView("data");
+      } else if (e.key === "3") {
+        e.preventDefault();
+        app.switchView("model");
+      } else if (e.key === "4") {
+        e.preventDefault();
+        app.switchView("dax");
+      } else if (e.key.toLowerCase() === "o") {
+        e.preventDefault();
+        app.selectAndRunExcel();
+      } else if (e.key.toLowerCase() === "e") {
+        e.preventDefault();
+        app.launchNativePowerBI();
+      } else if (e.shiftKey && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        app.runSamplePipeline();
+      }
+    } else if (!isTyping && e.key === "/") {
+      e.preventDefault();
+      if (state.activeView === "data") {
+        document.getElementById("dgSearchInput")?.focus();
+      } else if (state.activeView === "dax") {
+        document.getElementById("daxSearchInput")?.focus();
+      }
+    }
+  });
+
   // E. Data View Search & Export
   document.getElementById("dgSearchInput")?.addEventListener("input", (e) => {
     filterDataGrid(e.target.value, state);
@@ -316,7 +428,7 @@ function setupEventListeners() {
       if (file.name.match(/\.(xlsx|xls|xlsm|csv)$/i)) {
         if (window.api?.runPipeline && file.path) {
           const projName = file.name.replace(/\.[^.]+$/, "");
-          await app.runPipelineForPath(file.path, projName);
+          await runPipelineForPath(file.path, projName);
         } else {
           const { runPipelineWithFile } = await import("./modules/pipeline.js");
           await runPipelineWithFile(file, state, () => refreshAllViews());
@@ -338,6 +450,7 @@ function setupEventListeners() {
 }
 
 async function init() {
+  loadSavedTheme();
   setupEventListeners();
 
   // Load preloaded initial model if available from Electron main or static manifest
@@ -362,5 +475,5 @@ async function init() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  app.init();
+  init();
 });

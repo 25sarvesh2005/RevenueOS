@@ -43,6 +43,7 @@ export function renderDataView(state) {
         tableList.querySelectorAll(".dv-table-item").forEach((i) => i.classList.remove("active"));
         item.classList.add("active");
         state.activeTable = item.dataset.table;
+        state.dataGridPage = 1;
         renderDataView(state);
       });
     });
@@ -89,14 +90,56 @@ export function renderDataView(state) {
     });
   }
 
+  // Pagination Logic (50 rows per page for smooth 60fps performance)
+  if (!state.dataGridPage) state.dataGridPage = 1;
+  const pageSize = 50;
+  const totalRows = rows.length;
+  const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+  if (state.dataGridPage > totalPages) state.dataGridPage = totalPages;
+
+  const startIdx = (state.dataGridPage - 1) * pageSize;
+  const endIdx = Math.min(totalRows, startIdx + pageSize);
+  const pageRows = rows.slice(startIdx, endIdx);
+
   if (tbody) {
-    tbody.innerHTML = rows
+    tbody.innerHTML = pageRows
       .map((row) => `<tr>${colNames.map((c) => `<td>${row[c] !== undefined && row[c] !== null ? row[c] : ""}</td>`).join("")}</tr>`)
       .join("");
   }
 
   if (rowCountEl) {
-    rowCountEl.textContent = `Displaying ${rows.length} preview records in memory (${currentTableMeta.row_count || rows.length} total)`;
+    rowCountEl.textContent = `${totalRows} rows (${currentTableMeta.row_count || totalRows} in file)`;
+  }
+
+  // Update Pagination Controls
+  const paginationInfo = document.getElementById("dataPaginationInfo");
+  const pageIndicator = document.getElementById("dataCurrentPageIndicator");
+  const prevBtn = document.getElementById("btnPrevPage");
+  const nextBtn = document.getElementById("btnNextPage");
+
+  if (paginationInfo) {
+    paginationInfo.textContent = totalRows > 0 ? `Showing ${startIdx + 1}–${endIdx} of ${totalRows} rows` : "0 rows";
+  }
+  if (pageIndicator) {
+    pageIndicator.textContent = `Page ${state.dataGridPage} of ${totalPages}`;
+  }
+  if (prevBtn) {
+    prevBtn.disabled = state.dataGridPage <= 1;
+    prevBtn.onclick = () => {
+      if (state.dataGridPage > 1) {
+        state.dataGridPage--;
+        renderDataView(state);
+      }
+    };
+  }
+  if (nextBtn) {
+    nextBtn.disabled = state.dataGridPage >= totalPages;
+    nextBtn.onclick = () => {
+      if (state.dataGridPage < totalPages) {
+        state.dataGridPage++;
+        renderDataView(state);
+      }
+    };
   }
 }
 

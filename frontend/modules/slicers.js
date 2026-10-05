@@ -177,4 +177,38 @@ export function populateSlicers(manifest, state, onFilterChange) {
       }
     }
   }
+
+  // 4. Wire Quick Date Preset Chips
+  wireDatePresets(state, onFilterChange);
 }
+
+export function wireDatePresets(state, onFilterChange) {
+  const chips = document.querySelectorAll("#datePresetChips .date-preset-pill");
+  const startInput = document.getElementById("slicerStartDate");
+  const endInput = document.getElementById("slicerEndDate");
+
+  chips.forEach((chip) => {
+    chip.onclick = () => {
+      chips.forEach((c) => c.classList.remove("active"));
+      chip.classList.add("active");
+
+      const preset = chip.dataset.preset;
+      if (preset === "ALL") {
+        if (startInput?.min) startInput.value = startInput.min;
+        if (endInput?.max) endInput.value = endInput.max;
+      } else if (preset === "2024") {
+        if (startInput) startInput.value = "2024-01-01";
+        if (endInput) endInput.value = "2024-12-31";
+      } else if (preset === "2025") {
+        if (startInput) startInput.value = "2025-01-01";
+        if (endInput) endInput.value = "2025-12-31";
+      }
+
+      if (startInput) state.dateRange.start = startInput.value;
+      if (endInput) state.dateRange.end = endInput.value;
+
+      applySlicerFilters(state, onFilterChange);
+    };
+  });
+}
+
