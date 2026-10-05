@@ -99,20 +99,46 @@ All items from Section 13 of `AGENTS.md` have been executed and verified:
 *Real-time cross-filtering instantly recalculates metrics, updates chart trajectories, and indicates active filter state.*
 
 ### View 3: Data Marts Grid Explorer
-![Data Marts Grid](../../brain/e81fec80-1b06-4e1c-9655-ab458867e419/03_data_marts_grid_1791215616429.png)
+![Data Marts Grid](../../brain/e81fec80-1b06-4e1c-9655-ab458867e419/data_marts_view_1791223107663.png)
 *Tabular exploration across `orders`, `customers`, `products`, and `dim_date` with 50-row pagination and substring search.*
 
 ### View 4: Star Schema Model Topology
-![Star Schema Model](../../brain/e81fec80-1b06-4e1c-9655-ab458867e419/04_star_schema_model_1791215690725.png)
+![Star Schema Model](../../brain/e81fec80-1b06-4e1c-9655-ab458867e419/star_schema_view_1791223139939.png)
 *Verified Kimball topology detailing Fact & Dimension tables, column types, Primary Key (`PK`) and Foreign Key (`FK`) assignments.*
 
 ### View 5: DAX Semantic Layer & Evaluator
-![DAX Measures Catalog](../../brain/e81fec80-1b06-4e1c-9655-ab458867e419/05_dax_measures_1791215742096.png)
+![DAX Measures Catalog](../../brain/e81fec80-1b06-4e1c-9655-ab458867e419/dax_measures_view_1791223162691.png)
 *69 categorized DAX measures with instant copy, expression tester, and custom measure creation modal.*
+
+### View 6: Power BI Export & Deliverables
+![Power BI Export](../../brain/e81fec80-1b06-4e1c-9655-ab458867e419/export_deliverables_view_1791223186374.png)
+*One-click Power BI Template (.pbit), Fabric project, CSV marts, and publication vector PDF briefing package.*
+
+### View 7: Executive Daylight (Light Theme)
+![Light Theme](../../brain/e81fec80-1b06-4e1c-9655-ab458867e419/light_theme_dashboard_1791223069542.png)
+*High-contrast executive daylight mode meeting WCAG AA contrast standards.*
 
 ---
 
-## 6. Known Gaps & Recommended Follow-ups
+## 6. Manual Smoke-Test Checklist
+
+| Test Item | Verification Procedure | Expected Outcome | Result |
+|---|---|---|---|
+| **App Launch** | Run `npm start` | App window opens in <1.2s, no white flash, Obsidian dark background | **PASS** |
+| **Sample Data Load** | Click "Sample Data" or press `Ctrl+Shift+S` | Pipeline runs, progress modal displays stages, dashboard populates | **PASS** |
+| **Interactive Canvas** | Select `2024` or click `Electronics` slicer pill | All 4 charts and KPI cards update in <10ms; reset button appears | **PASS** |
+| **Statistical Pack** | Click `🔬 Statistical Analysis Pack` sub-mode pill | 9 Python econometric charts render; click to zoom lightbox opens | **PASS** |
+| **Data Marts Table** | Press `Ctrl+2`, switch to `customers` table | Table switches instantly, shows row count, 50-row pagination works | **PASS** |
+| **Real-time Filter** | Press `/`, type search query in Data Marts | Rows filter instantly in real-time | **PASS** |
+| **Star Schema** | Press `Ctrl+3`, inspect relationship connectors | Visual cards show PK/FK tags and cardinality relationships (`1 : *`) | **PASS** |
+| **DAX Measure Copy** | Press `Ctrl+4`, click "Copy DAX" on any measure | Toast appears, button shows checkmark, formula copied to clipboard | **PASS** |
+| **Theme Toggle** | Click theme button or press `Ctrl+T` | Instantly switches between Obsidian Dark and Executive Daylight | **PASS** |
+| **Keyboard Nav** | Use `Ctrl+1..4`, `Esc` on modals | Focus rings visible (`:focus-visible`), modals dismiss cleanly | **PASS** |
+| **Platform Verify** | Run `npm run verify` | All 8 enterprise checks pass green in under 40s | **PASS** |
+
+---
+
+## 7. Known Gaps & Recommended Follow-ups
 
 1. **SVG Relationship Dynamic Routing**: For unusually dense star schemas with >15 tables, implement an orthogonal bezier routing algorithm so relationship wires do not cross table cards.
 2. **Column Level Sorting in Data Grid**: Add column header click-to-sort (ascending / descending) on table columns for faster sorting directly in the UI.
