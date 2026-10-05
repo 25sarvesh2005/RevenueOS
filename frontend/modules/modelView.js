@@ -13,6 +13,15 @@ export function renderModelView(state) {
   grid.innerHTML = "";
 
   const tables = state.currentManifest?.tables || [];
+  const rels = state.currentManifest?.relationships || [];
+
+  // Update dynamic topology stats badge
+  const statsBadge = document.getElementById("modelStatsBadge");
+  if (statsBadge) {
+    const factCount = tables.filter((t) => t.table_type === "fact" || t.name.includes("order") || t.name.includes("fact")).length;
+    const dimCount = Math.max(0, tables.length - factCount);
+    statsBadge.textContent = `${factCount} Fact Table${factCount === 1 ? "" : "s"} · ${dimCount} Dimension${dimCount === 1 ? "" : "s"} · ${rels.length} Active 1:* Relationships`;
+  }
 
   tables.forEach((tbl) => {
     const isFact = tbl.table_type === "fact" || tbl.name.includes("order") || tbl.name.includes("fact");

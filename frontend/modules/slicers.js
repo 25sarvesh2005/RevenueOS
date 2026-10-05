@@ -34,6 +34,17 @@ export function resetFilters(state, onFilterChange) {
   const sel = document.getElementById("channelSlicerSelect");
   if (sel) sel.value = "ALL";
 
+  const startInput = document.getElementById("slicerStartDate");
+  const endInput = document.getElementById("slicerEndDate");
+  if (startInput && startInput.min) {
+    startInput.value = startInput.min;
+    state.dateRange.start = startInput.min;
+  }
+  if (endInput && endInput.max) {
+    endInput.value = endInput.max;
+    state.dateRange.end = endInput.max;
+  }
+
   updateActiveFilterBanner(state, () => resetFilters(state, onFilterChange));
   if (typeof onFilterChange === "function") {
     onFilterChange();
@@ -52,7 +63,11 @@ export function updateActiveFilterBanner(state, onReset) {
   let indicator = document.getElementById("activeFilterBanner");
   const container = document.getElementById("canvasSlicerBar");
 
-  if (state.activeCategoryFilter !== "ALL" || state.activeChannelFilter !== "ALL") {
+  const startInput = document.getElementById("slicerStartDate");
+  const endInput = document.getElementById("slicerEndDate");
+  const isDateFiltered = startInput && endInput && (startInput.value !== startInput.min || endInput.value !== endInput.max);
+
+  if (state.activeCategoryFilter !== "ALL" || state.activeChannelFilter !== "ALL" || isDateFiltered) {
     if (!indicator && container) {
       indicator = document.createElement("div");
       indicator.id = "activeFilterBanner";
@@ -65,6 +80,7 @@ export function updateActiveFilterBanner(state, onReset) {
     const parts = [];
     if (state.activeCategoryFilter !== "ALL") parts.push(`Category: ${state.activeCategoryFilter}`);
     if (state.activeChannelFilter !== "ALL") parts.push(`Channel: ${state.activeChannelFilter}`);
+    if (isDateFiltered && startInput && endInput) parts.push(`Date: ${startInput.value} ~ ${endInput.value}`);
     if (indicator) indicator.textContent = `Filtered (${parts.join(" · ")}) ✕`;
   } else if (indicator) {
     indicator.remove();
@@ -122,5 +138,43 @@ export function populateSlicers(manifest, state, onFilterChange) {
       if (state.activeChannelFilter === chan) opt.selected = true;
       channelSelect.appendChild(opt);
     });
+  }
+
+  // 3. Populate Date Range Inputs dynamically from timeSeries
+  const timeSeries = manifest.dashboard.timeSeries || [];
+  if (timeSeries.length > 0) {
+    const periods = timeSeries.map((t) => t.period).filter(Boolean).sort();
+    if (periods.length > 0) {
+      const minP = periods[0];
+      const maxP = periods[periods.length - 1];
+      const startInput = document.getElementById("slicerStartDate");
+      const endInput = document.getElementById("slicerEndDate");
+
+      const startDateVal = `${minP}-01`;
+      const [maxYear, maxMonth] = maxP.split("-");
+      const lastDay = new Date(Number(maxYear), Number(maxMonth), 0).getDate();
+      const endDateVal = `${maxP}-${String(lastDay).padStart(2, "0")}`;
+
+      if (startInput) {
+        startInput.min = startDateVal;
+        startInput.max = endDateVal;
+        if (!state.dateRange.start || state.dateRange.start < startDateVal) {
+          startInput.value = startDateVal;
+          state.dateRange.start = startDateVal;
+        } else {
+          startInput.value = state.dateRange.start;
+        }
+      }
+      if (endInput) {
+        endInput.min = startDateVal;
+        endInput.max = endDateVal;
+        if (!state.dateRange.end || state.dateRange.end > endDateVal) {
+          endInput.value = endDateVal;
+          state.dateRange.end = endDateVal;
+        } else {
+          endInput.value = state.dateRange.end;
+        }
+      }
+    }
   }
 }

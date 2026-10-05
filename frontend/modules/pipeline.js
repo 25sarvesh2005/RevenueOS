@@ -143,7 +143,61 @@ export async function runPipelineWithFile(file, state, onPipelineComplete) {
 }
 
 export async function runSamplePipeline(state, onPipelineComplete) {
-  // Let user pick their own file
+  // 1. Try Desktop IPC with verified sample path
+  if (window.api?.getSamplePath) {
+    try {
+      const samplePath = await window.api.getSamplePath();
+      if (samplePath) {
+        await runPipelineForPath(samplePath, "RevenueOS_Enterprise_Sample", state, onPipelineComplete);
+        return;
+      }
+    } catch (err) {
+      console.warn("getSamplePath error:", err);
+    }
+  }
+
+  // 2. Try preloaded initial model if available
+  if (window.api?.loadInitialModel) {
+    try {
+      const initial = await window.api.loadInitialModel();
+      if (initial) {
+        state.setManifest(initial);
+        showToast("Loaded sample Star Schema model!", "success");
+        if (typeof onPipelineComplete === "function") {
+          onPipelineComplete(initial);
+        }
+        return;
+      }
+    } catch (err) {
+      console.warn("loadInitialModel error:", err);
+    }
+  }
+
+  // 3. Try fetching static model manifest
+  try {
+    const resp = await fetch("../exports/default_model/manifest.json");
+    if (resp.ok) {
+      const initial = await resp.json();
+      state.setManifest(initial);
+      showToast("Loaded sample Star Schema model!", "success");
+      if (typeof onPipelineComplete === "function") {
+        onPipelineComplete(initial);
+      }
+      return;
+    }
+  } catch (err) {
+    console.debug("Static fetch manifest fallback:", err);
+  }
+
+  // 4. Try REST API
+  try {
+    await runPipelineViaRest("sample", state, onPipelineComplete);
+    return;
+  } catch (err) {
+    console.warn("runPipelineViaRest error:", err);
+  }
+
+  // 4. Fallback to file picker
   await selectAndRunExcel(state, onPipelineComplete);
 }
 

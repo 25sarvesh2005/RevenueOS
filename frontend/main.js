@@ -19,8 +19,8 @@ function createWindow() {
     height: 940,
     minWidth: 1100,
     minHeight: 740,
-    backgroundColor: "#1B1A19",
-    title: "RevenueOS Studio – Power BI Desktop Replica Engine",
+    backgroundColor: "#0B0E14",
+    title: "RevenueOS Studio – Automated Excel-to-Power BI Decision Engine",
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: false,
@@ -227,16 +227,14 @@ ipcMain.handle("pipeline:run", async (event, params) => {
 
 // 4. Sample Excel Path Provider
 ipcMain.handle("app:get-sample-path", () => {
-  const samplePath = path.resolve(
-    __dirname,
-    "..",
-    "data",
-    "raw",
-    "excel",
-    "revenueos_sample.xlsx"
-  );
-  if (fs.existsSync(samplePath)) {
-    return samplePath;
+  const candidatePaths = [
+    path.resolve(__dirname, "..", "data", "raw", "excel", "revenueos_sample.xlsx"),
+    path.resolve(__dirname, "..", "tests", "fixtures", "test_sales.xlsx"),
+  ];
+  for (const p of candidatePaths) {
+    if (fs.existsSync(p)) {
+      return p;
+    }
   }
   return null;
 });
@@ -272,7 +270,22 @@ ipcMain.handle("clipboard:write", (event, text) => {
 
 // 8. Load Precompiled Initial Model (Portable)
 ipcMain.handle("app:load-initial-model", () => {
-  // Fresh studio session starts in clean ingest mode
+  const candidates = [
+    path.resolve(__dirname, "..", "exports", "default_model", "manifest.json"),
+    path.resolve(__dirname, "model_data.json"),
+    path.resolve(__dirname, "model_data_sample.json"),
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      try {
+        const raw = fs.readFileSync(candidate, "utf-8");
+        const parsed = JSON.parse(raw);
+        return normalizeManifestPaths(parsed);
+      } catch (err) {
+        console.warn("Failed reading candidate manifest:", candidate, err);
+      }
+    }
+  }
   return null;
 });
 

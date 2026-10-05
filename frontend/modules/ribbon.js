@@ -130,6 +130,18 @@ export function renderFieldsTree(state, onSelectMeasure) {
   const tables = state.currentManifest?.tables || [];
   const measures = state.currentManifest?.measures || [];
 
+  // Dynamically update fields count badge
+  let totalCols = 0;
+  tables.forEach((t) => { totalCols += (t.columns || []).length; });
+  const totalFields = totalCols + measures.length;
+  const fieldsBadge = document.getElementById("fieldsCountBadge");
+  if (fieldsBadge) {
+    fieldsBadge.textContent = `${totalFields} fields (${measures.length} fx)`;
+  }
+
+  // Update dynamic status bar
+  updateStatusBar(state);
+
   // _Measures Node
   const mNode = document.createElement("div");
   mNode.className = "table-node open";
@@ -146,6 +158,7 @@ export function renderFieldsTree(state, onSelectMeasure) {
   measures.forEach((m) => {
     const li = document.createElement("li");
     li.className = "field-item";
+    li.dataset.fieldName = m.name.toLowerCase();
     li.innerHTML = `<span class="field-icon calc">fx</span> <span>[${m.name}]</span>`;
     li.onclick = () => {
       const sel = document.getElementById("daxMeasureDropdown");
@@ -190,9 +203,96 @@ export function renderFieldsTree(state, onSelectMeasure) {
 
       const li = document.createElement("li");
       li.className = "field-item";
+      li.dataset.fieldName = `${tbl.name}.${colName}`.toLowerCase();
       li.innerHTML = `<span class="field-icon">${icon}</span> <span>${colName}</span>`;
       fList.appendChild(li);
     });
     tree.appendChild(node);
+  });
+}
+
+export function updateStatusBar(state) {
+  const statusText = document.getElementById("statusText");
+  if (!statusText) return;
+
+  const tables = state.currentManifest?.tables || [];
+  const measures = state.currentManifest?.measures || [];
+  let totalRows = 0;
+  tables.forEach((t) => { totalRows += (t.row_count || 0); });
+
+  if (tables.length === 0) {
+    statusText.textContent = "Ready · Drop or select business data";
+  } else {
+    statusText.textContent = `Model Ready · ${tables.length} Tables · ${measures.length} Measures · ${totalRows.toLocaleString()} Rows`;
+  }
+}
+
+let currentZoomIndex = 2;
+const zoomLevels = [0.75, 0.9, 1.0, 1.1, 1.25, 1.5];
+
+export function setupZoomControls() {
+  const zoomInBtn = document.getElementById("zoomInBtn");
+  const zoomOutBtn = document.getElementById("zoomOutBtn");
+  const zoomVal = document.getElementById("zoomLevelVal");
+  const fitBtn = document.getElementById("btnFitToPage");
+  const canvas = document.getElementById("activeReportCanvas");
+
+  function applyZoom() {
+    const scale = zoomLevels[currentZoomIndex];
+    if (zoomVal) zoomVal.textContent = `${Math.round(scale * 100)}%`;
+    if (canvas) {
+      canvas.style.transform = `scale(${scale})`;
+      canvas.style.transformOrigin = "top center";
+    }
+  }
+
+  zoomInBtn?.addEventListener("click", () => {
+    if (currentZoomIndex < zoomLevels.length - 1) {
+      currentZoomIndex++;
+      applyZoom();
+    }
+  });
+
+  zoomOutBtn?.addEventListener("click", () => {
+    if (currentZoomIndex > 0) {
+      currentZoomIndex--;
+      applyZoom();
+    }
+  });
+
+  fitBtn?.addEventListener("click", () => {
+    currentZoomIndex = 2; // 100%
+    applyZoom();
+    const viewport = document.querySelector(".report-canvas-viewport");
+    if (viewport) viewport.scrollTop = 0;
+    showToast("Canvas reset to Fit to Page (100%)", "info");
+  });
+}
+
+export function setupFieldsSearch() {
+  const searchInput = document.getElementById("fieldsSearchInput");
+  if (!searchInput) return;
+
+  searchInput.addEventListener("input", (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    const nodes = document.querySelectorAll("#fieldsTree .table-node");
+
+    nodes.forEach((node) => {
+      let nodeMatch = false;
+      const items = node.querySelectorAll(".field-item");
+      items.forEach((item) => {
+        const text = item.textContent.toLowerCase();
+        const matches = !query || text.includes(query);
+        item.style.display = matches ? "flex" : "none";
+        if (matches) nodeMatch = true;
+      });
+
+      if (query) {
+        node.style.display = nodeMatch ? "block" : "none";
+        if (nodeMatch) node.classList.add("open");
+      } else {
+        node.style.display = "block";
+      }
+    });
   });
 }

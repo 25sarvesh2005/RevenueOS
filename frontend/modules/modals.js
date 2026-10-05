@@ -222,10 +222,72 @@ export async function runCopilotInvestigation(state) {
 
   if (resultBox) resultBox.textContent = "Analyzing analytical signals & synthesizing executive brief...";
 
-  const kpis = state?.currentManifest?.dashboard?.kpis || {};
-  const rev = kpis.totalRevenue || 8474027.5;
-  const gp = kpis.grossProfit || 2246207.5;
-  const margin = kpis.grossMarginPct || 26.5;
+  const filtered = state?.getFilteredData ? state.getFilteredData() : {};
+  const kpis = filtered.kpis || state?.currentManifest?.dashboard?.kpis || {};
+  const returns = filtered.returns || state?.currentManifest?.dashboard?.returns || {};
+  const cur = kpis.currency || "$";
+  const rev = Math.round(kpis.totalRevenue || 0);
+  const gp = Math.round(kpis.grossProfit || 0);
+  const cost = Math.round(kpis.totalCost || 0);
+  const margin = Number(kpis.grossMarginPct || 0);
+  const orders = Number(kpis.totalOrders || 0);
+  const units = Number(kpis.totalUnits || 0);
+  const retCount = returns.totalReturns || 0;
+  const retRate = Number(returns.returnRate || 0);
+  const momGrowth = Number(kpis.momGrowthPct !== undefined ? kpis.momGrowthPct : 14.2);
+
+  const isReturnIssue = issue.toLowerCase().includes("return") || entity.toLowerCase().includes("return");
+  const isMarginIssue = issue.toLowerCase().includes("margin") || entity.toLowerCase().includes("margin");
+
+  let impact = 0;
+  let drivers = [];
+  let actions = [];
+  let priority = "HIGH";
+
+  if (isReturnIssue) {
+    const avgItemPrice = units > 0 ? rev / units : 100;
+    impact = Math.round(retCount * avgItemPrice);
+    priority = retRate > 3.0 ? "CRITICAL" : "HIGH";
+    drivers = [
+      `Active return volume: ${retCount.toLocaleString()} items (${retRate.toFixed(2)}% return rate)`,
+      `Fulfillment exposure on ${units.toLocaleString()} units sold`,
+      "Reverse logistics carrier surcharges on high-velocity SKUs",
+      "Transit packaging defects in regional fulfillment centers",
+    ];
+    actions = [
+      "Audit carrier packaging tolerances to reduce return transit defects",
+      "Deploy automated return reason tagging at carrier intake hubs",
+      "Revise return authorization threshold for high-defect product categories",
+    ];
+  } else if (isMarginIssue) {
+    const marginDeficit = Math.max(0, 30.0 - margin);
+    impact = Math.round(rev * (marginDeficit / 100));
+    priority = margin < 25.0 ? "CRITICAL" : "HIGH";
+    drivers = [
+      `Current Gross Margin (${margin.toFixed(1)}%) vs 30.0% executive benchmark`,
+      `Total Cost of Goods Sold (${cur}${cost.toLocaleString()}) consuming ${(100 - margin).toFixed(1)}% of revenue`,
+      "Elevated coupon and multi-voucher checkout redemptions",
+      "Supplier component price variances across regional channels",
+    ];
+    actions = [
+      "Enforce hard ceiling on promotional discount and voucher stacking",
+      "Re-negotiate tier-1 component pricing with primary suppliers",
+      "Shift marketing budget toward high-margin direct-to-consumer channels",
+    ];
+  } else {
+    impact = Math.round(rev * 0.05);
+    priority = "HIGH";
+    drivers = [
+      `Overall net revenue: ${cur}${rev.toLocaleString()} across ${orders.toLocaleString()} orders`,
+      `Month-over-Month trajectory: ${momGrowth >= 0 ? "+" : ""}${momGrowth.toFixed(1)}% MoM`,
+      "Customer segment concentration and channel conversion variance",
+    ];
+    actions = [
+      "Accelerate top customer segment retention campaigns",
+      "Expand high-conversion sales channel distribution",
+      "Review pricing tier alignment across key product categories",
+    ];
+  }
 
   try {
     const resp = await fetch("http://127.0.0.1:8000/api/copilot/investigate", {
@@ -236,24 +298,20 @@ export async function runCopilotInvestigation(state) {
         entity_type: "Commercial Metric",
         entity_name: entity,
         issue: issue,
-        metric: "gross_margin_pct",
-        observed_value: margin / 100,
-        baseline_value: 0.30,
-        estimated_impact: Math.round(rev * 0.035),
-        priority: "HIGH",
-        drivers: [
-          "Elevated coupon and voucher stacking across primary channel",
-          "Logistics handling cost increase on multi-unit orders",
-          "Supplier component price adjustment",
-        ],
-        evidence: `Net Revenue: $${Math.round(rev).toLocaleString()} | Gross Profit: $${Math.round(gp).toLocaleString()} | Margin: ${margin.toFixed(1)}%`,
+        metric: isReturnIssue ? "return_rate" : "gross_margin_pct",
+        observed_value: isReturnIssue ? retRate / 100 : margin / 100,
+        baseline_value: isReturnIssue ? 0.015 : 0.30,
+        estimated_impact: impact,
+        priority: priority,
+        drivers: drivers,
+        evidence: `Net Revenue: ${cur}${rev.toLocaleString()} | Gross Profit: ${cur}${gp.toLocaleString()} | Margin: ${margin.toFixed(1)}%`,
       }),
     });
 
     if (resp.ok) {
       const data = await resp.json();
       if (resultBox) resultBox.textContent = data.briefing;
-      if (impactBadge) impactBadge.textContent = `Impact: $${Math.round(data.estimated_impact).toLocaleString()}`;
+      if (impactBadge) impactBadge.textContent = `Impact: ${cur}${Math.round(data.estimated_impact).toLocaleString()}`;
       if (priorityBadge) {
         priorityBadge.textContent = data.priority;
         priorityBadge.className = `kpi-badge ${data.priority === "CRITICAL" ? "warning" : "positive"}`;
@@ -270,42 +328,39 @@ export async function runCopilotInvestigation(state) {
     // Offline local fallback
   }
 
-  const impact = Math.round(rev * 0.035);
   const brief = `======================================================================
 REVENUEOS INVESTIGATION BRIEFING: ${entity.toUpperCase()}
 ======================================================================
 ISSUE DETECTED   : ${issue}
-PRIORITY LEVEL   : HIGH
-ESTIMATED IMPACT : $${impact.toLocaleString()}
+PRIORITY LEVEL   : ${priority}
+ESTIMATED IMPACT : ${cur}${impact.toLocaleString()}
 CONFIDENCE SCORE : HIGH (Derived from ingested analytical marts)
 
 1. SITUATION ANALYSIS
 ----------------------------------------------------------------------
 Gross Margin is operating at ${margin.toFixed(1)}% against expected 30.0% benchmark.
-Top-line volume ($${Math.round(rev).toLocaleString()}) remains strong (+14.2% MoM), but
-discount deductions and logistics surcharges are diluting unit profitability.
+Top-line volume (${cur}${rev.toLocaleString()}) reflects ${momGrowth >= 0 ? "+" : ""}${momGrowth.toFixed(1)}% MoM trajectory.
+Active order volume: ${orders.toLocaleString()} orders | Units fulfilled: ${units.toLocaleString()} units.
 
 2. ROOT-CAUSE DRIVERS
 ----------------------------------------------------------------------
-• Excessive promotional voucher stacking (>18% average reduction)
-• Expedited shipping costs absorbing 4.2% of contribution margin
-• High return frequency on premium category variants (2.77%)
+${drivers.map((d) => `• ${d}`).join("\n")}
 
 3. REQUIRED REMEDIATION ACTIONS
 ----------------------------------------------------------------------
-• Enforce hard cap on multi-voucher checkout redemptions.
-• Audit carrier packaging standards to reduce return transit defects.
-• Re-negotiate volume pricing tier with key wholesale suppliers.
+${actions.map((a) => `• ${a}`).join("\n")}
 ======================================================================`;
 
   if (resultBox) resultBox.textContent = brief;
-  if (impactBadge) impactBadge.textContent = `Impact: $${impact.toLocaleString()}`;
+  if (impactBadge) impactBadge.textContent = `Impact: ${cur}${impact.toLocaleString()}`;
+  if (priorityBadge) {
+    priorityBadge.textContent = priority;
+    priorityBadge.className = `kpi-badge ${priority === "CRITICAL" ? "warning" : "positive"}`;
+  }
   if (actionList) {
-    actionList.innerHTML = `
-      <li style="display:flex; gap:8px; margin-bottom:6px;"><span style="color:var(--pbi-accent-green); font-weight:bold;">✓</span> <span>Enforce hard cap on multi-voucher checkout redemptions</span></li>
-      <li style="display:flex; gap:8px; margin-bottom:6px;"><span style="color:var(--pbi-accent-green); font-weight:bold;">✓</span> <span>Audit carrier packaging standards to reduce return transit defects</span></li>
-      <li style="display:flex; gap:8px; margin-bottom:6px;"><span style="color:var(--pbi-accent-green); font-weight:bold;">✓</span> <span>Re-negotiate volume pricing tier with key wholesale suppliers</span></li>
-    `;
+    actionList.innerHTML = actions
+      .map((a) => `<li style="display:flex; gap:8px; margin-bottom:6px;"><span style="color:var(--pbi-accent-green); font-weight:bold;">✓</span> <span>${a}</span></li>`)
+      .join("");
   }
 }
 
@@ -386,5 +441,113 @@ export async function saveAnnotation(state) {
   showToast("Annotation recorded locally.", "success");
   const modal = document.getElementById("annotationModal");
   if (modal) modal.style.display = "none";
+}
+
+export function openNewVisualModal(state) {
+  const modal = document.getElementById("newVisualModal");
+  if (modal) modal.style.display = "flex";
+}
+
+let customVisualCounter = 100;
+export function confirmCreateVisual(state) {
+  const typeSelect = document.getElementById("newVisualTypeSelect");
+  const titleInput = document.getElementById("newVisualTitleInput");
+  const metricSelect = document.getElementById("newVisualMetricSelect");
+
+  const chartType = typeSelect?.value || "bar";
+  const title = titleInput?.value?.trim() || "Custom Analytical Visual";
+  const metric = metricSelect?.value || "revenue";
+
+  customVisualCounter++;
+  const visualId = `visualCustom_${customVisualCounter}`;
+  const canvasId = `canvasCustom_${customVisualCounter}`;
+
+  // Find active report canvas page
+  const activePage = document.querySelector(".canvas-page.active") || document.getElementById("pageExecutive");
+  const visualsGrid = activePage?.querySelector(".visuals-grid");
+
+  if (!visualsGrid) {
+    showToast("Please select a canvas page first.", "warning");
+    return;
+  }
+
+  const container = document.createElement("div");
+  container.className = "pbi-visual-container span-6";
+  container.id = visualId;
+  container.innerHTML = `
+    <div class="visual-header">
+      <div class="visual-title">
+        <span class="visual-type-icon">📊</span>
+        ${title}
+      </div>
+      <div class="visual-tools">
+        <button class="vtool-btn" title="Focus Mode" onclick="app.toggleFocus('${visualId}')">⛶</button>
+        <button class="vtool-btn" title="Remove Visual" onclick="this.closest('.pbi-visual-container').remove()">✕</button>
+      </div>
+    </div>
+    <div class="visual-body">
+      <canvas id="${canvasId}"></canvas>
+    </div>
+  `;
+
+  visualsGrid.appendChild(container);
+
+  // Render chart
+  const data = state.getFilteredData();
+  const ctx = document.getElementById(canvasId)?.getContext("2d");
+  if (ctx && window.Chart) {
+    const isDark = !document.body.classList.contains("powerbi-fluent");
+    const textColor = isDark ? "#CCCCCC" : "#323130";
+
+    const labels = data.byCategory.map((c) => c.category);
+    let values = data.byCategory.map((c) => c.revenue);
+    if (metric === "cost") values = data.timeSeries.map((t) => t.cost).slice(0, labels.length);
+    if (metric === "profit") values = data.timeSeries.map((t) => t.profit).slice(0, labels.length);
+
+    new window.Chart(ctx, {
+      type: chartType === "horizontalBar" ? "bar" : chartType,
+      data: {
+        labels: labels,
+        datasets: [{
+          label: title,
+          data: values,
+          backgroundColor: ["#118DFF", "#12239E", "#E66C37", "#DDAA33", "#3B7E67", "#744DA9"],
+          borderRadius: 4,
+        }],
+      },
+      options: {
+        indexAxis: chartType === "horizontalBar" ? "y" : "x",
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: textColor } } },
+      },
+    });
+  }
+
+  // Bind click selection
+  container.addEventListener("click", () => {
+    if (window.app?.selectVisual) window.app.selectVisual(visualId);
+  });
+
+  const modal = document.getElementById("newVisualModal");
+  if (modal) modal.style.display = "none";
+  showToast(`Created visual: ${title}`, "success");
+}
+
+export function openDocsModal() {
+  const modal = document.getElementById("docsModal");
+  if (modal) modal.style.display = "flex";
+}
+
+export function openLicenseModal() {
+  const modal = document.getElementById("licenseModal");
+  if (modal) modal.style.display = "flex";
+}
+
+export function togglePane(paneId) {
+  const pane = document.getElementById(paneId);
+  if (pane) {
+    pane.classList.toggle("collapsed");
+  }
 }
 

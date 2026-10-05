@@ -213,3 +213,126 @@ export function renderFieldsTree(state) {
     tree.appendChild(node);
   });
 }
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+export function renderDaxCatalog(state, query = "", selectedCat = "ALL") {
+  const grid = document.getElementById("daxMeasuresGrid");
+  const countBadge = document.getElementById("daxMeasuresCount");
+  const catFilterContainer = document.getElementById("daxCategoryFilters");
+  if (!grid) return;
+
+  const measures = state.currentManifest?.measures || [];
+  
+  // Extract distinct categories
+  const categories = ["ALL", ...new Set(measures.map((m) => m.category || "General").filter(Boolean))];
+  
+  if (catFilterContainer && (!catFilterContainer.children.length || catFilterContainer.dataset.cachedCount !== String(measures.length))) {
+    catFilterContainer.dataset.cachedCount = String(measures.length);
+    catFilterContainer.innerHTML = categories.map((cat) => `
+      <button class="dax-cat-pill ${cat === selectedCat ? "active" : ""}" data-cat="${escapeHtml(cat)}">
+        ${cat === "ALL" ? "All Categories" : escapeHtml(cat)}
+      </button>
+    `).join("");
+    
+    catFilterContainer.querySelectorAll(".dax-cat-pill").forEach((btn) => {
+      btn.onclick = () => {
+        catFilterContainer.querySelectorAll(".dax-cat-pill").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderDaxCatalog(state, query, btn.dataset.cat);
+      };
+    });
+  }
+
+  // Filter by query and category
+  const filtered = measures.filter((m) => {
+    const matchesCat = selectedCat === "ALL" || (m.category || "General") === selectedCat;
+    const matchesQuery = !query || 
+      m.name.toLowerCase().includes(query.toLowerCase()) || 
+      (m.expression && m.expression.toLowerCase().includes(query.toLowerCase())) ||
+      (m.description && m.description.toLowerCase().includes(query.toLowerCase()));
+    return matchesCat && matchesQuery;
+  });
+
+  if (countBadge) {
+    countBadge.textContent = `${filtered.length} of ${measures.length} Measures`;
+  }
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="dax-empty-state">No DAX measures match your search "${escapeHtml(query)}".</div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map((m) => `
+    <div class="dax-card">
+      <div class="dax-card-header">
+        <div class="dax-card-title-group">
+          <span class="dax-card-fx">fx</span>
+          <span class="dax-card-title">[${escapeHtml(m.name)}]</span>
+        </div>
+        <span class="dax-card-category">${escapeHtml(m.category || "Measure")}</span>
+      </div>
+      <div class="dax-code-wrapper">
+        <pre class="dax-code-content"><code>${escapeHtml(m.expression || "")}</code></pre>
+        <button class="dax-copy-btn" data-expr="${encodeURIComponent(m.expression || "")}" title="Copy DAX Expression">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copy</span>
+        </button>
+      </div>
+      <div class="dax-card-desc">${escapeHtml(m.description || "Synthesized DAX measure for Power BI")}</div>
+      <div class="dax-card-footer">
+        <span class="dax-table-tag">Table: ${escapeHtml(m.table_name || "_Measures")}</span>
+        <button class="dax-test-btn" data-name="${escapeHtml(m.name)}" title="Load into formula editor">Test in Editor ▶</button>
+      </div>
+    </div>
+  `).join("");
+
+  // Attach copy events
+  grid.querySelectorAll(".dax-copy-btn").forEach((btn) => {
+    btn.onclick = async (e) => {
+      e.stopPropagation();
+      const code = decodeURIComponent(btn.dataset.expr);
+      if (window.api?.copyToClipboard) {
+        await window.api.copyToClipboard(code);
+      } else {
+        await navigator.clipboard.writeText(code);
+      }
+      btn.innerHTML = `<span>✓ Copied</span>`;
+      btn.classList.add("copied");
+      showToast("DAX formula copied to clipboard!", "success");
+      setTimeout(() => {
+        btn.innerHTML = `
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copy</span>
+        `;
+        btn.classList.remove("copied");
+      }, 2000);
+    };
+  });
+
+  // Attach test events
+  grid.querySelectorAll(".dax-test-btn").forEach((btn) => {
+    btn.onclick = () => {
+      const name = btn.dataset.name;
+      const sel = document.getElementById("daxMeasureDropdown");
+      if (sel) sel.value = name;
+      updateDAXFormula(name, state);
+      const editor = document.getElementById("pbiDaxBar");
+      if (editor) {
+        editor.scrollIntoView({ behavior: "smooth", block: "center" });
+        const input = document.getElementById("daxFormulaInput");
+        if (input) input.focus();
+      }
+    };
+  });
+}
+

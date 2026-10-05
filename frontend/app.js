@@ -1,17 +1,15 @@
 /**
- * RevenueOS Studio – Power BI Desktop Replica Orchestrator
- * ========================================================
- * Modular Application Root coordinating:
- * - State management (modules/state.js)
- * - Toast notification feedback (modules/toast.js)
- * - Visualizations & Chart.js lifecycles (modules/charts.js)
- * - Tabular Data Grid & Matrix (modules/dataView.js)
- * - Kimball Star Schema Diagram & SVG Wire Connectors (modules/modelView.js)
- * - DAX Semantic Formula Engine & Measure Catalog (modules/daxEngine.js)
+ * RevenueOS Studio – Modern Application Orchestrator
+ * ====================================================
+ * High-performance, clean controller coordinating:
+ * - Reactive state store (modules/state.js)
+ * - Executive dashboard & Chart.js visualizations (modules/charts.js)
+ * - Data Marts grid explorer (modules/dataView.js)
+ * - Kimball Star Schema topology (modules/modelView.js)
+ * - DAX Semantic Layer & Evaluator (modules/daxEngine.js)
  * - Slicers & Dynamic Cross-Filtering (modules/slicers.js)
- * - Python Pipeline Engine & Ingestion Streaming (modules/pipeline.js)
- * - Modals, Shell Integrations & Focus Mode (modules/modals.js)
- * - Ribbon Navigation & Fields Hierarchy (modules/ribbon.js)
+ * - Automated Excel ingestion pipeline (modules/pipeline.js)
+ * - Native Power BI export & toasts (modules/modals.js, modules/toast.js)
  */
 
 import { state } from "./modules/state.js";
@@ -19,11 +17,9 @@ import { showToast } from "./modules/toast.js";
 import {
   renderCharts,
   selectVisual,
-  transformSelectedVisual,
 } from "./modules/charts.js";
 import {
   renderDataView,
-  renderFinancialTable,
   filterDataGrid,
   exportCurrentTableCSV,
 } from "./modules/dataView.js";
@@ -37,6 +33,7 @@ import {
   evaluateDAX,
   saveDAX,
   copyAllDAX,
+  renderDaxCatalog,
 } from "./modules/daxEngine.js";
 import {
   setCategoryFilter,
@@ -54,36 +51,66 @@ import {
   appendLog,
 } from "./modules/pipeline.js";
 import {
-  openPowerQueryModal,
-  openNewMeasureModal,
-  confirmCreateMeasure,
-  openMatplotlibModal,
-  openChartsFolder,
   launchNativePowerBI,
   exportCSVMarts,
-  toggleFocus,
-  closeFocusMode,
-  openCopilotModal,
-  runCopilotInvestigation,
-  openExecutiveReportModal,
-  exportExecutiveReportPdf,
-  openAnnotationModal,
-  saveAnnotation,
 } from "./modules/modals.js";
-import {
-  setupRibbonTabs,
-  switchView,
-  switchPage,
-  addNewPage,
-  renderFieldsTree,
-} from "./modules/ribbon.js";
 
-function refreshAllViews() {
+// Switch between the 4 primary views
+export function switchView(viewName) {
+  state.activeView = viewName;
+
+  document.querySelectorAll(".nav-tab-btn").forEach((btn) => {
+    btn.classList.toggle("active", btn.dataset.view === viewName);
+  });
+
+  document.querySelectorAll(".app-view").forEach((v) => {
+    v.classList.remove("active");
+  });
+
+  const activeViewEl = document.getElementById(`view_${viewName}`);
+  if (activeViewEl) {
+    activeViewEl.classList.add("active");
+  }
+
+  // Trigger view-specific rendering
+  if (viewName === "dashboard") {
+    renderCharts(state);
+  } else if (viewName === "data") {
+    renderDataView(state);
+  } else if (viewName === "model") {
+    renderModelView(state);
+    setTimeout(() => drawModelRelationships(state), 120);
+  } else if (viewName === "dax") {
+    renderDaxCatalog(state);
+    populateDAXMeasures(state);
+  }
+}
+
+// Update live metric summary chip in header / filter bar
+export function updateSummaryChip(state) {
+  const chip = document.getElementById("dashboardFilterSummary");
+  if (!chip) return;
+
+  const data = state.getFilteredData();
+  const rev = Math.round(data.kpis?.totalRevenue || 0);
+  const orders = data.kpis?.totalOrders || 0;
+  const cur = data.kpis?.currency || "$";
+
+  let statusText = `⚡ ${orders.toLocaleString()} Orders · ${cur}${rev.toLocaleString()}`;
+  if (state.activeCategoryFilter !== "ALL" || state.activeChannelFilter !== "ALL") {
+    statusText = `Filtered: ${orders.toLocaleString()} Orders · ${cur}${rev.toLocaleString()}`;
+  }
+  chip.innerHTML = `<span>${statusText}</span>`;
+}
+
+// Refresh all views when a new dataset or filter changes
+export function refreshAllViews() {
   const emptyState = document.getElementById("canvasEmptyState");
   const mainContent = document.getElementById("canvasMainContent");
+
   if (emptyState && mainContent) {
     if (!state.currentManifest) {
-      emptyState.style.display = "flex";
+      emptyState.style.display = "block";
       mainContent.style.display = "none";
     } else {
       emptyState.style.display = "none";
@@ -91,31 +118,40 @@ function refreshAllViews() {
     }
   }
 
+  // Populate dynamic slicers
+  populateSlicers(state.currentManifest, state, () => {
+    renderCharts(state);
+    updateSummaryChip(state);
+  });
+
+  // Render active view
+  if (state.activeView === "dashboard") {
+    renderCharts(state);
+  } else if (state.activeView === "data") {
+    renderDataView(state);
+  } else if (state.activeView === "model") {
+    renderModelView(state);
+  } else if (state.activeView === "dax") {
+    renderDaxCatalog(state);
+  }
+
+  // Populate DAX editor dropdown
   populateDAXMeasures(state);
-  renderFieldsTree(state, (name) => updateDAXFormula(name, state));
-  populateSlicers(state.currentManifest, state, () => renderCharts(state));
-  renderCharts(state);
-  renderDataView(state);
-  renderModelView(state);
-  renderFinancialTable(state);
+  updateSummaryChip(state);
+
+  // Update document title if present
+  const docTitle = document.getElementById("documentTitle");
+  if (docTitle && state.currentManifest?.projectName) {
+    docTitle.textContent = `${state.currentManifest.projectName} · Star Schema Studio`;
+  }
 }
 
 export const app = {
   state,
   init,
   refreshAllViews,
-
-  // Ribbon & Viewport Navigation
-  switchView: (viewName) =>
-    switchView(viewName, state, (v) => {
-      if (v === "report") renderCharts(state);
-      else if (v === "data") renderDataView(state);
-      else if (v === "model") renderModelView(state);
-    }),
-  switchPage: (pageId) => switchPage(pageId, state),
-  addNewPage: () => addNewPage(state),
-  selectVisual: (id) => selectVisual(id, state),
-  transformSelectedVisual: (type) => transformSelectedVisual(type, state),
+  switchView,
+  updateSummaryChip,
 
   // DAX Semantic Operations
   evaluateDAX: () => evaluateDAX(state),
@@ -125,50 +161,40 @@ export const app = {
 
   // Slicer Cross-Filtering
   setCategoryFilter: (cat) =>
-    setCategoryFilter(cat, state, () => renderCharts(state)),
+    setCategoryFilter(cat, state, () => {
+      renderCharts(state);
+      updateSummaryChip(state);
+    }),
   setChannelFilter: (chan) =>
-    setChannelFilter(chan, state, () => renderCharts(state)),
-  resetFilters: () => resetFilters(state, () => renderCharts(state)),
+    setChannelFilter(chan, state, () => {
+      renderCharts(state);
+      updateSummaryChip(state);
+    }),
+  resetFilters: () =>
+    resetFilters(state, () => {
+      renderCharts(state);
+      updateSummaryChip(state);
+    }),
 
-  // Pipeline Engine
+  // Ingestion Pipeline
+  selectAndRunExcel: () => selectAndRunExcel(state, () => refreshAllViews()),
+  runSamplePipeline: () => runSamplePipeline(state, () => refreshAllViews()),
+  runPipelineForPath: (path, proj) => runPipelineForPath(path, proj, state, () => refreshAllViews()),
   refreshData: () =>
     refreshData(state, () => {
       renderCharts(state);
       renderDataView(state);
+      updateSummaryChip(state);
     }),
-  selectAndRunExcel: () =>
-    selectAndRunExcel(state, () => refreshAllViews()),
-  runSamplePipeline: () =>
-    runSamplePipeline(state, () => refreshAllViews()),
-  runPipelineForPath: (path, proj) =>
-    runPipelineForPath(path, proj, state, () => refreshAllViews()),
-  updateProgress,
-  appendLog,
 
-  // Modals & Native Shell
-  openPowerQueryModal: () => openPowerQueryModal(state),
-  openNewMeasureModal: () => openNewMeasureModal(),
-  confirmCreateMeasure: () =>
-    confirmCreateMeasure(state, () => {
-      populateDAXMeasures(state);
-      renderFieldsTree(state, (name) => updateDAXFormula(name, state));
-    }),
-  openMatplotlibModal: () => openMatplotlibModal(state),
-  openChartsFolder: () => openChartsFolder(state),
+  // Export Shell Actions
   launchNativePowerBI: () => launchNativePowerBI(state),
   exportCSVMarts: () => exportCSVMarts(state),
-  toggleFocus: (id) => toggleFocus(id, state),
-  closeFocusMode: () => closeFocusMode(state),
-  openCopilotModal: (entity, issue) => openCopilotModal(entity, issue, state),
-  runCopilotInvestigation: () => runCopilotInvestigation(state),
-  openExecutiveReportModal: () => openExecutiveReportModal(state),
-  exportExecutiveReportPdf: () => exportExecutiveReportPdf(state),
-  openAnnotationModal: () => openAnnotationModal(state),
-  saveAnnotation: () => saveAnnotation(state),
+
   showToast,
 };
 
-// Global reference for backward-compatibility with inline HTML event triggers
+// Global reference for HTML event triggers
 window.app = app;
 
 function setupEventListeners() {
@@ -186,30 +212,66 @@ function setupEventListeners() {
     });
   }
 
-  // B. Ribbon Tabs
-  setupRibbonTabs();
-
-  // C. Left Navigation Rail (Report / Data / Model)
-  document.querySelectorAll(".rail-btn").forEach((btn) => {
-    btn.addEventListener("click", () => app.switchView(btn.dataset.view));
+  // B. Top Navigation Tabs (Dashboard, Data, Model, DAX)
+  document.querySelectorAll(".nav-tab-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (btn.dataset.view) {
+        app.switchView(btn.dataset.view);
+      }
+    });
   });
 
-  // D. Page Switcher Tabs
-  document.querySelectorAll(".page-tab").forEach((tab) => {
-    if (tab.dataset.page) {
-      tab.addEventListener("click", () => app.switchPage(tab.dataset.page));
-    }
+  // C. Header Action Buttons
+  document.getElementById("btnLoadSample")?.addEventListener("click", () => app.runSamplePipeline());
+  document.getElementById("btnImportExcel")?.addEventListener("click", () => app.selectAndRunExcel());
+  document.getElementById("btnLaunchPowerBI")?.addEventListener("click", () => app.launchNativePowerBI());
+  document.getElementById("btnExportCSVMarts")?.addEventListener("click", () => app.exportCSVMarts());
+
+  // D. Dashboard Slicers
+  document.querySelectorAll("#categorySlicerPills .slicer-pill").forEach((pill) => {
+    pill.addEventListener("click", () => {
+      document.querySelectorAll("#categorySlicerPills .slicer-pill").forEach((p) => p.classList.remove("active"));
+      pill.classList.add("active");
+      app.setCategoryFilter(pill.dataset.category);
+    });
   });
 
-  // E. Add Page Button (+)
-  document.getElementById("btnAddPage")?.addEventListener("click", () => app.addNewPage());
+  document.getElementById("channelSlicerSelect")?.addEventListener("change", (e) => {
+    app.setChannelFilter(e.target.value);
+  });
 
-  // F. DAX Measure Selector Dropdown
+  document.getElementById("slicerStartDate")?.addEventListener("change", (e) => {
+    state.dateRange.start = e.target.value;
+    applySlicerFilters(state, () => {
+      renderCharts(state);
+      updateSummaryChip(state);
+    });
+  });
+
+  document.getElementById("slicerEndDate")?.addEventListener("change", (e) => {
+    state.dateRange.end = e.target.value;
+    applySlicerFilters(state, () => {
+      renderCharts(state);
+      updateSummaryChip(state);
+    });
+  });
+
+  document.getElementById("btnResetSlicers")?.addEventListener("click", () => app.resetFilters());
+
+  // E. Data View Search & Export
+  document.getElementById("dgSearchInput")?.addEventListener("input", (e) => {
+    filterDataGrid(e.target.value, state);
+  });
+
+  document.getElementById("btnExportCurrentTableCSV")?.addEventListener("click", () => {
+    exportCurrentTableCSV(state);
+  });
+
+  // F. DAX Measures Formula Bar & Search
   document.getElementById("daxMeasureDropdown")?.addEventListener("change", (e) => {
     app.updateDAXFormula(e.target.value);
   });
 
-  // G. DAX Formula Bar Buttons
   document.getElementById("btnEvaluateDax")?.addEventListener("click", () => app.evaluateDAX());
   document.getElementById("btnSaveDax")?.addEventListener("click", () => app.saveDAX());
   document.getElementById("btnCopyDax")?.addEventListener("click", () => {
@@ -220,138 +282,30 @@ function setupEventListeners() {
       } else {
         navigator.clipboard?.writeText(formula);
       }
-      showToast("DAX formula copied to clipboard!", "info");
+      showToast("DAX formula copied to clipboard!", "success");
     }
   });
 
-  // H. Category Slicer Pills
-  document.querySelectorAll(".slicer-pills .slicer-pill").forEach((pill) => {
-    pill.addEventListener("click", () => {
-      document.querySelectorAll(".slicer-pills .slicer-pill").forEach((p) => p.classList.remove("active"));
-      pill.classList.add("active");
-      app.setCategoryFilter(pill.dataset.category);
-    });
+  document.getElementById("btnCopyAllDax")?.addEventListener("click", () => app.copyAllDAX());
+
+  document.getElementById("daxSearchInput")?.addEventListener("input", (e) => {
+    const activeCat = document.querySelector(".dax-cat-pill.active")?.dataset.cat || "ALL";
+    renderDaxCatalog(state, e.target.value, activeCat);
   });
 
-  // I. Channel Slicer
-  document.getElementById("channelSlicerSelect")?.addEventListener("change", (e) => {
-    app.setChannelFilter(e.target.value);
-  });
-
-  // J. Date Slicers
-  document.getElementById("slicerStartDate")?.addEventListener("change", (e) => {
-    state.dateRange.start = e.target.value;
-    applySlicerFilters(state, () => renderCharts(state));
-  });
-  document.getElementById("slicerEndDate")?.addEventListener("change", (e) => {
-    state.dateRange.end = e.target.value;
-    applySlicerFilters(state, () => renderCharts(state));
-  });
-
-  // K. Reset Slicers
-  document.getElementById("btnResetSlicers")?.addEventListener("click", () => app.resetFilters());
-
-  // L. Ribbon Tools
-  document.getElementById("btnLoadSample")?.addEventListener("click", () => app.runSamplePipeline());
-  document.getElementById("btnSelectExcel")?.addEventListener("click", () => app.selectAndRunExcel());
-  document.getElementById("btnGetData")?.addEventListener("click", () => app.selectAndRunExcel());
-  document.getElementById("btnRefreshData")?.addEventListener("click", () => app.refreshData());
-  document.getElementById("btnTransformData")?.addEventListener("click", () => app.openPowerQueryModal());
-  document.getElementById("btnNewMeasure")?.addEventListener("click", () => app.openNewMeasureModal());
-  document.getElementById("btnManageRelationships")?.addEventListener("click", () => app.switchView("model"));
-  document.getElementById("btnStarSchemaViewer")?.addEventListener("click", () => app.switchView("model"));
-  document.getElementById("btnLaunchPowerBI")?.addEventListener("click", () => app.launchNativePowerBI());
-  document.getElementById("btnExportCSVMarts")?.addEventListener("click", () => app.exportCSVMarts());
-  document.getElementById("btnMatplotlibPack")?.addEventListener("click", () => app.openMatplotlibModal());
-  document.getElementById("btnOpenChartsFolder")?.addEventListener("click", () => app.openChartsFolder());
-  document.getElementById("btnCopyAllDAX")?.addEventListener("click", () => app.copyAllDAX());
-  document.getElementById("btnInvestigateCopilot")?.addEventListener("click", () => app.openCopilotModal());
-  document.getElementById("btnExecutiveBriefing")?.addEventListener("click", () => app.openExecutiveReportModal());
-  document.getElementById("btnExportExecutivePdf")?.addEventListener("click", () => app.exportExecutiveReportPdf());
-  document.getElementById("btnAddAnnotation")?.addEventListener("click", () => app.openAnnotationModal());
-  document.getElementById("btnRunCopilot")?.addEventListener("click", () => app.runCopilotInvestigation());
-  document.getElementById("btnSaveAnnotation")?.addEventListener("click", () => app.saveAnnotation());
-
-  // M. Theme Switcher
-  document.getElementById("themeSelect")?.addEventListener("change", (e) => {
-    document.body.className = e.target.value;
-    renderCharts(state);
-  });
-
-  // N. Data View Table Switcher
-  document.querySelectorAll(".dv-table-item").forEach((item) => {
-    item.addEventListener("click", () => {
-      document.querySelectorAll(".dv-table-item").forEach((i) => i.classList.remove("active"));
-      item.classList.add("active");
-      state.activeTable = item.dataset.table;
-      renderDataView(state);
-    });
-  });
-
-  // O. Data Grid Search & Export
-  document.getElementById("dgSearchInput")?.addEventListener("input", (e) => {
-    filterDataGrid(e.target.value, state);
-  });
-  document.getElementById("btnExportCurrentTableCSV")?.addEventListener("click", () => {
-    exportCurrentTableCSV(state);
-  });
-
-  // P. Visualizations Gallery (Transform active chart)
-  document.querySelectorAll(".visuals-gallery .vis-icon-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".visuals-gallery .vis-icon-btn").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      if (btn.dataset.chartType) {
-        app.transformSelectedVisual(btn.dataset.chartType);
-      }
-    });
-  });
-
-  // Q. Canvas Visual Containers (Click to select)
-  document.querySelectorAll(".pbi-visual-container").forEach((container) => {
-    container.addEventListener("click", (e) => {
-      if (!e.target.closest(".vtool-btn")) {
-        app.selectVisual(container.id);
-      }
-    });
-  });
-
-  // R. Power Query & Measure Modals
-  document.getElementById("btnCopyPqCode")?.addEventListener("click", () => {
-    const code = document.getElementById("pqCodeBlock")?.textContent;
-    if (code) {
-      if (window.api?.copyToClipboard) {
-        window.api.copyToClipboard(code);
-      } else {
-        navigator.clipboard?.writeText(code);
-      }
-      showToast("Power Query M code copied to clipboard!", "info");
-    }
-  });
-  document.getElementById("btnConfirmCreateMeasure")?.addEventListener("click", () => {
-    app.confirmCreateMeasure();
-  });
-
-  // S. Global Error Boundary / Window Error Listener
-  window.addEventListener("error", (event) => {
-    console.error("[RevenueOS Studio Unhandled Error]", event.error);
-    showToast(`Runtime exception: ${event.message}`, "error", 5000);
-  });
-  window.addEventListener("unhandledrejection", (event) => {
-    console.error("[RevenueOS Studio Unhandled Promise]", event.reason);
-    showToast(`Async exception: ${event.reason?.message || event.reason}`, "error", 5000);
-  });
-  // T. Drag and drop file ingestion
+  // G. Drag & Drop File Ingestion
   window.addEventListener("dragover", (e) => {
     e.preventDefault();
     e.stopPropagation();
     document.body.classList.add("drag-active");
   });
+
   window.addEventListener("dragleave", (e) => {
     e.preventDefault();
     e.stopPropagation();
     document.body.classList.remove("drag-active");
   });
+
   window.addEventListener("drop", async (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -372,16 +326,31 @@ function setupEventListeners() {
       }
     }
   });
+
+  // Window resize: re-render charts & re-draw SVG lines
+  window.addEventListener("resize", () => {
+    if (state.activeView === "dashboard") {
+      Object.values(state.charts).forEach((c) => c?.resize?.());
+    } else if (state.activeView === "model") {
+      drawModelRelationships(state);
+    }
+  });
 }
 
 async function init() {
   setupEventListeners();
 
-  // Check if an existing model was specifically returned by user session
+  // Load preloaded initial model if available from Electron main or static manifest
   try {
     if (window.api?.loadInitialModel) {
       const preloaded = await window.api.loadInitialModel();
       if (preloaded) {
+        state.setManifest(preloaded);
+      }
+    } else {
+      const resp = await fetch("../exports/default_model/manifest.json");
+      if (resp.ok) {
+        const preloaded = await resp.json();
         state.setManifest(preloaded);
       }
     }
@@ -390,7 +359,6 @@ async function init() {
   }
 
   refreshAllViews();
-  selectVisual("visualMonthlyTrend", state);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
